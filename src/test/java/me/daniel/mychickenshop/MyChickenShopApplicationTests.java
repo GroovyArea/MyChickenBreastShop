@@ -1,4 +1,4 @@
-package com.example.mychickenshop;
+package me.daniel.mychickenshop;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
