@@ -1,5 +1,6 @@
-package me.daniel.mychickenshop;
+package me.daniel;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
