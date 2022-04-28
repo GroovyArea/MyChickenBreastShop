@@ -1,19 +1,24 @@
 <!DOCTYPE html>
-<html
-        lang="ko"
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
->
-<!--/* 이곳에 각 view가 위치합니다. */-->
-<th:block layout:fragment="head"></th:block>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
-<div>
-    <div layout:fragment="header"></div>
+<head>
+    <meta charset="UTF-8"/>
 
-    <div layout:fragment="content"></div>
+    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
 
-    <div layout:fragment="footer"></div>
-</div>
+    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-출처: https://dev-overload.tistory.com/25 [E: overload]
+</head>
+
+<header th:replace="fragments/header :: headerFragment"></header>
+
+<div layout:fragment="layoutContent"></div>
+
+<footer th:replace="fragments/footer :: footerFragment"></footer>
+
 </html>
