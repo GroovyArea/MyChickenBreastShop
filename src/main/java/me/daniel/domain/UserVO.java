@@ -17,4 +17,9 @@ public class UserVO {
     private String userZipcode;
     private String userGrade;
     private String userReserves;
+
+    public UserVO(int userNo, String userName){
+        this.userNo = userNo;
+        this.userName = userName;
+    }
 }

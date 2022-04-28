@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 
 public class MySqlConnectionTest {
 
@@ -18,6 +19,11 @@ public class MySqlConnectionTest {
         try {
             Connection connection = DriverManager.getConnection(URL,USER,PASSWORD);
             System.out.println(connection);
+
+            PreparedStatement preparedStatement = null;
+
+
+
         } catch (Exception e){
             System.out.println("연결 실패!");
         }
