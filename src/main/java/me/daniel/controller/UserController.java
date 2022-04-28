@@ -23,4 +23,12 @@ public class UserController {
         userService.insertTest(new UserVO(1, "김남영"));
         return 1;
     }
+
+    @GetMapping("/insertTest2")
+    public Integer insertTest2(){
+
+        userService.insertTest(new UserVO(2, "김공룡"));
+
+        return 2;
+    }
 }
