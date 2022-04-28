@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.daniel.mapper.UserMapper">
+    <insert id="insertTest" parameterType="me.daniel.domain.UserVO">
+        insert into
+            user (user_no, user_name) values (#{userNo},#{userName})
+    </insert>
+</mapper>
