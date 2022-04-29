@@ -1,4 +1,4 @@
-package me.daniel.controller;
+package me.daniel.controller.user;
 
 import me.daniel.domain.UserVO;
 import me.daniel.service.UserService;
@@ -12,6 +12,8 @@ public class UserController {
 
     private final UserService userService;
 
+
+
     @Autowired
     public UserController(UserService userService){
         this.userService = userService;
@@ -23,6 +25,7 @@ public class UserController {
         userService.insertTest(new UserVO(1, "김남영"));
         return 1;
     }
+
 
     @GetMapping("/insertTest2")
     public Integer insertTest2(){
