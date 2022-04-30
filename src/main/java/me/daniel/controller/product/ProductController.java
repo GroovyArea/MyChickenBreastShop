@@ -1,15 +1,18 @@
 package me.daniel.controller.product;
 
 import lombok.RequiredArgsConstructor;
+import me.daniel.Enum.ChickenStatus;
 import me.daniel.service.ProductService;
 import me.daniel.utility.Pager;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -35,14 +38,27 @@ public class ProductController {
                            @RequestParam(defaultValue = "1") int pageNum,
                            Model model){
 
+        Map<String, Object> countMap = new HashMap<>();
 
-        // 페이저 인자로 4개 넘기기
-        // 전체 게시글 갯수 sql 생성
-        // pageSize = 10
-        // blockSize = 5
-        //Pager pager = new Pager();
+        countMap.put("productCategory", productCategoryNo);
+        countMap.put("productStatus", ChickenStatus.SALE.getValue());
 
-        return ""; // 카테고리별 페이지 get 요청 건 만들기 if문 사용?
+        int totalProduct = productService.getCategoryCount(countMap);
+        int productSize = 5;
+        int blockSize = 6;
+        int number = totalProduct - (pageNum-1) * productSize;
+
+        // 페이징 객체
+        Pager pager = new Pager(pageNum, totalProduct, productSize, blockSize);
+
+        Map<String, Object> pagerMap = new HashMap<>();
+        pagerMap.put("productCategory", productCategoryNo);
+        pagerMap.put("startRow",pager.getStartRow()-1);
+        pagerMap.put("rowCount", blockSize);
+
+        model.addAttribute("productList", productService.getCategoryList(pagerMap));
+
+        return "/fragments/product/product_list"; // 카테고리별 페이지 get 요청 건 만들기 if문 사용?
     }
 
 }
