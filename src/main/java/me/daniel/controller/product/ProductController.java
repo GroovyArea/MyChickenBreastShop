@@ -22,11 +22,11 @@ public class ProductController {
     private final ProductService productService;
 
     // 1. 상품 디테일 요청(상품 번호로 쿼리 스트링으로 날리기) => get?
-    @GetMapping("/detail")
-    public String detailPage(@RequestParam int productNo, Model model){
+    @GetMapping("/detail/{productNo}")
+    public String detailPage(@PathVariable int productNo, Model model){
 
         // 상품 단일 행 반환
-        model.addAttribute(productService.getProduct(productNo));
+        model.addAttribute("product",productService.getProduct(productNo));
 
         return "/fragments/product/product_detail";
     }
@@ -46,7 +46,7 @@ public class ProductController {
         int totalProduct = productService.getCategoryCount(countMap);
         int productSize = 5;
         int blockSize = 6;
-        int number = totalProduct - (pageNum-1) * productSize;
+        //int number = totalProduct - (pageNum-1) * productSize;
 
         // 페이징 객체
         Pager pager = new Pager(pageNum, totalProduct, productSize, blockSize);
