@@ -4,7 +4,7 @@ public enum ChickenBreast {
 
     STEAMED(1),
     SMOKED(2),
-    LOW_SALT(3),
+    SAUSAGE(3),
     STEAK(4),
     CUBE(5),
     RAW(6);
