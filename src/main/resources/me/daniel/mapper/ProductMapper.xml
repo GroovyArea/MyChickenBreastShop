@@ -4,6 +4,18 @@
 
 <mapper namespace="me.daniel.mapper.ProductMapper">
     <select id="selectProduct" parameterType="me.daniel.domain.ProductVO" resultType="ProductVO">
-        select * from product where product_no = #{productNo}
+        select * from product
+        where product_no = #{productNo}
+    </select>
+
+    <select id="selectCategoryCount" resultType="int">
+        select count(*) from product
+        where product_categoty = #{productCategory} and product_status = #{productStatus}
+    </select>
+
+    <select id="selectCategoryList" resultType="ProductVO">
+        select * from product
+        where product_category = #{productCategory}
+        limit  #{startRow}, #{rowCount}
     </select>
 </mapper>
