@@ -26,7 +26,7 @@
             <td th:text="${product.productPrice}"></td>
             <td th:text="${product.productStock}"></td>
             <td th:text="${product.productDetail}"></td>
-            <td><img th:src="${product.productImage}"></td>
+            <td><img th:src="@{/img/} + ${product.productImage}"></td>
         </tr>
         </tbody>
 
