@@ -3,6 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
+    <title>닭가슴살 판매 사이트</title>
     <meta charset="UTF-8"/>
 
     <!-- 공통으로 쓰이는 css파일을넣는다.-->
@@ -29,10 +30,15 @@
     <script th:src="@{/js/src/app.js}"></script>
 </head>
 
-<header th:replace="fragments/header :: headerFragment"></header>
-
-<div layout:fragment="layoutContent"></div>
-
-<footer th:replace="fragments/footer :: footerFragment"></footer>
-
+<body>
+    <div>
+        <header th:replace="fragments/header :: headerFragment"></header>
+    </div>
+    <div>
+        <div layout:fragment="layoutContent"></div>
+    </div>
+    <div>
+        <footer th:replace="fragments/footer :: footerFragment"></footer>
+    </div>
+</body>
 </html>
