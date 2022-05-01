@@ -3,8 +3,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="me.daniel.mapper.UserMapper">
+
+    <select id="selectUser" resultType="UserVO">
+        select * from
+        user where user_no = #{userNo}
+    </select>
+
     <insert id="insertTest" parameterType="me.daniel.domain.UserVO">
         insert into
-            user (user_no, user_name) values (#{userNo},#{userName})
+            user (user_no, user_name) values (#{userNo}, #{userName})
     </insert>
 </mapper>

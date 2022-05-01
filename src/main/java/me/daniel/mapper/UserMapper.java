@@ -7,5 +7,8 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface UserMapper {
+
+    UserVO selectUser(int userNo);
+
     void insertTest(UserVO userVO);
 }
