@@ -3,56 +3,69 @@
       layout:decorate="~{layout/layout}">
 
 <div layout:fragment="layoutContent">
-    <div class="container">
-        <div class="productList">
-            <section id="main-wrapper" class="theme-grey">
-                <aside class="sidebar sidebar-left">
-                    <nav>
-                        <h1 class="sidebar-header"><span>닭가슴살 리스트</span></h1>
-                        <ul class="nav nav-pills nav-stacked">
-                            <li>
-                                <a th:href="@{/product/list/1}" title="productList">스팀</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/product/list/2}" title="productList">훈제</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/product/list/3}" title="productList">소시지</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/product/list/4}" title="productList">스테이크</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/product/list/5}" title="productList">볼</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/product/list/6}" title="productList">생닭가슴살</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </aside>
 
-                <div class="container">
-                    <div class="my-page-box" style=" color: #fff">
-                        <h1>스팀 닭가슴살</h1>
-                    </div>
-                    <br>
-                    <div class="flex-container1">
-                        <div class="flex-container">
-                            <div class="flex-item" th:each="product : ${productList}">
-                                <a th:href="@{/product/detail/}" style="color: white">
-                                    <img src="@{/img/}+${product.productImage}">
-                                    <p>${product.productName}</p>
-                                    <p>${product.productPrice}</p>
-                                </a>
-                            </div>
-                        </div>
+    <br>
+
+    <div>
+        <br><br>
+        <h1 style="text-align: center;">닭가슴살 카테고리</h1>
+        <div class="chickenMenu1">
+            <ul class="clearfix">
+                <li>
+                    <a th:href="@{/product/list/1}" title="productList">스팀</a>
+                </li>
+                <li>
+                    <a th:href="@{/product/list/2}" title="productList">훈제</a>
+                </li>
+                <li>
+                    <a th:href="@{/product/list/3}" title="productList">소시지</a>
+                </li>
+                <li>
+                    <a th:href="@{/product/list/4}" title="productList">스테이크</a>
+                </li>
+                <li>
+                    <a th:href="@{/product/list/5}" title="productList">볼</a>
+                </li>
+                <li>
+                    <a th:href="@{/product/list/6}" title="productList">생닭가슴살</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="my-page-box" style=" color: #fff">
+            <div class="pageheader" style="font-size: 20px;">
+                <h1>스테이크 닭가슴살</h1>
+            </div>
+        </div>
+        <br>
+        <div class="flex-container1">
+            <div class="flex-container">
+                <div class="flex-item" th:each="product : ${productList1}">
+                    <a th:href="@{/product/detail/}" style="color: white">
+                        <img th:src="@{/img/}+${product.productImage}" alt="">
+                        <p th:text="${product.productName}"></p>
+                        <p th:text="${product.productPrice}"></p>
+                    </a>
+                </div>
+            </div>
+            <th:block th:if="${productList2 != null}">
+                <div class="flex-container">
+                    <div class="flex-item" th:each="product2 : ${productList2}">
+                        <a th:href="@{/product/detail/}" style="color: white">
+                            <img th:src="@{/img/}+${product2.productImage}" alt="">
+                            <p th:text="${product2.productName}"></p>
+                            <p th:text="${product2.productPrice}"></p>
+                        </a>
                     </div>
                 </div>
+            </th:block>
+            <br>
 
-            </section>
         </div>
-
     </div>
+
+
 </div>
+
 </html>
