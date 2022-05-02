@@ -1,7 +1,8 @@
 @charset "UTF-8";
 .notice-list-print {
-	width: 100%;
+    width: 100%;
 }
+
 .notice-list-title {
     color: #fff;
     background-color: #556b8d;
@@ -16,8 +17,8 @@
 }
 
 .notice-view-title {
-	width: 100%;
-	font-weight: 400;
+    width: 100%;
+    font-weight: 400;
     text-transform: uppercase;
     padding: 14px 10px;
     color: #fff;
@@ -32,15 +33,15 @@
 }
 
 .footer-content {
-	text-align: right;
+    text-align: right;
 }
 
 .logo-location {
-	text-align: center;
+    text-align: center;
 }
 
 .modal-header-logo {
-	font-size: 30px;;
+    font-size: 30px;;
 }
 
 .main-search {
@@ -50,6 +51,7 @@
     height: 37px;
     padding: 8px 12px 9px 12px;
 }
+
 .main-search {
     width: 30%;
     height: 42px;
@@ -63,20 +65,22 @@
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
     box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
-#pricing {
+.chickenIndex {
     padding: 75px 0;
 }
+
 #pricing .spacer {
     height: 2px;
     width: 80px;
     margin: 20px auto;
     background: #556b8d;
 }
+
 .row {
     margin-right: -15px;
     margin-left: -15px;
@@ -86,17 +90,18 @@
     margin: 2em auto;
 }
 
-#chicken-content {
-	width: 30%;
+.chicken-content {
+    width: 30%;
 }
 
+
 #trainer-review-content {
-	width: 30%;
+    width: 30%;
 }
 
 .review-trainer-name {
-	color: #556b8d;
-	font-weight: bold; 
+    color: #556b8d;
+    font-weight: bold;
 }
 
 .phone-form-control {
@@ -113,10 +118,11 @@
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
     box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
+
 .phone-form-control {
     border: 2px solid #e8ebed;
     border-radius: 2px;
@@ -124,16 +130,17 @@
     height: 37px;
     padding: 8px 12px 9px 12px;
 }
+
 .formDiv {
-	text-align: center;
+    text-align: center;
 }
 
 #selbox {
-	width: 100%;
+    width: 100%;
 }
 
 .trainer-search-list {
-	width: 100%
+    width: 100%
 }
 
 .main-h1 {
@@ -143,12 +150,12 @@
 }
 
 .posting-box {
-	width: 700px;
-	margin: auto;
+    width: 700px;
+    margin: auto;
 }
 
 .trainer-profile {
-	width: 100%;
+    width: 100%;
 }
 
 .radio-inline, .checkbox-inline {
@@ -161,13 +168,13 @@
 }
 
 .account-info-box {
-	width: 50%;
-	margin: 200px auto;
+    width: 50%;
+    margin: 200px auto;
 }
 
 .account-table {
-	padding-top: 20px;
-	padding-bottom: 10px;
+    padding-top: 20px;
+    padding-bottom: 10px;
 }
 
 .theme-default .sidebar-left {
@@ -175,39 +182,40 @@
 }
 
 .memberBtn {
-	font-size: 13px;
-	margin-bottom: 0px;
-	width: 105px;
+    font-size: 13px;
+    margin-bottom: 0px;
+    width: 105px;
 }
 
-.userList {
-	margin: 100px auto;
+.productList {
+    margin: 100px auto;
 }
 
 .searchBtnBox {
-	margin-bottom: 0px;
-	height: 42px;
+    margin-bottom: 0px;
+    height: 42px;
 }
 
 .trainerDetailView {
-	float: left;
-	margin: auto 20px;
+    float: left;
+    margin: auto 20px;
 }
+
 .trainer-detail-profile {
-	width: 60px;
-	height: 60px;
+    width: 60px;
+    height: 60px;
 }
 
 .ad-t-v-header-award-footer-text {
-	margin: 25px auto;
+    margin: 25px auto;
 }
 
 .memberModifyBody {
-	margin: auto 50px;
+    margin: auto 50px;
 }
 
 .control-label {
-	text-align: right;
+    text-align: right;
 }
 
 .email-form-control {
@@ -219,15 +227,16 @@
 }
 
 .flex-container1 {
-	margin: 20px auto;
+    margin: 20px auto;
 }
 
 .flex-container {
-	justify-content: center;
-	display: flex;
+    justify-content: center;
+    display: flex;
 }
+
 .flex-item {
-	width: 240px;
+    width: 240px;
     height: 240px;
     margin: 25px;
     text-align: center;
@@ -240,15 +249,15 @@
 }
 
 .my-page-box {
-	margin: 100px auto;
+    margin: 100px auto;
 }
 
 .my-page-title {
-	margin-bottom: 20px;	
+    margin-bottom: 20px;
 }
 
 .myPageIcon {
-	font-size: 100px;
+    font-size: 100px;
 }
 
 .navbar-wrapper .navbar-default {
@@ -262,77 +271,77 @@
     border-width: 0 0 1px;
 }
 
-.error{
-	color: red;
-	position: relative;
-	display: none;
+.error {
+    color: red;
+    position: relative;
+    display: none;
 }
 
 .trainerRequestBody {
-	margin: auto 50px;
+    margin: auto 50px;
 }
 
 .personalTable {
-	margin-bottom: 0px;
+    margin-bottom: 0px;
 }
 
 .personalContent {
-	padding: 15px;
+    padding: 15px;
 }
 
 .ptOnceBtn {
-	width: 73px;
-	height: 30px;
-	font-size: 12px;
-	padding: 5px;
-	margin-bottom: 0px;
+    width: 73px;
+    height: 30px;
+    font-size: 12px;
+    padding: 5px;
+    margin-bottom: 0px;
 }
 
 .center-form-control {
-	border: 2px solid #e8ebed;
+    border: 2px solid #e8ebed;
     border-radius: 2px;
     box-shadow: none;
     height: 37px;
     padding: 8px 12px 9px 12px;
-	width: 250px; 
+    width: 250px;
 }
 
 .trainer-profile-form-control {
-	border: 2px solid #e8ebed;
+    border: 2px solid #e8ebed;
     border-radius: 2px;
     box-shadow: none;
     height: 37px;
     padding: 8px 12px 9px 12px;
-	width: 300px; 
+    width: 300px;
 }
 
 .email-group {
-	float: left; 
-	overflow: auto;  
-	padding-left: 4px; 
-	margin-bottom: 20px;
+    float: left;
+    overflow: auto;
+    padding-left: 4px;
+    margin-bottom: 20px;
 }
 
 .phoneSelect {
-	width: 150px; 
-	margin-bottom: 0px; 
-	height: 37px;
+    width: 150px;
+    margin-bottom: 0px;
+    height: 37px;
 }
 
 .joinPhone {
-	width: 180px;
-	height: 36px;
+    width: 180px;
+    height: 36px;
 }
 
 .ptOnce-form-group {
-	border-bottom: 1px solid #444444;
+    border-bottom: 1px solid #444444;
     padding: 5px;
-	margin-bottom: 0px;
+    margin-bottom: 0px;
 }
 
 .ptOnceDiv {
-	vertical-align: middle;
-	margin-bottom: 0px; 
+    vertical-align: middle;
+    margin-bottom: 0px;
 }
 
 .admin-list-body-list-table th, td {
@@ -341,203 +350,205 @@
 }
 
 .ptOnceSignificantForm {
-	resize: none; 
-	width: 420px; 
-	/*height: 300px;*/
-	margin-bottom: 40px;
+    resize: none;
+    width: 420px;
+    /*height: 300px;*/
+    margin-bottom: 40px;
 }
 
 .ptServiceContentForm {
-	resize: none; 
-	width: 420px; 
+    resize: none;
+    width: 420px;
 }
 
-.review-posting-box{ 
-	width: 47%;
-	margin: 20px 0px 0px 13px;	
+.review-posting-box {
+    width: 47%;
+    margin: 20px 0px 0px 13px;
 }
 
 #ptServiceReplyText {
-	resize: none;
-	min-height: 60px;
+    resize: none;
+    min-height: 60px;
 }
 
 .reviewColor {
-	background: #556b8d; 
-	color: #fff; border: 
-	none; padding: 0px 7px;
+    background: #556b8d;
+    color: #fff;
+    border: none;
+    padding: 0px 7px;
 }
 
 .reviewRight {
-	text-align: right;
+    text-align: right;
 }
 
 .h2BoldWhite {
-	color: #fff; 
-	font-weight: bold;
+    color: #fff;
+    font-weight: bold;
 }
 
 .tabTitle {
-	width: 50%; 
-	text-align: center;
+    width: 50%;
+    text-align: center;
 }
 
 .tabSideMenu {
-	margin-bottom: 20px; 
-	display: inline-block; 
-	width: 100%; 
-	background-color: #fff;
+    margin-bottom: 20px;
+    display: inline-block;
+    width: 100%;
+    background-color: #fff;
 }
 
 .ptOnceMemberInfoTitle {
-	text-align: left; 
-	margin-top: 30px; 
-	font-weight: bold;
+    text-align: left;
+    margin-top: 30px;
+    font-weight: bold;
 }
 
 .trainer-sidemenu {
-	margin-left: 2%;
-	margin-right: 2%;
+    margin-left: 2%;
+    margin-right: 2%;
 }
 
 .noticeBody {
-	margin: auto 50px;
+    margin: auto 50px;
 }
 
 .btnGroup {
-	text-align: center;
+    text-align: center;
 }
 
 .noticeFormContent {
-	resize: none;
-	width: 100%;
-	/*height: 400px;*/ 
-	border: 2px solid #e8ebed;
+    resize: none;
+    width: 100%;
+    /*height: 400px;*/
+    border: 2px solid #e8ebed;
     border-radius: 2px;
     box-shadow: none;
     padding: 8px 12px 9px 12px;
 }
+
 .accordionBoard {
-	text-align: center; 
-	vertical-align: middle;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .boardEmptyWriting {
-	width: 100%; 
-	height: 57px; 
-	padding: 20px;
+    width: 100%;
+    height: 57px;
+    padding: 20px;
 }
 
 .reviewEmptyWriting {
-	width: 100%; 
-	height: 250px; 
-	padding: 105px;
-	margin-top: 50px;
-	
+    width: 100%;
+    height: 250px;
+    padding: 105px;
+    margin-top: 50px;
+
 }
 
 .ptOncePersonalContent {
-	padding: 20px 30px;
+    padding: 20px 30px;
 }
 
 .posting-form-control {
-	border: 2px solid #e8ebed;
+    border: 2px solid #e8ebed;
     border-radius: 2px;
     box-shadow: none;
     height: 34px;
     padding: 8px 12px 9px 12px;
-	width: 226px;
+    width: 226px;
 }
 
 .time-form-control {
-	font-size: medium;
-	border: 2px solid #e8ebed;
+    font-size: medium;
+    border: 2px solid #e8ebed;
     border-radius: 2px;
     box-shadow: none;
     height: 34px;
-	width: 50px;
-	
+    width: 50px;
+
 }
 
 ul {
-	list-style: none;
-	padding-left: 0px;		
+    list-style: none;
+    padding-left: 0px;
 }
 
-.ptPersonalContent{
-	padding: 15px 30px;
+.ptPersonalContent {
+    padding: 15px 30px;
 }
 
 .trainer-ptonce-content-label {
-	text-align: right;
-	float: left;
-	width: 80px;
-	margin: auto 30px;
+    text-align: right;
+    float: left;
+    width: 80px;
+    margin: auto 30px;
 }
 
 .pageBtn {
-	font-size: medium;
-	width: 15px;
-	height: 15px;
-	border-radius: 0px;
+    font-size: medium;
+    width: 15px;
+    height: 15px;
+    border-radius: 0px;
 }
 
 .frofile-content-body {
-	padding: 15px 30px;
-	
+    padding: 15px 30px;
+
 }
 
 .posting-label {
-	float: left;
-	width: 80px;
-	float: right;
-	width: 510px;
-	padding: 20px;
+    float: left;
+    width: 80px;
+    float: right;
+    width: 510px;
+    padding: 20px;
 }
 
 .award-label {
-	float: left;
-	width: 80px;
-	float: right;
-	width: 250px;
-	padding: 20px;
+    float: left;
+    width: 80px;
+    float: right;
+    width: 250px;
+    padding: 20px;
 }
 
 .reviewlistContent {
-	padding: 20px;
-	
+    padding: 20px;
+
 }
 
 .mainSearchBody {
-	padding: 20px 40px 20px 0px;
-	
+    padding: 20px 40px 20px 0px;
+
 }
 
 .searchProfileImg {
-	width: 150px; 
-	height: 150px; 
-	text-align: center; 
-	vertical-align: middle; 
-	float: left;
-	margin-left: 20px;
-	margin-right: 40px;
-	
+    width: 150px;
+    height: 150px;
+    text-align: center;
+    vertical-align: middle;
+    float: left;
+    margin-left: 20px;
+    margin-right: 40px;
+
 }
 
 html, body {
-	margin: 0;
-	padding: 0;
-	height: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
 
 #content {
-	min-height: 63%;
-	    vertical-align: middle;
-	
+    min-height: 63%;
+    vertical-align: middle;
+
 }
 
 .bottomContent {
-	width: 100%;
+    width: 100%;
     background: #fff;
     padding: 30px 0;
     height: 400px;
@@ -545,7 +556,7 @@ html, body {
 }
 
 .home-header {
-	width: 100%;
+    width: 100%;
     border: 0;
     background: #fff;
     display: inline-block;
@@ -558,47 +569,49 @@ html, body {
 }
 
 .categoryLeft {
-	text-align: left;
-	float: left;
-}		
+    text-align: left;
+    float: left;
+}
 
 #trainer-content {
-	min-height: 410px;
-	
+    min-height: 410px;
+
 }
 
 .mainProfileImg {
-	width: 150px;
-	height: 150px;
-	margin-left: 81px;
-	vertical-align: middle;
-	
+    width: 150px;
+    height: 150px;
+    margin-left: 81px;
+    vertical-align: middle;
+
 }
 
 .mainReviewBody {
-	text-align: center;
-	min-height: 300px;
-	cursor: pointer;
-	
+    text-align: center;
+    min-height: 300px;
+    cursor: pointer;
+
 }
 
 .review-trainer-name {
-	font-size: large;
-	
+    font-size: large;
+
 }
 
 .mainReviewContent {
-	min-height: 150px;
-	
+    min-height: 150px;
+
 }
 
 .mainReviewTitle {
-	font-weight: bold;
-	
+    font-weight: bold;
+
 }
 
 .postingImg {
-	width: 130px;
-	height: 130px;
-	
+    width: 130px;
+    height: 130px;
+
 }
+
+
