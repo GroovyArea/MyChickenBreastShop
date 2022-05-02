@@ -10,7 +10,7 @@
 
     <select id="selectCategoryCount" resultType="int">
         select count(*) from product
-        where product_categoty = #{productCategory} and product_status = #{productStatus}
+        where product_category = #{productCategory} and product_status = #{productStatus}
     </select>
 
     <select id="selectCategoryList" resultType="ProductVO">

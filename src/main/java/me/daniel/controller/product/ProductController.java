@@ -21,24 +21,26 @@ public class ProductController {
 
     private final ProductService productService;
 
+    private Map<String, Object> countMap = new HashMap<>();
+
+    private Map<String, Object> pagerMap = new HashMap<>();
+
     // 1. 상품 디테일 요청(상품 번호로 쿼리 스트링으로 날리기) => get?
     @GetMapping("/detail/{productNo}")
-    public String detailPage(@PathVariable int productNo, Model model){
+    public String detailPage(@PathVariable int productNo, Model model) {
 
         // 상품 단일 행 반환
-        model.addAttribute("product",productService.getProduct(productNo));
+        model.addAttribute("product", productService.getProduct(productNo));
 
         return "/fragments/product/product_detail";
     }
 
-    // 2. 카테고리 별 상품 리스트 요청(스팀, 훈제, 저염, 스테이크, 큐브, 생닭가슴살)
+    // 2. 카테고리 별 상품 리스트 요청(스팀, 훈제, 소시지, 스테이크, 볼, 생닭가슴살)
     // 페이징 처리 데이터(페이지 번호, 총 개수), 상품 카테고리 번호
     @GetMapping("/list/{productCategoryNo}")
     public String listPage(@PathVariable(value = "productCategoryNo") int productCategoryNo,
                            @RequestParam(defaultValue = "1") int pageNum,
-                           Model model){
-
-        Map<String, Object> countMap = new HashMap<>();
+                           Model model) {
 
         countMap.put("productCategory", productCategoryNo);
         countMap.put("productStatus", ChickenStatus.SALE.getValue());
@@ -51,14 +53,28 @@ public class ProductController {
         // 페이징 객체
         Pager pager = new Pager(pageNum, totalProduct, productSize, blockSize);
 
-        Map<String, Object> pagerMap = new HashMap<>();
         pagerMap.put("productCategory", productCategoryNo);
-        pagerMap.put("startRow",pager.getStartRow()-1);
+        pagerMap.put("startRow", pager.getStartRow() - 1);
         pagerMap.put("rowCount", blockSize);
 
         model.addAttribute("productList", productService.getCategoryList(pagerMap));
 
-        return "/fragments/product/product_list"; // 카테고리별 페이지 get 요청 건 만들기 if문 사용?
+        if(productCategoryNo == 1) {
+            return "/fragments/product/product_list";
+        } else if(productCategoryNo == 2){
+            return "/fragments/product/product_list_smoked";
+        } else if(productCategoryNo == 3){
+            return "/fragments/product/product_list_sausage";
+        } else if(productCategoryNo == 4){
+            return "/fragments/product/product_list_steak";
+        } else if(productCategoryNo == 5){
+            return "/fragments/product/product_list_ball";
+        } else{
+            return "/fragments/product/product_list_raw";
+        }
+        // 카테고리별 페이지 get 요청 건 만들기 if문 사용?
     }
+
+    // 상품 추가, 수정, 삭제 핸들러
 
 }
