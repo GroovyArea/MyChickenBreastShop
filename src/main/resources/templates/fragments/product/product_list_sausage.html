@@ -42,21 +42,21 @@
         <div class="flex-container1">
             <div class="flex-container">
                 <div class="flex-item" th:each="product : ${productList1}">
-                    <a th:href="@{/product/detail/}" style="color: white">
+                    <a th:href="@{/product/detail/}+${product.productNo}" style="color: white">
                         <img th:src="@{/img/}+${product.productImage}" alt="">
                         <p th:text="${product.productName}"></p>
-                        <p th:text="${product.productPrice}"></p>
                     </a>
+                    <span th:text="${product.productPrice} + 원"></span>
                 </div>
             </div>
             <th:block th:if="${productList2 != null}">
                 <div class="flex-container">
                     <div class="flex-item" th:each="product2 : ${productList2}">
-                        <a th:href="@{/product/detail/}" style="color: white">
+                        <a th:href="@{/product/detail/}+${product2.productNo}" style="color: white">
                             <img th:src="@{/img/}+${product2.productImage}" alt="">
                             <p th:text="${product2.productName}"></p>
-                            <p th:text="${product2.productPrice}"></p>
                         </a>
+                        <span th:text="${product2.productPrice} + 원"></span>
                     </div>
                 </div>
             </th:block>
