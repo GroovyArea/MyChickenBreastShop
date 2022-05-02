@@ -4,13 +4,25 @@
 
 <mapper namespace="me.daniel.mapper.UserMapper">
 
+    <insert id="insertUser" parameterType="UserVO">
+        insert into
+        user values(
+                               nextval('user_seq'),
+                    #{userPw},
+                    #{userName},
+                    #{userPhone},
+                    #{userEmail},
+                    #{userMainAddress},
+                    #{userDetailAddress},
+                    #{userZipcode},
+                    1,
+                    2000
+                           )
+    </insert>
+
     <select id="selectUser" resultType="UserVO">
         select * from
         user where user_no = #{userNo}
     </select>
 
-    <insert id="insertTest" parameterType="me.daniel.domain.UserVO">
-        insert into
-            user (user_no, user_name) values (#{userNo}, #{userName})
-    </insert>
 </mapper>

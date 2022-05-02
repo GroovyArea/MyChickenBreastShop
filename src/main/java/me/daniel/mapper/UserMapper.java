@@ -10,5 +10,6 @@ public interface UserMapper {
 
     UserVO selectUser(int userNo);
 
-    void insertTest(UserVO userVO);
+    void insertUser(UserVO userVO);
+
 }

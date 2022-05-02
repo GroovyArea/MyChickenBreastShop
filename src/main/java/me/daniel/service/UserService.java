@@ -6,5 +6,5 @@ public interface UserService {
 
     UserVO getUser(int userNo);
 
-    void insertTest(UserVO userVO);
+    void addUser(UserVO userVO);
 }

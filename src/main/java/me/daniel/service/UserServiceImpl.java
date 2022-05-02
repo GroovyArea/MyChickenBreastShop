@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void insertTest(UserVO userVO) {
-        userMapper.insertTest(userVO);
+    public void addUser(UserVO userVO) {
+        userMapper.insertUser(userVO);
     }
 }
