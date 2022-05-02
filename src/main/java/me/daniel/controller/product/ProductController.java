@@ -64,16 +64,21 @@ public class ProductController {
         List<ProductVO> list1 = new ArrayList<>();
         List<ProductVO> list2 = new ArrayList<>();
 
-        for (int i = 0; i < 4; i++) {
-            list1.add(list.get(i));
+        if (list.size() < 4) {
+            model.addAttribute("productList1", list);
+        } else if (list.size() >= 4) {
+            for (int i = 0; i < 4; i++) {
+                list1.add(list.get(i));
+                model.addAttribute("productList1", list1);
+            }
         }
-        if (productService.getCategoryList(pagerMap).size() >= 4) {
-            for (int a = 4; a <list.size(); a++) {
+
+        if (list.size() >= 5) {
+            for (int a = 4; a < list.size(); a++) {
                 list2.add(list.get(a));
                 model.addAttribute("productList2", list2);
             }
         }
-                model.addAttribute("productList1", list1);
 
         if (productCategoryNo == 1) {
             return "/fragments/product/product_list";
