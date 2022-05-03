@@ -4,43 +4,62 @@ import me.daniel.Enum.ChickenStatus;
 import me.daniel.domain.ProductVO;
 import me.daniel.service.ProductService;
 import me.daniel.utility.Pager;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * 상품 관련 Controller
+ * 상품 조회, 추가, 수정, 삭제 요청
+ * @author Nam Young Kim
+ */
 @RestController
 @RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
 
-    public ProductController(ProductService productService){
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
+    /**
+     * page 당 게시글 수를 찾기 위한 map 객체
+     */
     private Map<String, Object> countMap = new HashMap<>();
-
+    /**
+     * page 당 게시글 리스트를 반환 받기 위한 map 객체
+     */
     private Map<String, Object> pagerMap = new HashMap<>();
 
-    // 1. 상품 디테일 요청(상품 번호로 쿼리 스트링으로 날리기) => get?
+    /**
+     * 게시글 데이터를 반환하기 위한 map 객체
+     */
+    private Map<String, Object> returnMap = new HashMap<>();
+
+    /**
+     * 단일 상품 디테일 객체를 반환하는 메서드
+     *
+     * @param productNo
+     * @return productVO
+     */
     @GetMapping("/detail/{productNo}")
-    public String detailPage(@PathVariable int productNo, Model model) {
-
-        // 상품 단일 행 반환
-        model.addAttribute("product", productService.getProduct(productNo));
-
-        return "/fragments/product/product_detail";
+    public ProductVO detailPage(@PathVariable int productNo) {
+        return productService.getProduct(productNo);
     }
 
-    // 2. 카테고리 별 상품 리스트 요청(스팀, 훈제, 소시지, 스테이크, 볼, 생닭가슴살)
-    // 페이징 처리 데이터(페이지 번호, 총 개수), 상품 카테고리 번호
+    /**
+     * page 당 상품 리스트 반환하는 메서드
+     *
+     * @param productCategoryNo
+     * @param pageNum
+     * @return returnMap
+     */
     @GetMapping("/list/{productCategoryNo}")
-    public String listPage(@PathVariable(value = "productCategoryNo") int productCategoryNo,
-                           @RequestParam(defaultValue = "1") int pageNum,
-                           Model model) {
+    public Map<String, Object> listPage(@PathVariable(value = "productCategoryNo") int productCategoryNo,
+                                        @RequestParam(defaultValue = "1") int pageNum
+    ) {
 
         countMap.put("productCategory", productCategoryNo);
         countMap.put("productStatus", ChickenStatus.SALE.getValue());
@@ -57,10 +76,13 @@ public class ProductController {
         pagerMap.put("startRow", pager.getStartRow() - 1);
         pagerMap.put("rowCount", blockSize);
 
-        List<ProductVO> list = productService.getCategoryList(pagerMap);
 
-        return "";
+        returnMap.put("productList", productService.getCategoryList(pagerMap));
+        returnMap.put("pager", pager);
+
+        return returnMap;
     }
+
 
     // 상품 추가, 수정, 삭제 핸들러
 
