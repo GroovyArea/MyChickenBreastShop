@@ -2,11 +2,11 @@ package me.daniel.controller.user;
 
 import me.daniel.domain.UserVO;
 import me.daniel.service.UserService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class JoinController {
 
     private final UserService userService;
@@ -17,9 +17,9 @@ public class JoinController {
 
     // 회원 가입 처리
     @PostMapping("/user/join")
-    public String joinAction(@ModelAttribute UserVO userVO) {
+    public UserVO joinAction(@ModelAttribute UserVO userVO) {
 
         userService.addUser(userVO);
-        return "redirect:/";
+        return userService.getUser(userVO.getUserNo());
     }
 }
