@@ -12,6 +12,7 @@ import java.util.Map;
 /**
  * 상품 관련 Controller
  * 상품 조회, 추가, 수정, 삭제 요청
+ *
  * @author Nam Young Kim
  */
 @RestController
@@ -83,7 +84,41 @@ public class ProductController {
         return returnMap;
     }
 
+    /**
+     * 상품 추가
+     *
+     * @param productVO
+     * @return productVO
+     */
+    @PostMapping("add")
+    public ProductVO addAction(@ModelAttribute ProductVO productVO) {
+        // add method 추가 예정
+        return productService.getProduct(productVO.getProductNo());
+    }
 
-    // 상품 추가, 수정, 삭제 핸들러
+    /**
+     * 상품 수정
+     *
+     * @param productNo
+     * @param productVO
+     * @return productVO
+     */
+    @PutMapping("modify/{productNo}")
+    public ProductVO modifyAction(@PathVariable int productNo, @ModelAttribute ProductVO productVO) {
+        // modify method 추가 예정
+        return productService.getProduct(productNo);
+    }
+
+    /**
+     * 상품 삭제 (status 0으로 값 변경)
+     *
+     * @param productNo
+     * @return String
+     */
+    @DeleteMapping("delete/{productNo}")
+    public String deleteAction(@PathVariable int productNo) {
+        // delete method (상태 변경) 메서드 추가 예정
+        return "delete Success";
+    }
 
 }
