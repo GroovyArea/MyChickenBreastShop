@@ -2,14 +2,12 @@ package me.daniel.Enum;
 
 public enum ChickenBreast {
 
-    // 스팀, 훈제, 소시지, 스테이크, 볼, 생닭가슴살
-
-    STEAMED(1),
-    SMOKED(2),
-    SAUSAGE(3),
-    STEAK(4),
-    BALL(5),
-    RAW(6);
+    STEAMED(1), // 스팀
+    SMOKED(2), // 훈제
+    SAUSAGE(3), // 소시지
+    STEAK(4), // 스테이크
+    BALL(5), // 볼
+    RAW(6); // 생닭가슴살
 
     private final int chickenNumber;
 
@@ -17,16 +15,20 @@ public enum ChickenBreast {
         this.chickenNumber = chickenNumber;
     }
 
-    public static ChickenBreast of(int chickenNumber){
-
-        switch(chickenNumber){
-
-            case 2 : return SMOKED;
-            case 3 : return SAUSAGE;
-            case 4 : return STEAK;
-            case 5 : return BALL;
-            case 6 : return RAW;
-            default: return STEAMED;
+    public static ChickenBreast of(int chickenNumber) {
+        switch (chickenNumber) {
+            case 2:
+                return SMOKED;
+            case 3:
+                return SAUSAGE;
+            case 4:
+                return STEAK;
+            case 5:
+                return BALL;
+            case 6:
+                return RAW;
+            default:
+                return STEAMED;
         }
     }
 

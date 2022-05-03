@@ -1,28 +1,25 @@
 package me.daniel.controller.product;
 
-import lombok.RequiredArgsConstructor;
 import me.daniel.Enum.ChickenStatus;
 import me.daniel.domain.ProductVO;
 import me.daniel.service.ProductService;
 import me.daniel.utility.Pager;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
-@RequiredArgsConstructor
+@RestController
 @RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
+
+    public ProductController(ProductService productService){
+        this.productService = productService;
+    }
 
     private Map<String, Object> countMap = new HashMap<>();
 
@@ -61,39 +58,8 @@ public class ProductController {
         pagerMap.put("rowCount", blockSize);
 
         List<ProductVO> list = productService.getCategoryList(pagerMap);
-        List<ProductVO> list1 = new ArrayList<>();
-        List<ProductVO> list2 = new ArrayList<>();
 
-        if (list.size() < 4) {
-            model.addAttribute("productList1", list);
-        } else if (list.size() >= 4) {
-            for (int i = 0; i < 4; i++) {
-                list1.add(list.get(i));
-                model.addAttribute("productList1", list1);
-            }
-        }
-
-        if (list.size() >= 5) {
-            for (int a = 4; a < list.size(); a++) {
-                list2.add(list.get(a));
-                model.addAttribute("productList2", list2);
-            }
-        }
-
-        if (productCategoryNo == 1) {
-            return "/fragments/product/product_list";
-        } else if (productCategoryNo == 2) {
-            return "/fragments/product/product_list_smoked";
-        } else if (productCategoryNo == 3) {
-            return "/fragments/product/product_list_sausage";
-        } else if (productCategoryNo == 4) {
-            return "/fragments/product/product_list_steak";
-        } else if (productCategoryNo == 5) {
-            return "/fragments/product/product_list_ball";
-        } else {
-            return "/fragments/product/product_list_raw";
-        }
-        // 카테고리별 페이지 get 요청 건 만들기 if문 사용?
+        return "";
     }
 
     // 상품 추가, 수정, 삭제 핸들러

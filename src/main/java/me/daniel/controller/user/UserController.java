@@ -1,25 +1,23 @@
 package me.daniel.controller.user;
 
-import lombok.RequiredArgsConstructor;
 import me.daniel.domain.UserVO;
 import me.daniel.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
 @Controller
-@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
-
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
     private final UserService userService;
+
+    public UserController(UserService userService){
+        this.userService = userService;
+    }
 
     // 로그인 페이지 요청
     @GetMapping("/login")
