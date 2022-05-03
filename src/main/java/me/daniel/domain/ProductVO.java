@@ -3,14 +3,14 @@ package me.daniel.domain;
 
 public class ProductVO {
 
-    private int productNo;
-    private String productName;
-    private String productCategory;
-    private int productPrice;
-    private int productStock;
-    private String productDetail;
-    private String productImage;
-    private int product_status;
+    private final int productNo;
+    private final String productName;
+    private final String productCategory;
+    private final int productPrice;
+    private final int productStock;
+    private final String productDetail;
+    private final String productImage;
+    private final int product_status;
 
     public ProductVO(int productNo, String productName, String productCategory, int productPrice, int productStock, String productDetail, String productImage, int product_status) {
         this.productNo = productNo;

@@ -1,21 +1,16 @@
 package me.daniel.domain;
 public class UserVO {
 
-    private int userNo;
-    private String userPw;
-    private String userName;
-    private String userPhone;
-    private String userEmail;
-    private String userMainAddress;
-    private String userDetailAddress;
-    private String userZipcode;
-    private String userGrade;
-    private String userReserves;
-
-    public UserVO(int userNo, String userName){
-        this.userNo = userNo;
-        this.userName = userName;
-    }
+    private final int userNo;
+    private final String userPw;
+    private final String userName;
+    private final String userPhone;
+    private final String userEmail;
+    private final String userMainAddress;
+    private final String userDetailAddress;
+    private final String userZipcode;
+    private final String userGrade;
+    private final String userReserves;
 
     public UserVO(int userNo, String userPw, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, String userGrade, String userReserves) {
         this.userNo = userNo;
