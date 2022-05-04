@@ -3,6 +3,7 @@ package me.daniel.service;
 import me.daniel.domain.ProductVO;
 import me.daniel.mapper.ProductMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -30,4 +31,23 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductVO> getCategoryList(Map<String, Object> map) {
         return productMapper.selectCategoryList(map);
     }
+
+    @Override
+    @Transactional
+    public void addProduct(ProductVO productVO) {
+        productMapper.insertProduct(productVO);
+    }
+
+    @Override
+    @Transactional
+    public void modifyProduct(ProductVO productVO) {
+        productMapper.updateProduct(productVO);
+    }
+
+    @Override
+    @Transactional
+    public void removeProduct(int productNo) {
+        productMapper.deleteProduct(productNo);
+    }
+
 }

@@ -18,4 +18,52 @@
         where product_category = #{productCategory}
         limit  #{startRow}, #{rowCount}
     </select>
+
+    <insert id="insertProduct">
+        <selectKey resultType="int" keyProperty="productNo" order="BEFORE">
+            select nextval('product_seq') from dual
+        </selectKey>
+        INSERT INTO product VALUES (
+                                    #{productNo},
+                                    #{productName},
+                                    #{productCategory},
+                                    #{productPrice},
+                                    #{productStock},
+                                    #{productDetail},
+                                    #{productImage},
+                                    #{productStatus}
+        )
+    </insert>
+
+    <update id="updateProduct">
+        UPDATE product
+        <trim prefix="set" suffix=",">
+           <if test="productName != null and productName != ''">
+                product_name = #{productName},
+           </if>
+            <if test="productPrice != null">
+                product_price = #{productPrice},
+            </if>
+            <if test="productStock != null">
+                product_stock = #{productStock},
+            </if>
+            <if test="productDetail != null and productDetail != ''">
+                product_detail = #{productDetail},
+            </if>
+            <if test="productImage != null and productImage != ''">
+                product_image = #{productImage},
+            </if>
+            <if test="productStatus != null">
+                product_status = #{productStatus}
+            </if>
+        </trim>
+         where product_no = #{productNo}
+    </update>
+
+    <update id="deleteProduct">
+        UPDATE product
+        SET
+        product_status = 0
+        WHERE product_no = #{productNo}
+    </update>
 </mapper>
