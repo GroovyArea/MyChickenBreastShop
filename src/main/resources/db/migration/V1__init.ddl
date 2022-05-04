@@ -3,7 +3,7 @@ drop table if exists testtest;
 
 # 초기 스키마 작성
 create table testtest(
-    id int auto_increment;
+    id int auto_increment,
     name varchar(250),
     primary key (id)
 );
