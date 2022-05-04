@@ -1,8 +1,9 @@
 package me.daniel.domain;
+
 public class UserVO {
 
-    private final int userNo;
-    private final String userPw;
+    private final String userId;
+    private String userPw;
     private final String userName;
     private final String userPhone;
     private final String userEmail;
@@ -12,8 +13,8 @@ public class UserVO {
     private final String userGrade;
     private final String userReserves;
 
-    public UserVO(int userNo, String userPw, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, String userGrade, String userReserves) {
-        this.userNo = userNo;
+    public UserVO(String userId, String userPw, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, String userGrade, String userReserves) {
+        this.userId = userId;
         this.userPw = userPw;
         this.userName = userName;
         this.userPhone = userPhone;
@@ -25,9 +26,7 @@ public class UserVO {
         this.userReserves = userReserves;
     }
 
-    public int getUserNo() {
-        return userNo;
-    }
+    public String getUserId() { return userId; }
 
     public String getUserPw() {
         return userPw;
@@ -63,5 +62,9 @@ public class UserVO {
 
     public String getUserReserves() {
         return userReserves;
+    }
+
+    public void setUserPw(String userPw) {
+        this.userPw = userPw;
     }
 }

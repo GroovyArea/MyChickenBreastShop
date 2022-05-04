@@ -8,8 +8,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper {
 
-    UserVO selectUser(int userNo);
+    UserVO selectUser(String userId);
 
     void insertUser(UserVO userVO);
+
+    void updateUser(UserVO userVO);
+
+    void deleteUser(String userId);
 
 }

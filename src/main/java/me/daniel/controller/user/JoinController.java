@@ -1,6 +1,7 @@
 package me.daniel.controller.user;
 
 import me.daniel.domain.UserVO;
+import me.daniel.exception.UserExistsException;
 import me.daniel.service.UserService;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +18,8 @@ public class JoinController {
 
     // 회원 가입 처리
     @PostMapping("/user/join")
-    public UserVO joinAction(@ModelAttribute UserVO userVO) {
-
+    public UserVO joinAction(@ModelAttribute UserVO userVO) throws UserExistsException {
         userService.addUser(userVO);
-        return userService.getUser(userVO.getUserNo());
+        return userService.getUser(userVO.getUserId());
     }
 }
