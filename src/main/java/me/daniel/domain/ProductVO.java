@@ -3,16 +3,16 @@ package me.daniel.domain;
 
 public class ProductVO {
 
-    private final int productNo;
+    private final Integer productNo;
     private final String productName;
     private final String productCategory;
-    private final int productPrice;
-    private final int productStock;
+    private final Integer productPrice;
+    private final Integer productStock;
     private final String productDetail;
     private final String productImage;
-    private final int product_status;
+    private final Integer productStatus;
 
-    public ProductVO(int productNo, String productName, String productCategory, int productPrice, int productStock, String productDetail, String productImage, int product_status) {
+    public ProductVO(Integer productNo, String productName, String productCategory, Integer productPrice, Integer productStock, String productDetail, String productImage, Integer productStatus) {
         this.productNo = productNo;
         this.productName = productName;
         this.productCategory = productCategory;
@@ -20,10 +20,10 @@ public class ProductVO {
         this.productStock = productStock;
         this.productDetail = productDetail;
         this.productImage = productImage;
-        this.product_status = product_status;
+        this.productStatus = productStatus;
     }
 
-    public int getProductNo() {
+    public Integer getProductNo() {
         return productNo;
     }
 
@@ -35,11 +35,11 @@ public class ProductVO {
         return productCategory;
     }
 
-    public int getProductPrice() {
+    public Integer getProductPrice() {
         return productPrice;
     }
 
-    public int getProductStock() {
+    public Integer getProductStock() {
         return productStock;
     }
 
@@ -51,7 +51,7 @@ public class ProductVO {
         return productImage;
     }
 
-    public int getProduct_status() {
-        return product_status;
+    public Integer productStatus() {
+        return productStatus;
     }
 }

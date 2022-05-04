@@ -13,4 +13,10 @@ public interface ProductService {
 
     List<ProductVO> getCategoryList(Map<String, Object> map);
 
+    void addProduct(ProductVO productVO);
+
+    void modifyProduct(ProductVO productVO);
+
+    void removeProduct(int productNo);
+
 }

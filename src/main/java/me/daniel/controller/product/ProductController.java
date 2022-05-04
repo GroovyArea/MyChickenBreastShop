@@ -92,21 +92,20 @@ public class ProductController {
      */
     @PostMapping("add")
     public ProductVO addAction(@ModelAttribute ProductVO productVO) {
-        // add method 추가 예정
+        productService.addProduct(productVO);
         return productService.getProduct(productVO.getProductNo());
     }
 
     /**
      * 상품 수정
      *
-     * @param productNo
      * @param productVO
      * @return productVO
      */
-    @PutMapping("modify/{productNo}")
-    public ProductVO modifyAction(@PathVariable int productNo, @ModelAttribute ProductVO productVO) {
-        // modify method 추가 예정
-        return productService.getProduct(productNo);
+    @PutMapping("modify")
+    public ProductVO modifyAction(@ModelAttribute ProductVO productVO) {
+        productService.modifyProduct(productVO);
+        return productService.getProduct(productVO.getProductNo());
     }
 
     /**
@@ -117,7 +116,7 @@ public class ProductController {
      */
     @DeleteMapping("delete/{productNo}")
     public String deleteAction(@PathVariable int productNo) {
-        // delete method (상태 변경) 메서드 추가 예정
+        productService.removeProduct(productNo);
         return "delete Success";
     }
 
