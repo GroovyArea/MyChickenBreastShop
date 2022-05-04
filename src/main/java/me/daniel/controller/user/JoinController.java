@@ -16,7 +16,12 @@ public class JoinController {
         this.userService = userService;
     }
 
-    // 회원 가입 처리
+    /**
+     * 회원가입 처리
+     * @param userVO
+     * @return UserVO
+     * @throws UserExistsException
+     */
     @PostMapping("/user/join")
     public UserVO joinAction(@ModelAttribute UserVO userVO) throws UserExistsException {
         userService.addUser(userVO);
