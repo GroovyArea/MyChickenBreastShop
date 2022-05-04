@@ -1,0 +1,1 @@
+alter table testtest add column age integer default 0
