@@ -41,6 +41,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(String userId) {
-
+        userMapper.deleteUser(userId);
     }
 }
