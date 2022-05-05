@@ -57,7 +57,11 @@
                 product_status = #{productStatus}
             </if>
         </trim>
+
          where product_no = #{productNo}
+
+        where product_no = #{productNo}
+
     </update>
 
     <update id="deleteProduct">
