@@ -4,10 +4,18 @@
 
 <mapper namespace="me.daniel.mapper.UserMapper">
 
+
+    <select id="selectUser" resultType="UserVO">
+        SELECT * FROM
+        user
+        WHERE user_id = #{userId}
+    </select>
+
     <insert id="insertUser" parameterType="UserVO">
-        insert into
-        user values(
-                               nextval('user_seq'),
+        INSERT INTO
+        user
+        VALUES (
+                    #{userId},
                     #{userPw},
                     #{userName},
                     #{userPhone},
@@ -20,9 +28,36 @@
                            )
     </insert>
 
-    <select id="selectUser" resultType="UserVO">
-        select * from
-        user where user_no = #{userNo}
-    </select>
+    <update id="updateUser">
+        UPDATE user
+        SET
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userPw != null and userPw != ''">
+                user_pw = #{user_pw},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                user_phone = #{userPhone},
+            </if>
+            <if test="userMainAddress != null and userMainAddress != ''">
+                user_main_address = #{userMainAddress},
+            </if>
+            <if test="userDetailAddress != null and userDetailAddress != ''">
+                user_detail_address = #{userDetailAddress},
+            </if>
+            <if test="userZipcode != null and userZipcode != ''">
+                user_zipcode = #{userZipcode},
+            </if>
+            WHERE user_id = #{userId}
+        </trim>
+    </update>
 
+    <update id="deleteUser">
+        UPDATE user
+        SET
+        user_grade = 0
+        WHERE user_id = #{userId}
+    </update>
 </mapper>
