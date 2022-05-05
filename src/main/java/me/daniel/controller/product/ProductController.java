@@ -4,6 +4,7 @@ import me.daniel.Enum.ChickenStatus;
 import me.daniel.domain.ProductVO;
 import me.daniel.service.ProductService;
 import me.daniel.utility.Pager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
@@ -42,8 +44,8 @@ public class ProductController {
     /**
      * 단일 상품 디테일 객체를 반환하는 메서드
      *
-     * @param productNo
-     * @return productVO
+     * @param productNo 상품 번호
+     * @return productVO 상품 정보
      */
     @GetMapping("/detail/{productNo}")
     public ProductVO detailPage(@PathVariable int productNo) {
@@ -53,9 +55,9 @@ public class ProductController {
     /**
      * page 당 상품 리스트 반환하는 메서드
      *
-     * @param productCategoryNo
-     * @param pageNum
-     * @return returnMap
+     * @param productCategoryNo 상품 카테고리 번호
+     * @param pageNum 페이지 번호
+     * @return returnMap 페이지 정보, 상품 카테고리 리스트
      */
     @GetMapping("/list/{productCategoryNo}")
     public Map<String, Object> listPage(@PathVariable(value = "productCategoryNo") int productCategoryNo,
@@ -87,8 +89,8 @@ public class ProductController {
     /**
      * 상품 추가
      *
-     * @param productVO
-     * @return productVO
+     * @param productVO 추가할 상품 정보
+     * @return productVO 추가된 상품 정보
      */
     @PostMapping("add")
     public ProductVO addAction(@ModelAttribute ProductVO productVO) {
@@ -99,8 +101,8 @@ public class ProductController {
     /**
      * 상품 수정
      *
-     * @param productVO
-     * @return productVO
+     * @param productVO 수정할 상품 정보
+     * @return productVO 수정된 상품 정보
      */
     @PutMapping("modify")
     public ProductVO modifyAction(@ModelAttribute ProductVO productVO) {
@@ -111,8 +113,8 @@ public class ProductController {
     /**
      * 상품 삭제 (status 0으로 값 변경)
      *
-     * @param productNo
-     * @return String
+     * @param productNo 삭제할 상품 번호
+     * @return delete Success
      */
     @DeleteMapping("delete/{productNo}")
     public String deleteAction(@PathVariable int productNo) {
