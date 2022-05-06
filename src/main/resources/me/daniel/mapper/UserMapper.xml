@@ -6,13 +6,14 @@
 
 
     <select id="selectUser" resultType="UserVO">
-        SELECT * FROM
-        user
+        SELECT *
+        FROM user
         WHERE user_id = #{userId}
     </select>
 
     <insert id="insertUser" parameterType="UserVO">
         INSERT INTO
+
         user
         VALUES (
                     #{userId},
@@ -30,7 +31,6 @@
 
     <update id="updateUser">
         UPDATE user
-        SET
         <trim prefix="set" suffixOverrides=",">
             <if test="userPw != null and userPw != ''">
                 user_pw = #{user_pw},
@@ -48,10 +48,10 @@
                 user_detail_address = #{userDetailAddress},
             </if>
             <if test="userZipcode != null and userZipcode != ''">
-                user_zipcode = #{userZipcode},
+                user_zipcode = #{userZipcode}
             </if>
-            WHERE user_id = #{userId}
         </trim>
+            WHERE user_id = #{userId}
     </update>
 
     <update id="deleteUser">

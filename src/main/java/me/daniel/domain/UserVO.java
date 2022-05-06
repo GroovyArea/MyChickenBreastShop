@@ -26,7 +26,9 @@ public class UserVO {
         this.userReserves = userReserves;
     }
 
-    public String getUserId() { return userId; }
+    public String getUserId() {
+        return userId;
+    }
 
     public String getUserPw() {
         return userPw;

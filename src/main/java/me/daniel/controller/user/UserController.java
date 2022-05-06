@@ -45,24 +45,37 @@ public class UserController {
         return "logout Success";
     }
 
+    /**
+     *
+     * @param userId 회원 아이디
+     * @return 회원 정보
+     */
+    @GetMapping("/detail/{userId}")
+    public UserVO detailAction(@PathVariable String userId){
+       UserVO returnUser = userService.getUser(userId);
+       returnUser.setUserPw("암호화");
+        return returnUser;
+    }
 
     /**
      * 회원 정보 수정
-     * @param userVO
-     * @return UserVO
+     * @param userVO 수정할 회원 정보
+     * @return UserVO 수정된 회원 정보
      */
-    @PutMapping("/modify")
+    @PostMapping("/modify")
     public UserVO modifyAction(@ModelAttribute UserVO userVO) {
         userService.modifyUser(userVO);
-        return userService.getUser(userVO.getUserId());
+        UserVO returnUser = userService.getUser(userVO.getUserId());
+        returnUser.setUserPw("암호화");
+        return returnUser;
     }
 
     /**
      * 회원 탈퇴 처리
-     * @param userId
-     * @return "delete Success"
+     * @param userId 탈퇴할 회원 아이디
+     * @return delete Success
      */
-    @DeleteMapping("/delete/{userId}")
+    @GetMapping("/delete/{userId}")
     public String deleteAction(@PathVariable String userId) {
         userService.deleteUser(userId);
         return "delete Success";
