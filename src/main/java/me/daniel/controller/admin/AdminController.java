@@ -1,16 +1,12 @@
-package me.daniel.controller.user;
+package me.daniel.controller.admin;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/admin")
 public class AdminController {
 
-    // 관리자 전용 마이페이지 요청청
-    @GetMapping("/mypage")
-    public String mypage() {
-        return "/fragments/user/mypage";
-    }
 }
