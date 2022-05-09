@@ -4,7 +4,10 @@ import me.daniel.Enum.ChickenStatus;
 import me.daniel.domain.ProductVO;
 import me.daniel.service.ProductService;
 import me.daniel.utility.Pager;
+import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -35,7 +38,6 @@ public class ProductController {
      * page 당 게시글 리스트를 반환 받기 위한 map 객체
      */
     private Map<String, Object> pagerMap = new HashMap<>();
-
     /**
      * 게시글 데이터를 반환하기 위한 map 객체
      */
@@ -45,11 +47,11 @@ public class ProductController {
      * 단일 상품 디테일 객체를 반환하는 메서드
      *
      * @param productNo 상품 번호
-     * @return productVO 상품 정보
+     * @return ResponseEntity 상품 정보
      */
-    @GetMapping("/detail/{productNo}")
-    public ProductVO detailPage(@PathVariable int productNo) {
-        return productService.getProduct(productNo);
+    @GetMapping("/{productNo}")
+    public ResponseEntity productDetail(@PathVariable int productNo) {
+        return new ResponseEntity(productService.getProduct(productNo), HttpStatus.OK);
     }
 
     /**
@@ -57,13 +59,12 @@ public class ProductController {
      *
      * @param productCategoryNo 상품 카테고리 번호
      * @param pageNum 페이지 번호
-     * @return returnMap 페이지 정보, 상품 카테고리 리스트
+     * @return ResponseEntity 페이지 정보, 상품 카테고리 리스트
      */
     @GetMapping("/list/{productCategoryNo}")
-    public Map<String, Object> listPage(@PathVariable(value = "productCategoryNo") int productCategoryNo,
+    public ResponseEntity productList(@PathVariable(value = "productCategoryNo") int productCategoryNo,
                                         @RequestParam(defaultValue = "1") int pageNum
     ) {
-
         countMap.put("productCategory", productCategoryNo);
         countMap.put("productStatus", ChickenStatus.SALE.getValue());
 
@@ -72,54 +73,51 @@ public class ProductController {
         int blockSize = 8;
         //int number = totalProduct - (pageNum-1) * productSize;
 
-        // 페이징 객체
         Pager pager = new Pager(pageNum, totalProduct, productSize, blockSize);
 
         pagerMap.put("productCategory", productCategoryNo);
         pagerMap.put("startRow", pager.getStartRow() - 1);
         pagerMap.put("rowCount", blockSize);
 
-
         returnMap.put("productList", productService.getCategoryList(pagerMap));
-        returnMap.put("pager", pager);
 
-        return returnMap;
+        return ResponseEntity.ok().body(productService.getCategoryList(pagerMap));
     }
 
     /**
      * 상품 추가
      *
      * @param productVO 추가할 상품 정보
-     * @return productVO 추가된 상품 정보
+     * @return ResponseEntity 추가된 상품 정보
      */
     @PostMapping("add")
-    public ProductVO addAction(@ModelAttribute ProductVO productVO) {
+    public ResponseEntity addAction(@ModelAttribute ProductVO productVO) {
         productService.addProduct(productVO);
-        return productService.getProduct(productVO.getProductNo());
+        return ResponseEntity.ok().body(productService.getProduct(productVO.getProductNo()));
     }
 
     /**
      * 상품 수정
      *
      * @param productVO 수정할 상품 정보
-     * @return productVO 수정된 상품 정보
+     * @return ResponseEntity 수정된 상품 정보
      */
     @PutMapping("modify")
-    public ProductVO modifyAction(@ModelAttribute ProductVO productVO) {
+    public ResponseEntity modifyAction(@ModelAttribute ProductVO productVO) {
         productService.modifyProduct(productVO);
-        return productService.getProduct(productVO.getProductNo());
+        return ResponseEntity.ok().body(productService.getProduct(productVO.getProductNo()));
     }
 
     /**
      * 상품 삭제 (status 0으로 값 변경)
      *
      * @param productNo 삭제할 상품 번호
-     * @return delete Success
+     * @return ResponseEntity Success
      */
     @DeleteMapping("delete/{productNo}")
-    public String deleteAction(@PathVariable int productNo) {
+    public ResponseEntity deleteAction(@PathVariable int productNo) {
         productService.removeProduct(productNo);
-        return "delete Success";
+        return ResponseEntity.ok().body("delete Success");
     }
 
 }

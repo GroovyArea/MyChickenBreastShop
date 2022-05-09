@@ -2,6 +2,7 @@ package me.daniel.controller.user;
 
 import me.daniel.domain.UserVO;
 import me.daniel.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -24,61 +25,66 @@ public class UserController {
 
     /**
      * login 처리
+     *
      * @param userVO
      * @param session
-     * @return "login Success"
+     * @return ResponseEntity 로그인 성공 메시지
      */
     @PostMapping("/login")
-    public String loginAction(@ModelAttribute UserVO userVO, HttpSession session) {
+    public ResponseEntity loginAction(@ModelAttribute UserVO userVO, HttpSession session) {
         session.setAttribute("loginUser", userVO);
-        return "login Success";
+        return ResponseEntity.ok().body("login succeed!");
     }
 
     /**
      * logout 처리
+     *
      * @param session
-     * @return "logout Success"
+     * @return ResponseEntity 로그아웃 성공 메시지
      */
     @GetMapping("/logout")
-    public String logoutAction(HttpSession session) {
+    public ResponseEntity logoutAction(HttpSession session) {
         session.invalidate();
-        return "logout Success";
+        return ResponseEntity.ok().body("logout succeed!");
     }
 
     /**
+     * 회원 정보 디테일 조회
      *
      * @param userId 회원 아이디
-     * @return 회원 정보
+     * @return ResponseEntity 회원 정보
      */
     @GetMapping("/detail/{userId}")
-    public UserVO detailAction(@PathVariable String userId){
-       UserVO returnUser = userService.getUser(userId);
-       returnUser.setUserPw("암호화");
-        return returnUser;
+    public ResponseEntity detailAction(@PathVariable String userId) {
+        UserVO returnUser = userService.getUser(userId);
+        returnUser.setUserPw("암호화");
+        return ResponseEntity.ok().body(returnUser);
     }
 
     /**
      * 회원 정보 수정
+     *
      * @param userVO 수정할 회원 정보
-     * @return UserVO 수정된 회원 정보
+     * @return ResponseEntity 수정된 회원 정보
      */
     @PostMapping("/modify")
-    public UserVO modifyAction(@ModelAttribute UserVO userVO) {
+    public ResponseEntity modifyAction(@ModelAttribute UserVO userVO) {
         userService.modifyUser(userVO);
         UserVO returnUser = userService.getUser(userVO.getUserId());
         returnUser.setUserPw("암호화");
-        return returnUser;
+        return ResponseEntity.ok().body(returnUser);
     }
 
     /**
      * 회원 탈퇴 처리
+     *
      * @param userId 탈퇴할 회원 아이디
-     * @return delete Success
+     * @return ResponseEntity 탈퇴 성공 메시지
      */
     @GetMapping("/delete/{userId}")
-    public String deleteAction(@PathVariable String userId) {
+    public ResponseEntity deleteAction(@PathVariable String userId) {
         userService.deleteUser(userId);
-        return "delete Success";
+        return ResponseEntity.ok().body("delete succeed");
     }
 
 }
