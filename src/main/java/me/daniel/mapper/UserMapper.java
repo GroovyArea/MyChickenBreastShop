@@ -1,6 +1,7 @@
 package me.daniel.mapper;
 
-import me.daniel.domain.UserVO;
+import me.daniel.domain.DTO.UserDTO;
+import me.daniel.domain.VO.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

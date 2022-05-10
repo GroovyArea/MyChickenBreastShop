@@ -5,7 +5,7 @@
 <mapper namespace="me.daniel.mapper.UserMapper">
 
 
-    <select id="selectUser" resultType="UserVO">
+    <select id="selectUser" resultType="UserDetailDTO">
         SELECT *
         FROM user
         WHERE user_id = #{userId}

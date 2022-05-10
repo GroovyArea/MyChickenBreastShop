@@ -3,14 +3,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="me.daniel.mapper.ProductMapper">
-    <select id="selectProduct" parameterType="me.daniel.domain.ProductVO" resultType="ProductVO">
+    <select id="selectNoProduct" resultType="ProductVO">
         select * from product
         where product_no = #{productNo}
     </select>
 
-    <select id="selectCategoryCount" resultType="int">
-        select count(*) from product
-        where product_category = #{productCategory} and product_status = #{productStatus}
+    <select id="selectNameProduct" resultType="ProductVO">
+        select * from product
+        where product_name = #{productName}
     </select>
 
     <select id="selectCategoryList" resultType="ProductVO">
@@ -40,7 +40,10 @@
         <trim prefix="set" suffix=",">
            <if test="productName != null and productName != ''">
                 product_name = #{productName},
-           </if>
+            </if>
+            <if test="productCategory != null">
+                product_category = #{productCategory},
+            </if>
             <if test="productPrice != null">
                 product_price = #{productPrice},
             </if>
@@ -57,11 +60,7 @@
                 product_status = #{productStatus}
             </if>
         </trim>
-
          where product_no = #{productNo}
-
-        where product_no = #{productNo}
-
     </update>
 
     <update id="deleteProduct">
