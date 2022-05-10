@@ -1,25 +1,26 @@
 package me.daniel.exception;
 
-import me.daniel.domain.UserVO;
+import me.daniel.domain.DTO.UserDTO;
+import me.daniel.domain.VO.UserVO;
 
 public class UserExistsException extends Exception {
 
-    private UserVO user;
+    private UserDTO user;
 
     public UserExistsException() {
 
     }
 
-    public UserExistsException(String message, UserVO user) {
+    public UserExistsException(String message, UserDTO user) {
         super(message);
         this.user = user;
     }
 
-    public UserVO getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserVO user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 }
