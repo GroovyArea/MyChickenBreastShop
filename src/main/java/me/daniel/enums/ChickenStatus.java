@@ -1,4 +1,4 @@
-package me.daniel.Enum;
+package me.daniel.enums;
 
 public enum ChickenStatus {
 
