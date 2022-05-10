@@ -1,22 +1,53 @@
 package me.daniel.service;
 
-import me.daniel.domain.ProductVO;
+import me.daniel.domain.DTO.ProductDTO;
+import me.daniel.domain.DTO.ProductModifyDTO;
+import me.daniel.domain.VO.ProductVO;
+import me.daniel.mapper.ProductMapper;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
-public interface ProductService {
+@Service
+public class ProductService {
 
-    ProductVO getProduct(int productNo);
+    private final ProductMapper productMapper;
 
-    int getCategoryCount(Map<String, Object> map);
+    private final ModelMapper modelMapper;
 
-    List<ProductVO> getCategoryList(Map<String, Object> map);
+    public ProductService(ProductMapper productMapper, ModelMapper modelMapper) {
+        this.productMapper = productMapper;
+        this.modelMapper = modelMapper;
+    }
 
-    void addProduct(ProductVO productVO);
+    public ProductDTO findByNumber(Integer productNo) {
+        return modelMapper.map(productMapper.selectNoProduct(productNo), ProductDTO.class);
+    }
 
-    void modifyProduct(ProductVO productVO);
+    public ProductDTO findByName(String productName) {
+        return modelMapper.map(productMapper.selectNameProduct(productName), ProductDTO.class);
+    }
 
-    void removeProduct(int productNo);
+    public List<ProductVO> getCategoryList(Map<String, Object> map) {
+        return productMapper.selectCategoryList(map);
+    }
+
+    @Transactional
+    public void addProduct(ProductDTO productDTO) {
+        productMapper.insertProduct(modelMapper.map(productDTO, ProductVO.class));
+    }
+
+    @Transactional
+    public void modifyProduct(ProductModifyDTO productModifyDTO) {
+        productMapper.updateProduct(modelMapper.map(productModifyDTO, ProductVO.class));
+    }
+
+    @Transactional
+    public void removeProduct(int productNo) {
+        productMapper.deleteProduct(productNo);
+    }
 
 }
