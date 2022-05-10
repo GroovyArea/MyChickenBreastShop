@@ -1,0 +1,1 @@
+ALTER TABLE product ADD INDEX idx_name(product_name);
