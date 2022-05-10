@@ -1,19 +1,22 @@
-package me.daniel.domain;
+package me.daniel.domain.VO;
+
+import me.daniel.domain.DTO.UserDTO;
+import me.daniel.domain.DTO.UserModifyDTO;
 
 public class UserVO {
 
     private final String userId;
-    private String userPw;
+    private final String userPw;
     private final String userName;
     private final String userPhone;
     private final String userEmail;
     private final String userMainAddress;
     private final String userDetailAddress;
     private final String userZipcode;
-    private final String userGrade;
-    private final String userReserves;
+    private final Integer userGrade;
+    private final Integer userReserves;
 
-    public UserVO(String userId, String userPw, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, String userGrade, String userReserves) {
+    public UserVO(String userId, String userPw, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, Integer userGrade, Integer userReserves) {
         this.userId = userId;
         this.userPw = userPw;
         this.userName = userName;
@@ -58,15 +61,12 @@ public class UserVO {
         return userZipcode;
     }
 
-    public String getUserGrade() {
+    public Integer getUserGrade() {
         return userGrade;
     }
 
-    public String getUserReserves() {
+    public Integer getUserReserves() {
         return userReserves;
     }
 
-    public void setUserPw(String userPw) {
-        this.userPw = userPw;
-    }
 }

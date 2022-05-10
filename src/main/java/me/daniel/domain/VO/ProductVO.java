@@ -1,4 +1,4 @@
-package me.daniel.domain;
+package me.daniel.domain.VO;
 
 
 public class ProductVO {
