@@ -37,6 +37,8 @@ dependencies {
     //Flyway
     implementation("org.flywaydb:flyway-core:6.5.7")
 
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+
     testImplementation('org.projectlombok:lombok')
     testAnnotationProcessor('org.projectlombok:lombok')
 }
