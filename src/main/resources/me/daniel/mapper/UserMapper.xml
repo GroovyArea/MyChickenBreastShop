@@ -4,8 +4,21 @@
 
 <mapper namespace="me.daniel.mapper.UserMapper">
 
+    <resultMap type="UserVO" id="user">
+        <result property="userId" column="user_id"/>
+        <result property="userPw" column="user_pw"/>
+        <result property="userName" column="user_name"/>
+        <result property="userPhone" column="user_phone"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="userMainAddress" column="user_main_address"/>
+        <result property="userDetailAddress" column="user_detail_address"/>
+        <result property="userZipcode" column="user_zipcode"/>
+        <result property="userGrade" column="user_grade"/>
+        <result property="userReserves" column="user_reserves"/>
+        <result property="userSalt" column="user_salt"/>
+    </resultMap>
 
-    <select id="selectUser" resultType="UserDetailDTO">
+    <select id="selectUser" parameterType="java.lang.String" resultType="UserVO" resultMap="user">
         SELECT *
         FROM user
         WHERE user_id = #{userId}
@@ -13,7 +26,6 @@
 
     <insert id="insertUser" parameterType="UserVO">
         INSERT INTO
-
         user
         VALUES (
                     #{userId},
@@ -25,7 +37,8 @@
                     #{userDetailAddress},
                     #{userZipcode},
                     1,
-                    2000
+                    2000,
+                    #{userSalt}
                            )
     </insert>
 
