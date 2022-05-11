@@ -1,22 +1,20 @@
 package me.daniel.domain.VO;
 
-import me.daniel.domain.DTO.UserDTO;
-import me.daniel.domain.DTO.UserModifyDTO;
-
 public class UserVO {
 
-    private final String userId;
-    private final String userPw;
-    private final String userName;
-    private final String userPhone;
-    private final String userEmail;
-    private final String userMainAddress;
-    private final String userDetailAddress;
-    private final String userZipcode;
-    private final Integer userGrade;
-    private final Integer userReserves;
+    private String userId;
+    private String userPw;
+    private String userName;
+    private String userPhone;
+    private String userEmail;
+    private String userMainAddress;
+    private String userDetailAddress;
+    private String userZipcode;
+    private Integer userGrade;
+    private Integer userReserves;
+    private String userSalt;
 
-    public UserVO(String userId, String userPw, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, Integer userGrade, Integer userReserves) {
+    public UserVO(String userId, String userPw, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, Integer userGrade, Integer userReserves, String userSalt) {
         this.userId = userId;
         this.userPw = userPw;
         this.userName = userName;
@@ -27,6 +25,10 @@ public class UserVO {
         this.userZipcode = userZipcode;
         this.userGrade = userGrade;
         this.userReserves = userReserves;
+        this.userSalt = userSalt;
+    }
+
+    public UserVO() {
     }
 
     public String getUserId() {
@@ -69,4 +71,24 @@ public class UserVO {
         return userReserves;
     }
 
+    public String getUserSalt() {
+        return userSalt;
+    }
+
+    @Override
+    public String toString() {
+        return "UserVO{" +
+                "userId='" + userId + '\'' +
+                ", userPw='" + userPw + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userPhone='" + userPhone + '\'' +
+                ", userEmail='" + userEmail + '\'' +
+                ", userMainAddress='" + userMainAddress + '\'' +
+                ", userDetailAddress='" + userDetailAddress + '\'' +
+                ", userZipcode='" + userZipcode + '\'' +
+                ", userGrade=" + userGrade +
+                ", userReserves=" + userReserves +
+                ", userSalt='" + userSalt + '\'' +
+                '}';
+    }
 }
