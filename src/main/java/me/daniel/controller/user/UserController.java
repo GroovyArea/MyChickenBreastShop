@@ -3,11 +3,13 @@ package me.daniel.controller.user;
 import me.daniel.domain.DTO.UserDTO;
 import me.daniel.domain.DTO.UserModifyDTO;
 import me.daniel.enums.ResponseMessage;
+import me.daniel.exception.LoginAuthFailException;
 import me.daniel.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 회원 Controller
@@ -16,7 +18,7 @@ import javax.servlet.http.HttpSession;
  * @author Nam Young Kim
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -29,12 +31,11 @@ public class UserController {
      * login 처리
      *
      * @param userDTO
-     * @param session
      * @return ResponseEntity 로그인 성공 메시지
      */
     @PostMapping("/login")
-    public ResponseEntity loginAction(@ModelAttribute UserDTO userDTO, HttpSession session) {
-        session.setAttribute("loginUser", userDTO);
+    public ResponseEntity loginAction(@ModelAttribute UserDTO userDTO) throws LoginAuthFailException, NoSuchAlgorithmException {
+        userService.loginAuth(userDTO);
         return ResponseEntity.ok().body(ResponseMessage.LOGIN_MESSAGE.getValue());
     }
 
@@ -56,8 +57,8 @@ public class UserController {
      * @param userId 회원 아이디
      * @return ResponseEntity 회원 정보
      */
-    @GetMapping("/detail/{userId}")
-    public ResponseEntity<UserDTO> detailAction(@PathVariable String userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity detailAction(@PathVariable String userId) {
         UserDTO user = userService.findById(userId);
         return ResponseEntity.ok().body(user);
     }
