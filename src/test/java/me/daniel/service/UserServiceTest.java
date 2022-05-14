@@ -1,6 +1,7 @@
 package me.daniel.service;
 
 import me.daniel.domain.DTO.UserDTO;
+import me.daniel.domain.DTO.UserLoginDTO;
 import me.daniel.exception.LoginAuthFailException;
 import me.daniel.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringBootTest
@@ -21,11 +21,11 @@ class UserServiceTest {
     @Autowired
     UserService userService;
 
-    private UserDTO userDTO;
+    private UserLoginDTO userDTO;
 
     @BeforeEach
     void setUserDTO(){
-        userDTO= new UserDTO();
+        userDTO= new UserLoginDTO();
         userDTO.setUserId("aaa333");
         userDTO.setUserPw("asdf11");
     }
