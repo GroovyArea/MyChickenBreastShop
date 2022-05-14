@@ -1,5 +1,7 @@
 package me.daniel.service;
 
+import me.daniel.domain.DTO.UserLoginDTO;
+import me.daniel.jwt.JwtTokenProvider;
 import me.daniel.domain.DTO.UserDTO;
 import me.daniel.domain.DTO.UserModifyDTO;
 import me.daniel.domain.VO.UserVO;
@@ -18,6 +20,7 @@ public class UserService {
 
     private final UserMapper userMapper;
     private final ModelMapper modelMapper;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private static final String USER_EXISTS_MESSAGE = "이미 사용중인 아이디를 입력 하셨습니다.";
     private static final String LOGIN_FAIL_MESSAGE = "해당 아이디의 회원 정보가 존재하지 않습니다.";
@@ -25,9 +28,10 @@ public class UserService {
     private static final String WRONG_PASSWORD_MESSAGE = "비밀번호가 일치하지 않습니다.";
     private static final int WITHDRAWAL_USER_GRADE = 0;
 
-    public UserService(UserMapper userMapper, ModelMapper modelMapper) {
+    public UserService(UserMapper userMapper, ModelMapper modelMapper, JwtTokenProvider jwtTokenProvider) {
         this.userMapper = userMapper;
         this.modelMapper = modelMapper;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public UserDTO findById(String userId) {
@@ -57,8 +61,8 @@ public class UserService {
         userMapper.deleteUser(userId);
     }
 
-    public void loginAuth(UserDTO userDTO) throws LoginAuthFailException, NoSuchAlgorithmException {
-        UserVO authUser = userMapper.selectUser(userDTO.getUserId());
+    public void loginAuth(UserLoginDTO userLoginDTO) throws LoginAuthFailException, NoSuchAlgorithmException {
+        UserVO authUser = userMapper.selectUser(userLoginDTO.getUserId());
         if (authUser == null) {
             throw new LoginAuthFailException(LOGIN_FAIL_MESSAGE);
         }
@@ -68,11 +72,15 @@ public class UserService {
         }
 
         String dbSalt = authUser.getUserSalt();
-        String loginPassword = PasswordEncrypt.getSecurePassword(userDTO.getUserPw(), dbSalt);
+        String loginPassword = PasswordEncrypt.getSecurePassword(userLoginDTO.getUserPw(), dbSalt);
         String dbPassword = authUser.getUserPw();
 
-        if (loginPassword.equals(dbPassword)) {
+        if (!loginPassword.equals(dbPassword)) {
             throw new LoginAuthFailException(WRONG_PASSWORD_MESSAGE);
         }
+    }
+
+    public String createToken(UserLoginDTO userLoginDTO) {
+        return jwtTokenProvider.createToken(userLoginDTO.getUserId());
     }
 }
