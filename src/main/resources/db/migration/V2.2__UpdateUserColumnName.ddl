@@ -1,0 +1,1 @@
+ALTER TABLE USER CHANGE SALT user_salt varchar(200);
