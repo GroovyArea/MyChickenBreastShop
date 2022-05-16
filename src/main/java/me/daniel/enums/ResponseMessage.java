@@ -2,6 +2,7 @@ package me.daniel.enums;
 
 public enum ResponseMessage {
 
+    JOIN_MESSAGE("Join succeed"),
     LOGIN_MESSAGE("Login succeed"),
     LOGOUT_MESSAGE("Logout succeed"),
     ADD_MESSAGE("Add successful"),
