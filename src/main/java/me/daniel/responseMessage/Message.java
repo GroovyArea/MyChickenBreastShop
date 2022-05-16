@@ -2,6 +2,7 @@ package me.daniel.responseMessage;
 
 /**
  * 응답 Body에 보낼 메시지 클래스
+ * Builder 패턴 적용
  */
 public class Message {
 
@@ -12,7 +13,6 @@ public class Message {
 
         private Object data;
         private String message;
-
 
         public Builder(Object data) {
             this.data = data;

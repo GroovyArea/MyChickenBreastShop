@@ -1,13 +1,19 @@
 package me.daniel.controller.user;
 
+import me.daniel.jwt.AuthorizationExtractor;
+import me.daniel.jwt.JwtTokenProvider;
 import me.daniel.domain.DTO.UserDTO;
 import me.daniel.domain.DTO.UserModifyDTO;
 import me.daniel.enums.ResponseMessage;
+import me.daniel.responseMessage.Message;
 import me.daniel.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 회원 Controller
@@ -16,7 +22,7 @@ import javax.servlet.http.HttpSession;
  * @author Nam Young Kim
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -26,40 +32,20 @@ public class UserController {
     }
 
     /**
-     * login 처리
-     *
-     * @param userDTO
-     * @param session
-     * @return ResponseEntity 로그인 성공 메시지
-     */
-    @PostMapping("/login")
-    public ResponseEntity loginAction(@ModelAttribute UserDTO userDTO, HttpSession session) {
-        session.setAttribute("loginUser", userDTO);
-        return ResponseEntity.ok().body(ResponseMessage.LOGIN_MESSAGE.getValue());
-    }
-
-    /**
-     * logout 처리
-     *
-     * @param session
-     * @return ResponseEntity 로그아웃 성공 메시지
-     */
-    @GetMapping("/logout")
-    public ResponseEntity logoutAction(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok().body(ResponseMessage.LOGOUT_MESSAGE.getValue());
-    }
-
-    /**
      * 회원 정보 디테일 조회
      *
      * @param userId 회원 아이디
      * @return ResponseEntity 회원 정보
      */
-    @GetMapping("/detail/{userId}")
-    public ResponseEntity<UserDTO> detailAction(@PathVariable String userId) {
-        UserDTO user = userService.findById(userId);
-        return ResponseEntity.ok().body(user);
+    @GetMapping("/{userId}")
+    public ResponseEntity detailAction(@PathVariable String userId) {
+        Message message = new Message
+                .Builder(userService.findById(userId))
+                .build();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(message);
     }
 
     /**
@@ -71,8 +57,14 @@ public class UserController {
     @PutMapping
     public ResponseEntity modifyAction(@ModelAttribute UserModifyDTO userModifyDTO) {
         userService.modifyUser(userModifyDTO);
-        UserDTO returnedUser = userService.findById(userModifyDTO.getUserId());
-        return ResponseEntity.ok().body(returnedUser);
+        Message message = new Message
+                .Builder(userService.findById(userModifyDTO.getUserId()))
+                .message(ResponseMessage.MODIFY_MESSAGE.getValue())
+                .build();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(message);
     }
 
     /**

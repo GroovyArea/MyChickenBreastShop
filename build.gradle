@@ -37,7 +37,17 @@ dependencies {
     //Flyway
     implementation("org.flywaydb:flyway-core:6.5.7")
 
+    //modelMapper
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+
+    //JWT
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+    //compile "javax.xml.bind:jaxb-api"
+    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+
 
     testImplementation('org.projectlombok:lombok')
     testAnnotationProcessor('org.projectlombok:lombok')
