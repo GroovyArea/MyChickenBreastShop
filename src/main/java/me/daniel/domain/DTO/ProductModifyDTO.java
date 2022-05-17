@@ -53,36 +53,4 @@ public class ProductModifyDTO {
     public Integer getProductStatus() {
         return productStatus;
     }
-
-    public void setProductNo(Integer productNo) {
-        this.productNo = productNo;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public void setProductCategory(String productCategory) {
-        this.productCategory = productCategory;
-    }
-
-    public void setProductPrice(Integer productPrice) {
-        this.productPrice = productPrice;
-    }
-
-    public void setProductStock(Integer productStock) {
-        this.productStock = productStock;
-    }
-
-    public void setProductDetail(String productDetail) {
-        this.productDetail = productDetail;
-    }
-
-    public void setProductImage(String productImage) {
-        this.productImage = productImage;
-    }
-
-    public void setProductStatus(Integer productStatus) {
-        this.productStatus = productStatus;
-    }
 }
