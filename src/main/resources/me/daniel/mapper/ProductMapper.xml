@@ -3,17 +3,29 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="me.daniel.mapper.ProductMapper">
-    <select id="selectNoProduct" resultType="ProductVO">
+
+    <resultMap type="ProductVO" id="product">
+        <result property="productNo" column="product_no"/>
+        <result property="productName" column="product_name"/>
+        <result property="productCategory" column="product_category"/>
+        <result property="productPrice" column="product_price"/>
+        <result property="productStock" column="product_stock"/>
+        <result property="productDetail" column="product_detail"/>
+        <result property="productImage" column="product_image"/>
+        <result property="productStatus" column="product_status"/>
+    </resultMap>
+
+    <select id="selectNoProduct" resultType="ProductVO" resultMap="product">
         select * from product
         where product_no = #{productNo}
     </select>
 
-    <select id="selectNameProduct" resultType="ProductVO">
+    <select id="selectNameProduct" resultType="ProductVO" resultMap="product">
         select * from product
         where product_name = #{productName}
     </select>
 
-    <select id="selectCategoryList" resultType="ProductVO">
+    <select id="selectCategoryList" resultType="ProductVO" resultMap="product">
         select * from product
         where product_category = #{productCategory}
         limit  #{startRow}, #{rowCount}
@@ -30,14 +42,13 @@
                                     #{productPrice},
                                     #{productStock},
                                     #{productDetail},
-                                    #{productImage},
-                                    #{productStatus}
+                                    #{productImage}
         )
     </insert>
 
     <update id="updateProduct">
         UPDATE product
-        <trim prefix="set" suffix=",">
+        <trim prefix="set" suffixOverrides=",">
            <if test="productName != null and productName != ''">
                 product_name = #{productName},
             </if>
@@ -66,7 +77,7 @@
     <update id="deleteProduct">
         UPDATE product
         SET
-        product_status = 0
+        product_status = #{productStatus}
         WHERE product_no = #{productNo}
     </update>
 </mapper>
