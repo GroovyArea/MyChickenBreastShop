@@ -1,23 +1,22 @@
 package me.daniel.controller.user;
 
-import me.daniel.jwt.AuthorizationExtractor;
-import me.daniel.jwt.JwtTokenProvider;
 import me.daniel.domain.DTO.UserDTO;
 import me.daniel.domain.DTO.UserModifyDTO;
-import me.daniel.enums.ResponseMessage;
+import me.daniel.enums.global.ResponseMessage;
+import me.daniel.enums.users.UserGrade;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 회원 Controller
- * 회원 조회, 수정, 삭제, 로그인, 로그아웃 요청
+ * 회원 조회, 수정, 삭제
  *
  * @author Nam Young Kim
  */
@@ -25,7 +24,13 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private static final String PASSWORD_ENCRYPT = "암호화";
+
     private final UserService userService;
+    /**
+     * 회원 탈퇴 정보를 담기 위한 map
+     */
+    private Map<String, Object> deleteUserMap = new HashMap<>();
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -38,33 +43,31 @@ public class UserController {
      * @return ResponseEntity 회원 정보
      */
     @GetMapping("/{userId}")
-    public ResponseEntity detailAction(@PathVariable String userId) {
-        Message message = new Message
-                .Builder(userService.findById(userId))
-                .build();
+    public ResponseEntity<UserDTO> detailAction(@PathVariable String userId) {
+        UserDTO userDTO = userService.findById(userId);
+        userDTO.setUserPw(PASSWORD_ENCRYPT);
+        userDTO.setUserSalt(PASSWORD_ENCRYPT);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(message);
+                .body(userDTO);
     }
 
     /**
      * 회원 정보 수정
      *
      * @param userModifyDTO 수정할 회원 정보
-     * @return ResponseEntity 수정된 회원 정보
+     * @return Message 수정된 회원 정보
      */
     @PutMapping
-    public ResponseEntity modifyAction(@ModelAttribute UserModifyDTO userModifyDTO) {
+    public Message modifyAction(@ModelAttribute UserModifyDTO userModifyDTO) {
         userService.modifyUser(userModifyDTO);
-        Message message = new Message
+        return new Message
                 .Builder(userService.findById(userModifyDTO.getUserId()))
                 .message(ResponseMessage.MODIFY_MESSAGE.getValue())
+                .mediaType(MediaType.APPLICATION_JSON)
+                .httpStatus(HttpStatus.OK)
                 .build();
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(message);
     }
 
     /**
@@ -75,7 +78,9 @@ public class UserController {
      */
     @DeleteMapping("/{userId}")
     public ResponseEntity deleteAction(@PathVariable String userId) {
-        userService.deleteUser(userId);
+        deleteUserMap.put("userId", userId);
+        deleteUserMap.put("userGrade", UserGrade.WITHDRAWAL.getValue());
+        userService.deleteUser(deleteUserMap);
         return ResponseEntity.ok().body(ResponseMessage.DELETE_MESSAGE.getValue());
     }
 
