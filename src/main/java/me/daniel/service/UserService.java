@@ -1,11 +1,14 @@
 package me.daniel.service;
 
 import me.daniel.domain.DTO.UserLoginDTO;
+import me.daniel.enums.users.ExceptionMessages;
+import me.daniel.exception.WithDrawalUserException;
+import me.daniel.exception.WrongPasswordException;
 import me.daniel.jwt.JwtTokenProvider;
 import me.daniel.domain.DTO.UserDTO;
 import me.daniel.domain.DTO.UserModifyDTO;
 import me.daniel.domain.VO.UserVO;
-import me.daniel.exception.LoginAuthFailException;
+import me.daniel.exception.LoginFailException;
 import me.daniel.exception.UserExistsException;
 import me.daniel.mapper.UserMapper;
 import me.daniel.utility.PasswordEncrypt;
@@ -14,19 +17,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 @Service
 public class UserService {
+
+    private static final int WITHDRAWAL_USER_GRADE = 0;
 
     private final UserMapper userMapper;
     private final ModelMapper modelMapper;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final String USER_EXISTS_MESSAGE = "이미 사용중인 아이디를 입력 하셨습니다.";
-    private static final String LOGIN_FAIL_MESSAGE = "해당 아이디의 회원 정보가 존재하지 않습니다.";
-    private static final String WITHDRAWAL_USER_MESSAGE = "탈퇴 회원입니다.";
-    private static final String WRONG_PASSWORD_MESSAGE = "비밀번호가 일치하지 않습니다.";
-    private static final int WITHDRAWAL_USER_GRADE = 0;
 
     public UserService(UserMapper userMapper, ModelMapper modelMapper, JwtTokenProvider jwtTokenProvider) {
         this.userMapper = userMapper;
@@ -34,6 +35,7 @@ public class UserService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @Transactional(readOnly = true)
     public UserDTO findById(String userId) {
         return modelMapper.map(userMapper.selectUser(userId), UserDTO.class);
     }
@@ -41,7 +43,7 @@ public class UserService {
     @Transactional
     public void addUser(UserDTO joinUser) throws UserExistsException, NoSuchAlgorithmException {
         if (userMapper.selectUser(joinUser.getUserId()) != null) {
-            throw new UserExistsException(USER_EXISTS_MESSAGE, joinUser);
+            throw new UserExistsException(ExceptionMessages.USER_EXISTS_MESSAGE.getValue());
         }
 
         String salt = PasswordEncrypt.getSalt();
@@ -57,18 +59,18 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String userId) {
-        userMapper.deleteUser(userId);
+    public void deleteUser(Map<String, Object> map) {
+        userMapper.deleteUser(map);
     }
 
-    public void loginAuth(UserLoginDTO userLoginDTO) throws LoginAuthFailException, NoSuchAlgorithmException {
+    public void loginAuth(UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawalUserException, WrongPasswordException {
         UserVO authUser = userMapper.selectUser(userLoginDTO.getUserId());
         if (authUser == null) {
-            throw new LoginAuthFailException(LOGIN_FAIL_MESSAGE);
+            throw new LoginFailException(ExceptionMessages.LOGIN_FAIL_MESSAGE.getValue());
         }
 
         if (authUser.getUserGrade() == WITHDRAWAL_USER_GRADE) {
-            throw new LoginAuthFailException(WITHDRAWAL_USER_MESSAGE);
+            throw new WithDrawalUserException(ExceptionMessages.WITHDRAWAL_USER_MESSAGE.getValue());
         }
 
         String dbSalt = authUser.getUserSalt();
@@ -76,7 +78,7 @@ public class UserService {
         String dbPassword = authUser.getUserPw();
 
         if (!loginPassword.equals(dbPassword)) {
-            throw new LoginAuthFailException(WRONG_PASSWORD_MESSAGE);
+            throw new WrongPasswordException(ExceptionMessages.WRONG_PASSWORD_MESSAGE.getValue());
         }
     }
 
