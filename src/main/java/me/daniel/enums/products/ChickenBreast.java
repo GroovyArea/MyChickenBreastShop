@@ -1,4 +1,4 @@
-package me.daniel.enums;
+package me.daniel.enums.products;
 
 public enum ChickenBreast {
 
