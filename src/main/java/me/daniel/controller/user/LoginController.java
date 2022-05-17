@@ -1,22 +1,24 @@
 package me.daniel.controller.user;
 
 import me.daniel.domain.DTO.UserLoginDTO;
-import me.daniel.enums.ResponseMessage;
-import me.daniel.exception.LoginAuthFailException;
+import me.daniel.enums.users.ExceptionMessages;
+import me.daniel.exception.LoginFailException;
+import me.daniel.exception.UserExistsException;
+import me.daniel.exception.WithDrawalUserException;
+import me.daniel.exception.WrongPasswordException;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequestMapping("/api")
 public class LoginController {
+
+    private static final String LOGIN_MESSAGE = "Login succeed";
 
     private final UserService userService;
 
@@ -28,17 +30,41 @@ public class LoginController {
      * login 처리
      *
      * @param userLoginDTO 로그인 DTO
-     * @return ResponseEntity 로그인 성공 메시지
+     * @return Message 응답 정보 객체
      */
     @PostMapping("/user/login")
-    public ResponseEntity loginAction(@ModelAttribute UserLoginDTO userLoginDTO) throws LoginAuthFailException, NoSuchAlgorithmException {
+    public Message loginAction(@ModelAttribute UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawalUserException, WrongPasswordException {
         userService.loginAuth(userLoginDTO);
-        Message message = new Message
+        return new Message
                 .Builder(userService.createToken(userLoginDTO))
-                .message(ResponseMessage.LOGIN_MESSAGE.getValue())
+                .message(LOGIN_MESSAGE)
+                .mediaType(MediaType.APPLICATION_JSON)
+                .httpStatus(HttpStatus.OK)
                 .build();
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(message);
     }
+
+    @ExceptionHandler(value = LoginFailException.class)
+    public Message loginFailHandler() {
+        return new Message
+                .Builder(ExceptionMessages.LOGIN_FAIL_MESSAGE.getValue())
+                .httpStatus(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @ExceptionHandler(value = WithDrawalUserException.class)
+    public Message withDrawalUserHandler() {
+        return new Message
+                .Builder(ExceptionMessages.WITHDRAWAL_USER_MESSAGE.getValue())
+                .httpStatus(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @ExceptionHandler(value = UserExistsException.class)
+    public Message userExistsHandler() {
+        return new Message
+                .Builder(ExceptionMessages.USER_EXISTS_MESSAGE.getValue())
+                .httpStatus(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
 }

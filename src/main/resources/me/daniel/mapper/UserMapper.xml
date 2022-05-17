@@ -36,8 +36,6 @@
                     #{userMainAddress},
                     #{userDetailAddress},
                     #{userZipcode},
-                    1,
-                    2000,
                     #{userSalt}
                            )
     </insert>
@@ -70,7 +68,7 @@
     <update id="deleteUser">
         UPDATE user
         SET
-        user_grade = 0
+        user_grade = #{userGrade}
         WHERE user_id = #{userId}
     </update>
 </mapper>

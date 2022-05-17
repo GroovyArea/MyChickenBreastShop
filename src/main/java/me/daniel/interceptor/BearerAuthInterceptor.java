@@ -28,7 +28,7 @@ public class BearerAuthInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String token = authorizationExtractor.extract(request, "Bearer");
         if (token.isEmpty()) {
             try {

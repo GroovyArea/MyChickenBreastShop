@@ -74,21 +74,4 @@ public class UserVO {
     public String getUserSalt() {
         return userSalt;
     }
-
-    @Override
-    public String toString() {
-        return "UserVO{" +
-                "userId='" + userId + '\'' +
-                ", userPw='" + userPw + '\'' +
-                ", userName='" + userName + '\'' +
-                ", userPhone='" + userPhone + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", userMainAddress='" + userMainAddress + '\'' +
-                ", userDetailAddress='" + userDetailAddress + '\'' +
-                ", userZipcode='" + userZipcode + '\'' +
-                ", userGrade=" + userGrade +
-                ", userReserves=" + userReserves +
-                ", userSalt='" + userSalt + '\'' +
-                '}';
-    }
 }

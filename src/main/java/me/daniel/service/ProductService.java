@@ -23,14 +23,17 @@ public class ProductService {
         this.modelMapper = modelMapper;
     }
 
+    @Transactional(readOnly = true)
     public ProductDTO findByNumber(Integer productNo) {
         return modelMapper.map(productMapper.selectNoProduct(productNo), ProductDTO.class);
     }
 
+    @Transactional(readOnly = true)
     public ProductDTO findByName(String productName) {
         return modelMapper.map(productMapper.selectNameProduct(productName), ProductDTO.class);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductVO> getCategoryList(Map<String, Object> map) {
         return productMapper.selectCategoryList(map);
     }
@@ -46,8 +49,8 @@ public class ProductService {
     }
 
     @Transactional
-    public void removeProduct(int productNo) {
-        productMapper.deleteProduct(productNo);
+    public void removeProduct(Map<String, Object> map) {
+        productMapper.deleteProduct(map);
     }
 
 }

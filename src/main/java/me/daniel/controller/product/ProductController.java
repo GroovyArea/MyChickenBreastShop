@@ -2,8 +2,12 @@ package me.daniel.controller.product;
 
 import me.daniel.domain.DTO.ProductDTO;
 import me.daniel.domain.DTO.ProductModifyDTO;
-import me.daniel.enums.ResponseMessage;
+import me.daniel.enums.global.ResponseMessage;
+import me.daniel.enums.products.ChickenStatus;
+import me.daniel.responseMessage.Message;
 import me.daniel.service.ProductService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +21,11 @@ import java.util.Map;
  * @author Nam Young Kim
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/products")
 public class ProductController {
+
+    private static final int PRODUCT_SIZE = 5;
+    private static final int BLOCK_SIZE = 8;
 
     private final ProductService productService;
 
@@ -26,13 +33,15 @@ public class ProductController {
         this.productService = productService;
     }
 
-    private static final int PRODUCT_SIZE = 5;
-    private static final int BLOCK_SIZE = 8;
-
     /**
      * page 당 게시글 리스트를 반환 받기 위한 map 객체
      */
     private Map<String, Object> pagerMap = new HashMap<>();
+    /**
+     * 상품 삭제 정보를 담기 위한 map
+     */
+    private Map<String, Object> deleteProductMap = new HashMap<>();
+
 
     /**
      * 단일 상품 디테일 객체를 반환하는 메서드
@@ -58,31 +67,43 @@ public class ProductController {
         pagerMap.put("startRow", getStartRow(pageNum) - 1);
         pagerMap.put("rowCount", BLOCK_SIZE);
 
-        return ResponseEntity.ok().body(productService.getCategoryList(pagerMap));
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productService.getCategoryList(pagerMap));
     }
 
     /**
      * 상품 추가
      *
      * @param productDTO 추가할 상품 정보
-     * @return ResponseEntity 추가된 상품 정보
+     * @return Message 응답 객체
      */
     @PostMapping
-    public ResponseEntity addAction(@ModelAttribute ProductDTO productDTO) {
+    public Message addAction(@ModelAttribute ProductDTO productDTO) {
         productService.addProduct(productDTO);
-        return ResponseEntity.ok().body(productService.findByName(productDTO.getProductName()));
+        return new Message
+                .Builder(productService.findByName(productDTO.getProductName()))
+                .message(ResponseMessage.ADD_MESSAGE.getValue())
+                .mediaType(MediaType.APPLICATION_JSON)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 
     /**
      * 상품 수정
      *
      * @param productModifyDTO 수정할 상품 정보
-     * @return ResponseEntity 수정된 상품 정보
+     * @return Message 응답 객체
      */
     @PutMapping
-    public ResponseEntity modifyAction(@ModelAttribute ProductModifyDTO productModifyDTO) {
+    public Message modifyAction(@ModelAttribute ProductModifyDTO productModifyDTO) {
         productService.modifyProduct(productModifyDTO);
-        return ResponseEntity.ok().body(productService.findByNumber(productModifyDTO.getProductNo()));
+        return new Message
+                .Builder(productService.findByNumber(productModifyDTO.getProductNo()))
+                .message(ResponseMessage.MODIFY_MESSAGE.getValue())
+                .mediaType(MediaType.APPLICATION_JSON)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 
     /**
@@ -93,16 +114,19 @@ public class ProductController {
      */
     @DeleteMapping("/{productNo}")
     public ResponseEntity deleteAction(@PathVariable int productNo) {
-        productService.removeProduct(productNo);
+        deleteProductMap.put("productNo", productNo);
+        deleteProductMap.put("productStatus", ChickenStatus.EXTINCTION.getValue());
+        productService.removeProduct(deleteProductMap);
         return ResponseEntity.ok().body(ResponseMessage.DELETE_MESSAGE.getValue());
     }
 
     /**
      * 상품 리스트 시작 행 구하기
+     *
      * @param pageNum 현재 페이지 번호
      * @return startRow 시작 행
      */
-    public static int getStartRow(int pageNum) {
+    private int getStartRow(int pageNum) {
         return (pageNum - 1) * PRODUCT_SIZE + 1;
     }
 }
