@@ -29,11 +29,11 @@ public class PasswordEncrypt {
 
     public static String getSecurePassword(String pwd, String salt) throws NoSuchAlgorithmException {
 
-        byte[] saltArr = salt.getBytes();
-        String result = "";
+        byte[] bytesArrOfSalt = salt.getBytes();
+        String result;
 
         byte[] temp = pwd.getBytes();
-        byte[] bytes = new byte[temp.length + saltArr.length];
+        byte[] bytes = new byte[temp.length + bytesArrOfSalt.length];
 
 
             MessageDigest md = MessageDigest.getInstance("SHA-256");
