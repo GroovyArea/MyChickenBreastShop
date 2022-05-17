@@ -3,14 +3,14 @@ package me.daniel.domain.VO;
 
 public class ProductVO {
 
-    private final Integer productNo;
-    private final String productName;
-    private final String productCategory;
-    private final Integer productPrice;
-    private final Integer productStock;
-    private final String productDetail;
-    private final String productImage;
-    private final Integer productStatus;
+    private Integer productNo;
+    private String productName;
+    private String productCategory;
+    private Integer productPrice;
+    private Integer productStock;
+    private String productDetail;
+    private String productImage;
+    private Integer productStatus;
 
     public ProductVO(Integer productNo, String productName, String productCategory, Integer productPrice, Integer productStock, String productDetail, String productImage, Integer productStatus) {
         this.productNo = productNo;
@@ -21,6 +21,9 @@ public class ProductVO {
         this.productDetail = productDetail;
         this.productImage = productImage;
         this.productStatus = productStatus;
+    }
+
+    public ProductVO() {
     }
 
     public Integer getProductNo() {

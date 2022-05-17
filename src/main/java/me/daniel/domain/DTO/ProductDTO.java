@@ -11,15 +11,8 @@ public class ProductDTO {
     private String productImage;
     private Integer productStatus;
 
-    public ProductDTO(Integer productNo, String productName, String productCategory, Integer productPrice, Integer productStock, String productDetail, String productImage, Integer productStatus) {
-        this.productNo = productNo;
-        this.productName = productName;
-        this.productCategory = productCategory;
-        this.productPrice = productPrice;
-        this.productStock = productStock;
-        this.productDetail = productDetail;
-        this.productImage = productImage;
-        this.productStatus = productStatus;
+    public ProductDTO() {
+
     }
 
     public Integer getProductNo() {

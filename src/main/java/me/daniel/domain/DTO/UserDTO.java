@@ -2,8 +2,6 @@ package me.daniel.domain.DTO;
 
 public class UserDTO {
 
-    private static final String ENCRYPTION_PW = "암호화";
-
     private String userId;
     private String userPw;
     private String userSalt;
@@ -103,22 +101,5 @@ public class UserDTO {
 
     public void setUserReserves(Integer userReserves) {
         this.userReserves = userReserves;
-    }
-
-    @Override
-    public String toString() {
-        return "UserDTO{" +
-                "userId='" + userId + '\'' +
-                ", userPw='" + userPw + '\'' +
-                ", userSalt='" + userSalt + '\'' +
-                ", userName='" + userName + '\'' +
-                ", userPhone='" + userPhone + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", userMainAddress='" + userMainAddress + '\'' +
-                ", userDetailAddress='" + userDetailAddress + '\'' +
-                ", userZipcode='" + userZipcode + '\'' +
-                ", userGrade=" + userGrade +
-                ", userReserves=" + userReserves +
-                '}';
     }
 }
