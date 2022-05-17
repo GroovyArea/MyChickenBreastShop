@@ -1,9 +1,7 @@
-package me.daniel.enums;
+package me.daniel.enums.global;
 
 public enum ResponseMessage {
 
-    JOIN_MESSAGE("Join succeed"),
-    LOGIN_MESSAGE("Login succeed"),
     LOGOUT_MESSAGE("Logout succeed"),
     ADD_MESSAGE("Add successful"),
     MODIFY_MESSAGE("Modify successful"),
