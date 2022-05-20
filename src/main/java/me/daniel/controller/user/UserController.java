@@ -4,6 +4,7 @@ import me.daniel.domain.DTO.UserDTO;
 import me.daniel.domain.DTO.UserModifyDTO;
 import me.daniel.enums.global.ResponseMessage;
 import me.daniel.enums.users.UserGrade;
+import me.daniel.interceptor.auth.Auth;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 회원 Controller
+ * 회원 Controller <br>
  * 회원 조회, 수정, 삭제
  *
  * @author Nam Young Kim
@@ -24,13 +25,11 @@ import java.util.Map;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private static final String PASSWORD_ENCRYPT = "암호화";
-
     private final UserService userService;
     /**
      * 회원 탈퇴 정보를 담기 위한 map
      */
-    private Map<String, Object> deleteUserMap = new HashMap<>();
+    private final Map<String, Object> deleteUserMap = new HashMap<>();
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -42,15 +41,16 @@ public class UserController {
      * @param userId 회원 아이디
      * @return ResponseEntity 회원 정보
      */
+    @Auth(role = Auth.Role.BASIC_USER)
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDTO> detailAction(@PathVariable String userId) {
+    public Message detailAction(@PathVariable String userId) {
         UserDTO userDTO = userService.findById(userId);
-        userDTO.setUserPw(PASSWORD_ENCRYPT);
-        userDTO.setUserSalt(PASSWORD_ENCRYPT);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(userDTO);
+        return new Message
+                .Builder(userDTO)
+                .message("권한 : " + UserGrade.of(userDTO.getUserGrade()))
+                .mediaType(MediaType.APPLICATION_JSON)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 
     /**
@@ -59,6 +59,7 @@ public class UserController {
      * @param userModifyDTO 수정할 회원 정보
      * @return Message 수정된 회원 정보
      */
+    @Auth(role = Auth.Role.BASIC_USER)
     @PutMapping
     public Message modifyAction(@ModelAttribute UserModifyDTO userModifyDTO) {
         userService.modifyUser(userModifyDTO);
@@ -76,10 +77,11 @@ public class UserController {
      * @param userId 탈퇴할 회원 아이디
      * @return ResponseEntity 탈퇴 성공 메시지
      */
+    @Auth(role = Auth.Role.BASIC_USER)
     @DeleteMapping("/{userId}")
-    public ResponseEntity deleteAction(@PathVariable String userId) {
+    public ResponseEntity<String> deleteAction(@PathVariable String userId) {
         deleteUserMap.put("userId", userId);
-        deleteUserMap.put("userGrade", UserGrade.WITHDRAWAL.getValue());
+        deleteUserMap.put("userGrade", UserGrade.WITHDRAWAL_USER.getValue());
         userService.deleteUser(deleteUserMap);
         return ResponseEntity.ok().body(ResponseMessage.DELETE_MESSAGE.getValue());
     }
