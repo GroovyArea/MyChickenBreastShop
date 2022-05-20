@@ -8,12 +8,20 @@ import me.daniel.exception.WithDrawalUserException;
 import me.daniel.exception.WrongPasswordException;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.UserService;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * 로그인 처리 <br>
+ * 로그인을 처리하며 jwt 토큰을 발급 후 Redis에 저장한다.
+ *
+ * @author 김남영
+ */
 @RestController
 @RequestMapping("/api")
 public class LoginController {
@@ -21,9 +29,11 @@ public class LoginController {
     private static final String LOGIN_MESSAGE = "Login succeed";
 
     private final UserService userService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public LoginController(UserService userService) {
+    public LoginController(UserService userService, RedisTemplate<String, Object> redisTemplate) {
         this.userService = userService;
+        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -35,8 +45,12 @@ public class LoginController {
     @PostMapping("/user/login")
     public Message loginAction(@ModelAttribute UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawalUserException, WrongPasswordException {
         userService.loginAuth(userLoginDTO);
+        String jwtToken = userService.createToken(userLoginDTO);
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(userLoginDTO.getUserId(), jwtToken);
+
         return new Message
-                .Builder(userService.createToken(userLoginDTO))
+                .Builder(jwtToken)
                 .message(LOGIN_MESSAGE)
                 .mediaType(MediaType.APPLICATION_JSON)
                 .httpStatus(HttpStatus.OK)
@@ -52,7 +66,7 @@ public class LoginController {
     }
 
     @ExceptionHandler(value = WithDrawalUserException.class)
-    public Message withDrawalUserHandler() {
+    public Message withDrawUserHandler() {
         return new Message
                 .Builder(ExceptionMessages.WITHDRAWAL_USER_MESSAGE.getValue())
                 .httpStatus(HttpStatus.NO_CONTENT)
