@@ -7,7 +7,7 @@ public enum ExceptionMessages {
     WITHDRAWAL_USER_MESSAGE("탈퇴 회원입니다."),
     WRONG_PASSWORD_MESSAGE("비밀번호가 일치하지 않습니다.");
 
-    private String exceptionMessage;
+    private final String exceptionMessage;
 
     private ExceptionMessages(String exceptionMessage){
         this.exceptionMessage = exceptionMessage;

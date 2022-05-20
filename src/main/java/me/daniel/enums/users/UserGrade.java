@@ -2,11 +2,11 @@ package me.daniel.enums.users;
 
 public enum UserGrade {
 
-    WITHDRAWAL(0),
-    COMMON(1),
-    ADMIN(2);
+    WITHDRAWAL_USER(0),
+    BASIC_USER(1),
+    ADMIN(9);
 
-    private int userGrade;
+    private final int userGrade;
 
     private UserGrade(int userGrade) {
         this.userGrade = userGrade;
@@ -14,5 +14,13 @@ public enum UserGrade {
 
     public int getValue() {
         return userGrade;
+    }
+
+    public static UserGrade of(int gradeNumber) {
+        switch (gradeNumber){
+            case 0: return WITHDRAWAL_USER;
+            case 9: return ADMIN;
+            default: return BASIC_USER;
+        }
     }
 }
