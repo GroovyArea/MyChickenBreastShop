@@ -12,8 +12,11 @@ import java.util.Base64;
 import java.util.Date;
 
 /**
- * 토큰 제공 클래스
+ * 토큰 제공 클래스 <br>
  * 토큰 생성, 유효성 검사, 값 추출
+ *
+ * @author 김남영
+ * @version 1.1
  */
 @Component
 public class JwtTokenProvider {

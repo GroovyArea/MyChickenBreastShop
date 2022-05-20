@@ -12,10 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * 상품 관련 Controller
+ * 상품 관련 Controller <br>
  * 상품 조회, 추가, 수정, 삭제 요청
  *
  * @author Nam Young Kim
@@ -50,7 +51,7 @@ public class ProductController {
      * @return ResponseEntity 상품 정보
      */
     @GetMapping("/{productNo}")
-    public ResponseEntity productDetail(@PathVariable int productNo) {
+    public ResponseEntity<ProductDTO> productDetail(@PathVariable int productNo) {
         return ResponseEntity.ok().body(productService.findByNumber(productNo));
     }
 
@@ -62,7 +63,7 @@ public class ProductController {
      * @return ResponseEntity 페이지 정보, 상품 카테고리 리스트
      */
     @GetMapping("/list/{productCategoryNo}")
-    public ResponseEntity productList(@PathVariable(value = "productCategoryNo") int productCategoryNo, @RequestParam(defaultValue = "1") int pageNum) {
+    public ResponseEntity<List<ProductDTO>> productList(@PathVariable(value = "productCategoryNo") int productCategoryNo, @RequestParam(defaultValue = "1") int pageNum) {
         pagerMap.put("productCategory", productCategoryNo);
         pagerMap.put("startRow", getStartRow(pageNum) - 1);
         pagerMap.put("rowCount", BLOCK_SIZE);
@@ -113,7 +114,7 @@ public class ProductController {
      * @return ResponseEntity Success
      */
     @DeleteMapping("/{productNo}")
-    public ResponseEntity deleteAction(@PathVariable int productNo) {
+    public ResponseEntity<String> deleteAction(@PathVariable int productNo) {
         deleteProductMap.put("productNo", productNo);
         deleteProductMap.put("productStatus", ChickenStatus.EXTINCTION.getValue());
         productService.removeProduct(deleteProductMap);
