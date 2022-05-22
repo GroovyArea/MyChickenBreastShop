@@ -1,7 +1,7 @@
 package me.daniel.controller.user;
 
 import me.daniel.domain.DTO.UserDTO;
-import me.daniel.exception.UserExistsException;
+import me.daniel.exceptions.UserExistsException;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.UserService;
 import org.springframework.http.HttpStatus;

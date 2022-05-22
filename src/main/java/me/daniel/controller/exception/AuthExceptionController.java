@@ -1,7 +1,7 @@
 package me.daniel.controller.exception;
 
-import me.daniel.exception.RedisNullTokenException;
-import me.daniel.exception.TokenMismatchException;
+import me.daniel.exceptions.RedisNullTokenException;
+import me.daniel.exceptions.TokenMismatchException;
 import me.daniel.interceptor.auth.AuthMessages;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
