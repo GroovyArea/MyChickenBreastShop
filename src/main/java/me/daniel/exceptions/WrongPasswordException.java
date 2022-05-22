@@ -1,4 +1,4 @@
-package me.daniel.exception;
+package me.daniel.exceptions;
 
 public class WrongPasswordException extends Exception {
 
