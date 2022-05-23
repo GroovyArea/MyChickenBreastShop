@@ -1,7 +1,7 @@
 package me.daniel.interceptor.auth;
 
-import me.daniel.exception.RedisNullTokenException;
-import me.daniel.exception.TokenMismatchException;
+import me.daniel.exceptions.RedisNullTokenException;
+import me.daniel.exceptions.TokenMismatchException;
 import me.daniel.jwt.AuthorizationExtractor;
 import me.daniel.jwt.JwtTokenProvider;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import static me.daniel.interceptor.auth.Auth.Role.ADMIN;
  *
  * <pre>
  *     <b>History</b>
- *     작성자, 1.0, 2022.05.20 최초 작성
+ *     김남영, 1.0, 2022.05.20 최초 작성
  * </pre>
  *
  * @author 김남영
