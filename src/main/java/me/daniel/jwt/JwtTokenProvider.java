@@ -12,8 +12,11 @@ import java.util.Base64;
 import java.util.Date;
 
 /**
- * 토큰 제공 클래스
+ * 토큰 제공 클래스 <br>
  * 토큰 생성, 유효성 검사, 값 추출
+ *
+ * @author 김남영
+ * @version 1.1
  */
 @Component
 public class JwtTokenProvider {
@@ -29,34 +32,20 @@ public class JwtTokenProvider {
      * @param id 유저 아이디
      * @return 토큰 값
      */
-    public String createToken(String id) {
-        Claims claims = Jwts.claims().setSubject(String.valueOf(id));
-
+    public String createToken(String id, String grade) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + VALIDATE_IN_MILLISECONDS);
         logger.info("now: {}", now);
         logger.info("validity: {}", validity);
-
         return Jwts.builder()
-                .setClaims(claims)
+                .setHeaderParam("typ", "JWT")
+                .setSubject("Login Token")
+                .claim("userId", id)
+                .claim("userGrade", grade)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, Base64.getEncoder().encodeToString(SECRET_KEY.getBytes()))
                 .compact();
-    }
-
-    /**
-     * 토큰 값 추출
-     *
-     * @param token 토큰
-     * @return 토큰 값
-     */
-    public String getSubject(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY.getBytes())
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
     }
 
     /**
@@ -71,6 +60,48 @@ public class JwtTokenProvider {
                 .setSigningKey(SECRET_KEY.getBytes())
                 .parseClaimsJws(token);
         return !claims.getBody().getExpiration().before(new Date());
+    }
+
+    /**
+     * 토큰에서 아이디 값 추출
+     *
+     * @param token 토큰
+     * @return 로그인 유저 아이디
+     */
+    public String getUserId(String token) {
+        return (String) Jwts.parser()
+                .setSigningKey(SECRET_KEY.getBytes())
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId");
+    }
+
+    /**
+     * 토큰에서 유저 등급 추출
+     *
+     * @param token 토큰
+     * @return 로그인 유저 등급
+     */
+    public String getUserGrade(String token) {
+        return (String) Jwts.parser()
+                .setSigningKey(SECRET_KEY.getBytes())
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userGrade");
+    }
+
+    /**
+     * 토큰 만료 시간 추출
+     *
+     * @param token 토큰
+     * @return 토큰 만료 시간
+     */
+    public Date getExpireDate(String token) {
+        return (Date) Jwts.parser()
+                .setSigningKey(SECRET_KEY.getBytes())
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
     }
 
 }

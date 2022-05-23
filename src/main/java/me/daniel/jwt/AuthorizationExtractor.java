@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 
+/**
+ * 토큰 추출 처리
+ */
 @Component
 public class AuthorizationExtractor {
 

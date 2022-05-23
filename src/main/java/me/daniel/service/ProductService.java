@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +35,12 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductVO> getCategoryList(Map<String, Object> map) {
-        return productMapper.selectCategoryList(map);
+    public List<ProductDTO> getCategoryList(Map<String, Object> map) {
+        List<ProductDTO> dtoList = new ArrayList<>();
+        for(ProductVO productVO : productMapper.selectCategoryList(map)){
+               dtoList.add(modelMapper.map(productVO, ProductDTO.class));
+        }
+        return dtoList;
     }
 
     @Transactional

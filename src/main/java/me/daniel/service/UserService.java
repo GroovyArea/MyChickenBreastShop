@@ -2,6 +2,7 @@ package me.daniel.service;
 
 import me.daniel.domain.DTO.UserLoginDTO;
 import me.daniel.enums.users.ExceptionMessages;
+import me.daniel.enums.users.UserGrade;
 import me.daniel.exception.WithDrawalUserException;
 import me.daniel.exception.WrongPasswordException;
 import me.daniel.jwt.JwtTokenProvider;
@@ -83,6 +84,6 @@ public class UserService {
     }
 
     public String createToken(UserLoginDTO userLoginDTO) {
-        return jwtTokenProvider.createToken(userLoginDTO.getUserId());
+        return jwtTokenProvider.createToken(userLoginDTO.getUserId(), String.valueOf(UserGrade.of(userMapper.selectUser(userLoginDTO.getUserId()).getUserGrade())));
     }
 }
