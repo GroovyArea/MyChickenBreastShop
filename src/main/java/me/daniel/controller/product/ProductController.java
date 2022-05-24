@@ -1,6 +1,6 @@
 package me.daniel.controller.product;
 
-import me.daniel.domain.DTO.ProductDTO;
+import me.daniel.domain.DTO.ProductListDTO;
 import me.daniel.domain.DTO.ProductModifyDTO;
 import me.daniel.enums.global.ResponseMessage;
 import me.daniel.enums.products.ChickenStatus;
@@ -51,7 +51,7 @@ public class ProductController {
      * @return ResponseEntity 상품 정보
      */
     @GetMapping("/{productNo}")
-    public ResponseEntity<ProductDTO> productDetail(@PathVariable int productNo) {
+    public ResponseEntity<ProductListDTO> productDetail(@PathVariable int productNo) {
         return ResponseEntity.ok().body(productService.findByNumber(productNo));
     }
 
@@ -63,7 +63,7 @@ public class ProductController {
      * @return ResponseEntity 페이지 정보, 상품 카테고리 리스트
      */
     @GetMapping("/list/{productCategoryNo}")
-    public ResponseEntity<List<ProductDTO>> productList(@PathVariable(value = "productCategoryNo") int productCategoryNo, @RequestParam(defaultValue = "1") int pageNum) {
+    public ResponseEntity<List<ProductListDTO>> productList(@PathVariable(value = "productCategoryNo") int productCategoryNo, @RequestParam(defaultValue = "1") int pageNum) {
         pagerMap.put("productCategory", productCategoryNo);
         pagerMap.put("startRow", getStartRow(pageNum) - 1);
         pagerMap.put("rowCount", BLOCK_SIZE);
@@ -80,7 +80,7 @@ public class ProductController {
      * @return Message 응답 객체
      */
     @PostMapping
-    public Message addAction(@ModelAttribute ProductDTO productDTO) {
+    public Message addAction(@ModelAttribute ProductListDTO productDTO) {
         productService.addProduct(productDTO);
         return new Message
                 .Builder(productService.findByName(productDTO.getProductName()))
