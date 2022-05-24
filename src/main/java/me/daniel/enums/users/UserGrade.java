@@ -1,5 +1,8 @@
 package me.daniel.enums.users;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum UserGrade {
 
     WITHDRAWAL_USER(0),
@@ -16,11 +19,10 @@ public enum UserGrade {
         return userGrade;
     }
 
-    public static UserGrade of(int gradeNumber) {
-        switch (gradeNumber){
-            case 0: return WITHDRAWAL_USER;
-            case 9: return ADMIN;
-            default: return BASIC_USER;
-        }
+    public static Optional<UserGrade> of(int gradeNumber) {
+        return Optional.of(Arrays.stream(UserGrade.values())
+                .filter(userGrade1 -> userGrade1.getValue() == gradeNumber)
+                .findFirst()
+                .orElse(BASIC_USER));
     }
 }
