@@ -34,9 +34,9 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
     private final AuthorizationExtractor authorizationExtractor;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public AuthenticateInterceptor(AuthorizationExtractor authorizationExtractor, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate) {
+    public AuthenticateInterceptor(AuthorizationExtractor authorizationExtractor, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, Object> redisTemplate) {
         this.authorizationExtractor = authorizationExtractor;
         this.jwtTokenProvider = jwtTokenProvider;
         this.redisTemplate = redisTemplate;
@@ -44,6 +44,8 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.info("인증 처리 인터셉터 실행");
+
         /* 토큰 추출 및 검증 */
         String requestToken = authorizationExtractor.extract(request, BEARER_TOKEN);
         jwtTokenProvider.validateToken(requestToken);
@@ -55,8 +57,8 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         request.setAttribute("tokenUserRole", jwtTokenProvider.getUserGrade(requestToken));
 
         /* Redis DB에 저장된 토큰 추출 */
-        final ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        final String redisToken = valueOperations.get(tokenUserId);
+        final ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        final String redisToken = (String) valueOperations.get(tokenUserId);
 
         /* DB에 토큰이 존재하지 않을 경우 */
         if (redisToken == null) {

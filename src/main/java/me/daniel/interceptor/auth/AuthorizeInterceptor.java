@@ -32,6 +32,7 @@ public class AuthorizeInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.info("권한 처리 인터셉터 실행");
 
         if (!(handler instanceof HandlerMethod)) {
             return true;
