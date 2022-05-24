@@ -1,6 +1,6 @@
 package me.daniel.controller.exception;
 
-import me.daniel.exceptions.NoCartException;
+import me.daniel.exceptions.EmptyCookiesException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,7 +16,8 @@ import java.io.UnsupportedEncodingException;
 public class CartExceptionController {
 
     private static final String UNSUPPORTED_ENCODING = "인코딩을 지원하지 않는 형식의 쿠키입니다.";
-    private static final String NULL_CART_COOKIE = "변경하려는 장바구니의 상품 쿠키가 없습니다.";
+    private static final String EMPTY_COOKIE = "쿠키가 없습니다.";
+
 
     @ExceptionHandler(UnsupportedEncodingException.class)
     public ResponseEntity<String> unsupportedEncodingException() {
@@ -25,11 +26,10 @@ public class CartExceptionController {
                 .body(UNSUPPORTED_ENCODING);
     }
 
-    @ExceptionHandler(NoCartException.class)
-    public ResponseEntity<String> noCartException() {
+    @ExceptionHandler(EmptyCookiesException.class)
+    public ResponseEntity<String> emptyCookiesException(){
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(NULL_CART_COOKIE);
+                .body(EMPTY_COOKIE);
     }
-
 }

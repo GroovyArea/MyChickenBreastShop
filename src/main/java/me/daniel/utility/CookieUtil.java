@@ -5,7 +5,9 @@ import me.daniel.domain.DTO.CartItemDTO;
 import javax.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 쿠키 Utils <br>
@@ -25,17 +27,14 @@ public class CookieUtil {
     private static final String ENC_TYPE = "utf-8";
 
     /* 카트 쿠키 반환 메서드 */
-    public static Cookie getCartCookie(Cookie[] requestCookies) {
-        for (Cookie cookie : requestCookies) {
-            if (COOKIE_KEY.equals(cookie.getName())) {
-                return cookie;
-            }
-        }
-        return null;
+    public static Optional<Cookie> getCartCookie(Cookie[] requestCookies) {
+        return Arrays.stream(requestCookies)
+                .filter(cookie -> cookie.getName().equals(COOKIE_KEY))
+                .findFirst();
     }
 
     /* 카크 쿠키 값 디코딩 후 map 객체 반환 메서드 */
-    public static Map<Integer, CartItemDTO> getCartItemDTOMap (Cookie responseCookie) throws UnsupportedEncodingException {
+    public static Map<Integer, CartItemDTO> getCartItemDTOMap(Cookie responseCookie) throws UnsupportedEncodingException {
         String cookieValue = responseCookie.getValue();
         return JsonUtil.stringToMap(URLDecoder.decode(cookieValue, ENC_TYPE), Integer.class, CartItemDTO.class);
     }
