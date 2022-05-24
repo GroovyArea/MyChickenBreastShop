@@ -29,7 +29,7 @@ public class JsonUtil {
 
     public static <T> T stringToObject(String string, Class<T> tClass) {
         try {
-            MAPPER.readValue(string, tClass);
+            return MAPPER.readValue(string, tClass);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
