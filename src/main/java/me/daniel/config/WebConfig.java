@@ -1,6 +1,7 @@
 package me.daniel.config;
 
-import me.daniel.interceptor.auth.AuthInterceptor;
+import me.daniel.interceptor.auth.AuthenticateInterceptor;
+import me.daniel.interceptor.auth.AuthorizeInterceptor;
 import me.daniel.interceptor.cookie.CookieInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,17 +14,22 @@ public class WebConfig implements WebMvcConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
-    private final AuthInterceptor authInterceptor;
+    private final AuthorizeInterceptor authorizeInterceptor;
+    private final AuthenticateInterceptor authenticateInterceptor;
     private final CookieInterceptor cookieInterceptor;
 
-    public WebConfig(AuthInterceptor authInterceptor, CookieInterceptor cookieInterceptor) {
-        this.authInterceptor = authInterceptor;
+    public WebConfig(AuthorizeInterceptor authorizeInterceptor, AuthenticateInterceptor authenticateInterceptor, CookieInterceptor cookieInterceptor) {
+        this.authorizeInterceptor = authorizeInterceptor;
+        this.authenticateInterceptor = authenticateInterceptor;
         this.cookieInterceptor = cookieInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor)
+        registry.addInterceptor(authenticateInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/api/user/login");
+        registry.addInterceptor(authorizeInterceptor)
                 .addPathPatterns("/**");
         registry.addInterceptor(cookieInterceptor)
                 .addPathPatterns("/api/carts/**");

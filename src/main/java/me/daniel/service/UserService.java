@@ -84,6 +84,6 @@ public class UserService {
     }
 
     public String createToken(UserLoginDTO userLoginDTO) {
-        return jwtTokenProvider.createToken(userLoginDTO.getUserId(), String.valueOf(UserGrade.of(userMapper.selectUser(userLoginDTO.getUserId()).getUserGrade())));
+        return jwtTokenProvider.createToken(userLoginDTO.getUserId(), String.valueOf(UserGrade.of(userMapper.selectUser(userLoginDTO.getUserId()).getUserGrade()).orElse(UserGrade.BASIC_USER)));
     }
 }

@@ -47,7 +47,7 @@ public class UserController {
         UserDTO userDTO = userService.findById(userId);
         return new Message
                 .Builder(userDTO)
-                .message("권한 : " + UserGrade.of(userDTO.getUserGrade()))
+                .message("권한 : " + UserGrade.of(userDTO.getUserGrade()).orElse(UserGrade.BASIC_USER))
                 .mediaType(MediaType.APPLICATION_JSON)
                 .httpStatus(HttpStatus.OK)
                 .build();
