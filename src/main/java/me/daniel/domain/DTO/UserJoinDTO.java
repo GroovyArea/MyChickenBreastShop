@@ -1,6 +1,6 @@
 package me.daniel.domain.DTO;
 
-public class UserDTO {
+public class UserJoinDTO {
 
     private String userId;
     private String userPw;
@@ -11,13 +11,9 @@ public class UserDTO {
     private String userMainAddress;
     private String userDetailAddress;
     private String userZipcode;
-    private Integer userGrade;
-    private Integer userReserves;
+    private String authKey;
 
-    public UserDTO() {
-    }
-
-    public UserDTO(String userId, String userPw, String userSalt, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, Integer userGrade, Integer userReserves) {
+    public UserJoinDTO(String userId, String userPw, String userSalt, String userName, String userPhone, String userEmail, String userMainAddress, String userDetailAddress, String userZipcode, String authKey) {
         this.userId = userId;
         this.userPw = userPw;
         this.userSalt = userSalt;
@@ -27,8 +23,7 @@ public class UserDTO {
         this.userMainAddress = userMainAddress;
         this.userDetailAddress = userDetailAddress;
         this.userZipcode = userZipcode;
-        this.userGrade = userGrade;
-        this.userReserves = userReserves;
+        this.authKey = authKey;
     }
 
     public String getUserId() {
@@ -37,10 +32,6 @@ public class UserDTO {
 
     public String getUserPw() {
         return userPw;
-    }
-
-    public String getUserSalt() {
-        return userSalt;
     }
 
     public String getUserName() {
@@ -67,11 +58,19 @@ public class UserDTO {
         return userZipcode;
     }
 
-    public Integer getUserGrade() {
-        return userGrade;
+    public String getAuthKey() {
+        return authKey;
     }
 
-    public Integer getUserReserves() {
-        return userReserves;
+    public String getUserSalt() {
+        return userSalt;
+    }
+
+    public void setUserPw(String userPw) {
+        this.userPw = userPw;
+    }
+
+    public void setUserSalt(String userSalt) {
+        this.userSalt = userSalt;
     }
 }
