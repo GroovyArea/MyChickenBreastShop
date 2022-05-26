@@ -26,7 +26,9 @@
 
     <insert id="insertUser" parameterType="UserVO">
         INSERT INTO
-        user
+        user (USER_ID, USER_PW, USER_NAME, USER_PHONE, USER_EMAIL,
+              USER_MAIN_ADDRESS, USER_DETAIL_ADDRESS, USER_ZIPCODE,
+              USER_SALT)
         VALUES (
                     #{userId},
                     #{userPw},
