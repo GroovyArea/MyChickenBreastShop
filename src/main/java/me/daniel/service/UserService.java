@@ -1,19 +1,21 @@
 package me.daniel.service;
 
-import me.daniel.domain.DTO.UserLoginDTO;
-import me.daniel.enums.users.ExceptionMessages;
-import me.daniel.enums.users.UserGrade;
-import me.daniel.exceptions.WithDrawalUserException;
-import me.daniel.exceptions.WrongPasswordException;
-import me.daniel.jwt.JwtTokenProvider;
 import me.daniel.domain.DTO.UserDTO;
+import me.daniel.domain.DTO.UserJoinDTO;
+import me.daniel.domain.DTO.UserLoginDTO;
 import me.daniel.domain.DTO.UserModifyDTO;
 import me.daniel.domain.VO.UserVO;
+import me.daniel.enums.users.UserGrade;
 import me.daniel.exceptions.LoginFailException;
 import me.daniel.exceptions.UserExistsException;
+import me.daniel.exceptions.WithDrawUserException;
+import me.daniel.exceptions.WrongPasswordException;
+import me.daniel.jwt.JwtTokenProvider;
 import me.daniel.mapper.UserMapper;
 import me.daniel.utility.PasswordEncrypt;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +25,16 @@ import java.util.Map;
 @Service
 public class UserService {
 
-    private static final int WITHDRAWAL_USER_GRADE = 0;
+    private static final String USER_EXISTS_MESSAGE = "이미 사용중인 아이디를 입력 하셨습니다.";
+    private static final String LOGIN_FAIL_MESSAGE = "해당 아이디의 회원 정보가 존재하지 않습니다.";
+    private static final String WITHDRAW_USER_MESSAGE = "탈퇴 회원입니다.";
+    private static final String WRONG_PASSWORD_MESSAGE = "비밀번호가 일치하지 않습니다.";
+
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserMapper userMapper;
     private final ModelMapper modelMapper;
     private final JwtTokenProvider jwtTokenProvider;
-
 
     public UserService(UserMapper userMapper, ModelMapper modelMapper, JwtTokenProvider jwtTokenProvider) {
         this.userMapper = userMapper;
@@ -42,9 +48,9 @@ public class UserService {
     }
 
     @Transactional
-    public void addUser(UserDTO joinUser) throws UserExistsException, NoSuchAlgorithmException {
+    public void addUser(UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException {
         if (userMapper.selectUser(joinUser.getUserId()) != null) {
-            throw new UserExistsException(ExceptionMessages.USER_EXISTS_MESSAGE.getValue());
+            throw new UserExistsException(USER_EXISTS_MESSAGE);
         }
 
         String salt = PasswordEncrypt.getSalt();
@@ -64,14 +70,22 @@ public class UserService {
         userMapper.deleteUser(map);
     }
 
-    public void loginAuth(UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawalUserException, WrongPasswordException {
+    /**
+     * 로그인 인증 검사
+     * @param userLoginDTO 로그인 회원
+     * @throws LoginFailException 회원 정보가 존재하지 않을 시 예외
+     * @throws NoSuchAlgorithmException 암호화 알고리즘 부적절 시 예외
+     * @throws WithDrawUserException 탈퇴 회원일 시 예외
+     * @throws WrongPasswordException 비밀번호 불일치 시 예외
+     */
+    public void loginAuth(UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
         UserVO authUser = userMapper.selectUser(userLoginDTO.getUserId());
         if (authUser == null) {
-            throw new LoginFailException(ExceptionMessages.LOGIN_FAIL_MESSAGE.getValue());
+            throw new LoginFailException(LOGIN_FAIL_MESSAGE);
         }
 
-        if (authUser.getUserGrade() == WITHDRAWAL_USER_GRADE) {
-            throw new WithDrawalUserException(ExceptionMessages.WITHDRAWAL_USER_MESSAGE.getValue());
+        if (authUser.getUserGrade() == UserGrade.WITHDRAWAL_USER.getValue()) {
+            throw new WithDrawUserException(WITHDRAW_USER_MESSAGE);
         }
 
         String dbSalt = authUser.getUserSalt();
@@ -79,10 +93,15 @@ public class UserService {
         String dbPassword = authUser.getUserPw();
 
         if (!loginPassword.equals(dbPassword)) {
-            throw new WrongPasswordException(ExceptionMessages.WRONG_PASSWORD_MESSAGE.getValue());
+            throw new WrongPasswordException(WRONG_PASSWORD_MESSAGE);
         }
     }
 
+    /**
+     * 로그인 유저 토큰 생성
+     * @param userLoginDTO 로그인 회원
+     * @return 토큰 값
+     */
     public String createToken(UserLoginDTO userLoginDTO) {
         return jwtTokenProvider.createToken(userLoginDTO.getUserId(), String.valueOf(UserGrade.of(userMapper.selectUser(userLoginDTO.getUserId()).getUserGrade()).orElse(UserGrade.BASIC_USER)));
     }
