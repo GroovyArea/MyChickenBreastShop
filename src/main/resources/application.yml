@@ -1,0 +1,57 @@
+
+# thymeleaf
+# spring.thymeleaf.cache=false
+# spring.thymeleaf.check-template-location=true
+# spring.thymeleaf.prefix=classpath:/templates/
+# spring.thymeleaf.suffix=.html
+
+# mybatis
+mybatis:
+  type-aliases-package: me.daniel.mapper
+  mapper-locations: classpath:me/daniel/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+
+
+spring:
+  # database
+  datasource:
+    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/namyoung_schema?serverTimezone=UTC&characterEncoding=UTF-8
+    username:
+    password:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+
+  # Redis
+  redis:
+    lettuce:
+      pool:
+        max-active: 5
+        max-idle: 5
+        min-idle: 5
+    host: 127.0.0.1
+    port: 6379
+
+  # Mail
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username:
+    password:
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.ssl.enable: true
+      mail.smtps.ssl.trust: smtp.naver.com
+
+  # flyway
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+    sql-migration-suffixes: ddl
+    baseline-version: 0
+    baseline-on-migrate: true
+
+# logging
+logging:
+  config: classpath:logback/logback-local.xml
