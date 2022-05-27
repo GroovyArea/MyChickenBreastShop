@@ -34,8 +34,8 @@ public class CookieUtil {
     }
 
     /* 카크 쿠키 값 디코딩 후 map 객체 반환 메서드 */
-    public static Map<Integer, CartItemDTO> getCartItemDTOMap(Cookie responseCookie) throws UnsupportedEncodingException {
-        String cookieValue = responseCookie.getValue();
+    public static Map<Integer, CartItemDTO> getCartItemDTOMap(Cookie responseCartCookie) throws UnsupportedEncodingException {
+        String cookieValue = responseCartCookie.getValue();
         return JsonUtil.stringToMap(URLDecoder.decode(cookieValue, ENC_TYPE), Integer.class, CartItemDTO.class);
     }
 }

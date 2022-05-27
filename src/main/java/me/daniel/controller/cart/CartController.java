@@ -17,9 +17,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static me.daniel.utility.CookieUtil.getCartItemDTOMap;
 
@@ -48,6 +50,8 @@ public class CartController {
     private static final String NULL_CART_COOKIE = "장바구니 쿠키가 없습니다.";
     private static final String NULL_MODIFY_COOKIE = "변경하려는 장바구니의 상품 쿠키가 없습니다.";
     private static final String NULL_REMOVE_COOKIE = "삭제하려는 장바구니의 상품 쿠키가 없습니다.";
+    private static final int KILL_COOKIE = 0;
+
 
     private Cookie responseCartCookie;
     private Map<Integer, CartItemDTO> cartDTOMap;
@@ -63,7 +67,7 @@ public class CartController {
     @GetMapping
     public Message getCartList(HttpServletRequest request) throws UnsupportedEncodingException {
         getCartCookie(request);
-
+        List<CartItemDTO> cartList;
         /* 장바구니 쿠키가 존재하지 않을 경우*/
         if (responseCartCookie == null) {
             return new Message
@@ -72,10 +76,10 @@ public class CartController {
                     .build();
         }
 
-        cartDTOMap = JsonUtil.stringToMap(URLDecoder.decode(responseCartCookie.getValue(), ENC_TYPE), Integer.class, CartItemDTO.class);
+        getCartDTOMap(responseCartCookie);
 
         if (cartDTOMap != null && !cartDTOMap.isEmpty()) {
-            List<CartItemDTO> cartList = new ArrayList<>(cartDTOMap.values());
+            cartList = new ArrayList<>(cartDTOMap.values());
             return new Message
                     .Builder(cartList)
                     .httpStatus(HttpStatus.OK)
@@ -105,27 +109,33 @@ public class CartController {
 
         getCartCookie(request);
 
-        /* 응답 쿠키 없을 경우 쿠키 생성 */
+        /* 응답 장바구니 쿠키가 없을 경우 쿠키 생성 */
         if (responseCartCookie == null) {
-            responseCartCookie = new Cookie(COOKIE_KEY, URLEncoder.encode(JsonUtil.objectToString(new HashMap<Integer, CartItemDTO>()), ENC_TYPE));
-            responseCartCookie.setPath("/api/carts");
+            cartDTOMap = new HashMap<>();
+
+            createCartCookie();
+
+            cartDTOMap.put(productNo, addCartDTO);
+
+            responseCartCookie.setValue(URLEncoder.encode(JsonUtil.objectToString(cartDTOMap), ENC_TYPE));
+            response.addCookie(responseCartCookie);
+
+            return ResponseEntity.ok().body(ResponseMessage.ADD_MESSAGE.getValue());
         }
 
         cartDTOMap = getCartItemDTOMap(responseCartCookie);
 
-        /*
-        기존 상품이 있을 경우 바꿔치기 해야됨 바뀔 데이터는 수량뿐
-        상품 번호 = key, 상품 객체 = value
-        */
         CartItemDTO cartItem = cartDTOMap.get(productNo);
-
+        /* 기존 상품이 있을 경우 바꿔치기 해야됨 바뀔 데이터는 수량뿐이다.
+        상품 번호 = key, 상품 객체 = value */
         if (cartItem != null) {
             cartItem.setProductStock(addCartDTO.getProductStock() + cartItem.getProductStock());
+            cartDTOMap.put(productNo, cartItem);
         }
 
-        cartDTOMap.put(productNo, cartItem);
+        cartDTOMap.put(productNo, addCartDTO);
 
-        setCartCookie(response);
+        resetCartCookie(response);
 
         return ResponseEntity.ok().body(ResponseMessage.ADD_MESSAGE.getValue());
     }
@@ -158,7 +168,7 @@ public class CartController {
 
         cartDTOMap.put(productNo, modifyCartDTO);
 
-        setCartCookie(response);
+        resetCartCookie(response);
 
         return ResponseEntity.ok().body(ResponseMessage.MODIFY_MESSAGE.getValue());
     }
@@ -189,7 +199,7 @@ public class CartController {
 
         removeProductFromMap(productNo);
 
-        setCartCookie(response);
+        resetCartCookie(response);
 
         return ResponseEntity.ok().body(ResponseMessage.DELETE_MESSAGE.getValue());
     }
@@ -223,13 +233,24 @@ public class CartController {
     }
 
     /**
-     * 전달할 장바구니 쿠키를 세팅
+     * 장바구니의 정보를 담은 map 객체를 값으로 장바구니 쿠키를 생성
+     *
+     * @throws UnsupportedEncodingException 인코딩 문제 시 예외 발생
+     */
+    private void createCartCookie() throws UnsupportedEncodingException {
+        responseCartCookie = new Cookie(COOKIE_KEY, URLEncoder.encode(JsonUtil.objectToString(cartDTOMap), ENC_TYPE));
+        responseCartCookie.setPath("/api/carts");
+    }
+
+    /**
+     * 기존 장바구니 쿠키를 삭제하고 새롭게 만들어진 쿠키를 응답
      *
      * @param response servlet response 객체
      * @throws UnsupportedEncodingException 인코딩 문제 시 예외 발생
      */
-    private void setCartCookie(HttpServletResponse response) throws UnsupportedEncodingException {
-        responseCartCookie.setValue(URLEncoder.encode(JsonUtil.objectToString(cartDTOMap), ENC_TYPE));
+    private void resetCartCookie(HttpServletResponse response) throws UnsupportedEncodingException {
+        responseCartCookie.setMaxAge(KILL_COOKIE);
+        createCartCookie();
         response.addCookie(responseCartCookie);
     }
 }
