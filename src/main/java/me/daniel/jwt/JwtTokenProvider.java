@@ -24,7 +24,7 @@ public class JwtTokenProvider {
     private final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     private static final String SECRET_KEY = "mysecretmysecretmysecretmysecretmysecretasdfasdfasdf";
-    private static final long VALIDATE_IN_MILLISECONDS = 1000 * 60L * 3L;
+    private static final long VALIDATE_IN_MILLISECONDS = 1000 * 60L * 10L;
 
     /**
      * 토큰 생성
