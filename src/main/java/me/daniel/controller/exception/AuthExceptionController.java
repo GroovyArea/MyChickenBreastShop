@@ -2,7 +2,6 @@ package me.daniel.controller.exception;
 
 import me.daniel.exceptions.RedisNullTokenException;
 import me.daniel.exceptions.TokenMismatchException;
-import me.daniel.interceptor.auth.AuthMessages;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,23 +17,23 @@ import javax.security.sasl.AuthenticationException;
 public class AuthExceptionController {
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<String> authException() {
+    public ResponseEntity<String> authException(AuthenticationException exception) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(AuthMessages.NOT_ADMIN_AUTH.getMessage());
+                .body(exception.getMessage());
     }
 
     @ExceptionHandler(RedisNullTokenException.class)
-    public ResponseEntity<String> nullTokenException() {
+    public ResponseEntity<String> nullTokenException(RedisNullTokenException exception) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(AuthMessages.NULL_TOKEN.getMessage());
+                .body(exception.getMessage());
     }
 
     @ExceptionHandler(TokenMismatchException.class)
-    public ResponseEntity<String> tokenMissMatchException() {
+    public ResponseEntity<String> tokenMissMatchException(TokenMismatchException exception) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(AuthMessages.INVALID_TOKEN.getMessage());
+                .body(exception.getMessage());
     }
 }

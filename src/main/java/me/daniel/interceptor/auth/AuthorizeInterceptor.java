@@ -28,6 +28,8 @@ import static me.daniel.interceptor.auth.Auth.Role.ADMIN;
 @Component
 public class AuthorizeInterceptor implements HandlerInterceptor {
 
+    private static final String NOT_ADMIN_AUTH = "관리자 권한을 필요로 하는 접근입니다.";
+
     private static final Logger log = LoggerFactory.getLogger(AuthorizeInterceptor.class);
 
     @Override
@@ -51,7 +53,7 @@ public class AuthorizeInterceptor implements HandlerInterceptor {
         if (auth.role() == ADMIN) {
             /* 로그인 유저 권한이 관리자가 아닐 경우 */
             if (!request.getAttribute("tokenUserRole").toString().equals(ADMIN.toString())) {
-                throw new AuthenticationException(AuthMessages.NOT_ADMIN_AUTH.getMessage());
+                throw new AuthenticationException(NOT_ADMIN_AUTH);
             }
         }
 

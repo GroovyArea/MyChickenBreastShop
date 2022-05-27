@@ -31,6 +31,8 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticateInterceptor.class);
     private static final String BEARER_TOKEN = "Bearer";
+    private static final String NULL_TOKEN = "DB에 토큰이 존재하지 않습니다. 로그인이 필요합니다.";
+    private static final String INVALID_TOKEN = "토큰이 일치하지 않습니다. 잘못된 접근입니다.";
 
     private final AuthorizationExtractor authorizationExtractor;
     private final JwtTokenProvider jwtTokenProvider;
@@ -62,12 +64,12 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
         /* DB에 토큰이 존재하지 않을 경우 */
         if (redisToken == null) {
-            throw new RedisNullTokenException(AuthMessages.NULL_TOKEN.getMessage());
+            throw new RedisNullTokenException(NULL_TOKEN);
         }
 
         /* DB 토큰과 로그인 유저 토큰 정보가 일치하지 않을 경우 */
         if (!redisToken.equals(requestToken)) {
-            throw new TokenMismatchException(AuthMessages.INVALID_TOKEN.getMessage());
+            throw new TokenMismatchException(INVALID_TOKEN);
         }
 
         return true;
