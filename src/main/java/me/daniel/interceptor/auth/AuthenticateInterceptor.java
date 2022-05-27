@@ -29,10 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class AuthenticateInterceptor implements HandlerInterceptor {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthenticateInterceptor.class);
     private static final String BEARER_TOKEN = "Bearer";
     private static final String NULL_TOKEN = "DB에 토큰이 존재하지 않습니다. 로그인이 필요합니다.";
     private static final String INVALID_TOKEN = "토큰이 일치하지 않습니다. 잘못된 접근입니다.";
+
+    private static final Logger log = LoggerFactory.getLogger(AuthenticateInterceptor.class);
 
     private final AuthorizationExtractor authorizationExtractor;
     private final JwtTokenProvider jwtTokenProvider;
