@@ -24,13 +24,15 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class CookieInterceptor implements HandlerInterceptor {
 
+    private static final String NULL_COOKIE = "쿠키가 없습니다.";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
         if (request.getCookies() == null) {
-            throw new EmptyCookiesException("쿠키가 없습니다.");
+            throw new EmptyCookiesException(NULL_COOKIE);
         }
         return true;
     }
