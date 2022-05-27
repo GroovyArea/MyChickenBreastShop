@@ -1,12 +1,15 @@
 package me.daniel.domain.DTO;
 
+import java.beans.ConstructorProperties;
+
 public class CartItemDTO {
 
     private final Integer productNo;
     private Integer productStock;
-    private final String productPrice;
+    private final Integer productPrice;
 
-    public CartItemDTO(Integer productNo, Integer productStock, String productPrice) {
+    @ConstructorProperties({"productNo","productStock","productPrice"})
+    public CartItemDTO(Integer productNo, Integer productStock, Integer productPrice) {
         this.productNo = productNo;
         this.productStock = productStock;
         this.productPrice = productPrice;
@@ -20,7 +23,7 @@ public class CartItemDTO {
         return productStock;
     }
 
-    public String getProductPrice() {
+    public Integer getProductPrice() {
         return productPrice;
     }
 
