@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.SimpleType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,8 @@ public class JsonUtil {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private static Logger log = LoggerFactory.getLogger(JsonUtil.class);
+
     private JsonUtil() {
     }
 
@@ -22,7 +26,7 @@ public class JsonUtil {
         try {
             return MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return "{}";
     }
@@ -31,7 +35,7 @@ public class JsonUtil {
         try {
             return MAPPER.readValue(string, tClass);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -41,7 +45,7 @@ public class JsonUtil {
             return MAPPER.readValue(string, MapType.construct(HashMap.class, null, null,
                     null, SimpleType.constructUnsafe(keyType), SimpleType.constructUnsafe(valueType)));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
