@@ -27,10 +27,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticateInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/api/user/login");
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/user");
         registry.addInterceptor(authorizeInterceptor)
-                .addPathPatterns("/**");
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/user");
         registry.addInterceptor(cookieInterceptor)
                 .addPathPatterns("/api/carts/**");
 

@@ -1,15 +1,18 @@
 package me.daniel.controller.user;
 
-import me.daniel.domain.DTO.UserDTO;
+import me.daniel.domain.DTO.UserEmailRequestDTO;
+import me.daniel.domain.DTO.UserJoinDTO;
+import me.daniel.exceptions.EmailAuthException;
 import me.daniel.exceptions.UserExistsException;
 import me.daniel.responseMessage.Message;
+import me.daniel.service.EmailService;
 import me.daniel.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -19,10 +22,14 @@ public class JoinController {
 
     private static final String JOIN_MESSAGE = "Join succeed";
 
-    private final UserService userService;
+    private static final Logger log = LoggerFactory.getLogger(JoinController.class);
 
-    public JoinController(UserService userService) {
+    private final UserService userService;
+    private final EmailService emailService;
+
+    public JoinController(UserService userService, EmailService emailService) {
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     /**
@@ -30,11 +37,16 @@ public class JoinController {
      *
      * @param joinUser 회원가입 데이터
      * @return Message 응답 정보 객체
-     * @throws UserExistsException 해당 아이디를 가진 유저 존재 시 예외 발생
+     * @throws UserExistsException      해당 아이디를 가진 유저 존재 시 예외 발생
      * @throws NoSuchAlgorithmException 암호화 알고리즘 잘못 사용시 예외 발생
      */
     @PostMapping
-    public Message joinAction(@ModelAttribute UserDTO joinUser) throws UserExistsException, NoSuchAlgorithmException {
+    public Message joinAction(@RequestBody UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException, EmailAuthException {
+        try {
+            emailService.authEmail(joinUser);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
         userService.addUser(joinUser);
         return new Message
                 .Builder(userService.findById(joinUser.getUserId()))
@@ -42,5 +54,17 @@ public class JoinController {
                 .mediaType(MediaType.APPLICATION_JSON)
                 .httpStatus(HttpStatus.OK)
                 .build();
+    }
+
+    /**
+     * 이메일 인증 번호 전송 처리
+     *
+     * @param emailRequestDTO 이메일
+     * @return 상태코드 200
+     */
+    @PostMapping("/email")
+    public ResponseEntity<String> authEmail(@RequestBody UserEmailRequestDTO emailRequestDTO) {
+        emailService.sendEmail(emailRequestDTO);
+        return ResponseEntity.ok().build();
     }
 }
