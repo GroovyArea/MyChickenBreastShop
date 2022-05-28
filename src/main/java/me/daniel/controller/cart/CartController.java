@@ -2,8 +2,11 @@ package me.daniel.controller.cart;
 
 import me.daniel.domain.DTO.CartItemDTO;
 import me.daniel.enums.global.ResponseMessage;
+import me.daniel.exceptions.InvalidPayAmountException;
+import me.daniel.exceptions.InvalidProductException;
 import me.daniel.interceptor.auth.Auth;
 import me.daniel.responseMessage.Message;
+import me.daniel.service.ProductService;
 import me.daniel.utility.CookieUtil;
 import me.daniel.utility.JsonUtil;
 import org.slf4j.Logger;
@@ -33,10 +36,11 @@ import static me.daniel.utility.CookieUtil.getCartItemDTOMap;
  *     <b>History</b>
  *     김남영, 1.0, 2022.05.20 최초 작성
  *     김남영, 1.1, 2022.05.24 코드 리팩토링 (중복 제거 메서드 분리)
+ *     김남영, 1.2, 2022.05.28 장바구니 데이터 유효성 검사
  * </pre>
  *
  * @author 김남영
- * @version 1.1
+ * @version 1.2
  */
 @RestController
 @RequestMapping("/api/carts")
@@ -52,10 +56,15 @@ public class CartController {
     private static final String NULL_REMOVE_COOKIE = "삭제하려는 장바구니의 상품 쿠키가 없습니다.";
     private static final int KILL_COOKIE = 0;
 
+    private final ProductService productService;
 
     private Cookie responseCartCookie;
     private Map<Integer, CartItemDTO> cartDTOMap;
     private Integer productNo;
+
+    public CartController(ProductService productService) {
+        this.productService = productService;
+    }
 
     /**
      * 장바구니 목록 조회 메서드
@@ -104,8 +113,10 @@ public class CartController {
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
     public ResponseEntity<String> addCart(@RequestBody(required = true) CartItemDTO addCartDTO, HttpServletRequest request,
-                                          HttpServletResponse response) throws UnsupportedEncodingException {
+                                          HttpServletResponse response) throws UnsupportedEncodingException, InvalidProductException, InvalidPayAmountException {
         productNo = addCartDTO.getProductNo();
+
+        cartValidate(addCartDTO);
 
         getCartCookie(request);
 
@@ -151,8 +162,10 @@ public class CartController {
     @Auth(role = Auth.Role.BASIC_USER)
     @PutMapping
     public ResponseEntity<String> modifyCart(@RequestBody(required = true) CartItemDTO modifyCartDTO, HttpServletRequest request,
-                                             HttpServletResponse response) throws UnsupportedEncodingException {
+                                             HttpServletResponse response) throws UnsupportedEncodingException, InvalidProductException, InvalidPayAmountException {
         productNo = modifyCartDTO.getProductNo();
+
+        cartValidate(modifyCartDTO);
 
         getCartCookie(request);
 
@@ -184,8 +197,10 @@ public class CartController {
     @Auth(role = Auth.Role.BASIC_USER)
     @DeleteMapping
     public ResponseEntity<String> deleteCart(@RequestBody CartItemDTO deleteCartDTO, HttpServletRequest request,
-                                             HttpServletResponse response) throws UnsupportedEncodingException {
+                                             HttpServletResponse response) throws UnsupportedEncodingException, InvalidProductException, InvalidPayAmountException {
         productNo = deleteCartDTO.getProductNo();
+
+        cartValidate(deleteCartDTO);
 
         getCartCookie(request);
 
@@ -252,5 +267,17 @@ public class CartController {
         responseCartCookie.setMaxAge(KILL_COOKIE);
         createCartCookie();
         response.addCookie(responseCartCookie);
+    }
+
+    /**
+     * 장바구니 데이터 유효성 검사 <br>
+     * 상품 유효성 검사 <br>
+     * 총 가격 유효성 검사
+     *
+     * @param cartItemDTO 장바구니 객체
+     */
+    private void cartValidate(CartItemDTO cartItemDTO) throws InvalidProductException, InvalidPayAmountException {
+        productService.validateProduct(productNo);
+        productService.validatePayAmount(cartItemDTO);
     }
 }

@@ -1,6 +1,8 @@
 package me.daniel.controller.exception;
 
 import me.daniel.exceptions.EmptyCookiesException;
+import me.daniel.exceptions.InvalidPayAmountException;
+import me.daniel.exceptions.InvalidProductException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,8 +18,6 @@ import java.io.UnsupportedEncodingException;
 public class CartExceptionController {
 
     private static final String UNSUPPORTED_ENCODING = "인코딩을 지원하지 않는 형식의 쿠키입니다.";
-    private static final String EMPTY_COOKIE = "쿠키가 없습니다.";
-
 
     @ExceptionHandler(UnsupportedEncodingException.class)
     public ResponseEntity<String> unsupportedEncodingException() {
@@ -27,9 +27,23 @@ public class CartExceptionController {
     }
 
     @ExceptionHandler(EmptyCookiesException.class)
-    public ResponseEntity<String> emptyCookiesException(){
+    public ResponseEntity<String> emptyCookiesException(EmptyCookiesException e) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(EMPTY_COOKIE);
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidProductException.class)
+    public ResponseEntity<String> invalidProductException(InvalidProductException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidPayAmountException.class)
+    public ResponseEntity<String> invalidPayAmountException(InvalidPayAmountException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
     }
 }
