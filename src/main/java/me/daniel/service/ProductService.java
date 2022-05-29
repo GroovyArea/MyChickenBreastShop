@@ -80,7 +80,7 @@ public class ProductService {
     }
 
     public void validatePayAmount(CartItemDTO cartItemDTO) throws InvalidPayAmountException {
-        if (productMapper.selectNoProduct(cartItemDTO.getProductNo()).getProductPrice() * cartItemDTO.getProductStock() != cartItemDTO.getProductStock()) {
+        if (productMapper.selectNoProduct(cartItemDTO.getProductNo()).getProductPrice() * cartItemDTO.getProductStock() != cartItemDTO.getProductPrice()) {
             throw new InvalidPayAmountException(INVALID_PAY_AMOUNT);
         }
     }
