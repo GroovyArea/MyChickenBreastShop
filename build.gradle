@@ -53,6 +53,8 @@ dependencies {
 
     // Mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
 }
 
 tasks.named('test') {
