@@ -6,6 +6,7 @@ import javax.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,10 +17,11 @@ import java.util.Optional;
  * <pre>
  *     <b>History</b>
  *     김남영, 1.0, 2022.05.21 최초 작성
+ *     김남영, 1.1, 2022.05.29 총 가격, 상품 번호 배열 메서드 추가
  * </pre>
  *
  * @author 김남영
- * @version 1.0
+ * @version 1.1
  */
 public class CookieUtil {
 
@@ -37,5 +39,41 @@ public class CookieUtil {
     public static Map<Integer, CartItemDTO> getCartItemDTOMap(Cookie responseCartCookie) throws UnsupportedEncodingException {
         String cookieValue = responseCartCookie.getValue();
         return JsonUtil.stringToMap(URLDecoder.decode(cookieValue, ENC_TYPE), Integer.class, CartItemDTO.class);
+    }
+
+    /**
+     * 카드 안의 상품 번호 배열 반환 메서드
+     * @param responseCartCookie 응답 카트 쿠키
+     * @return 상품 번호 배열
+     * @throws UnsupportedEncodingException 인코딩 예외
+     */
+    public static String[] getItemNoArr(Cookie responseCartCookie) throws UnsupportedEncodingException {
+        CartItemDTO[] cartArr = getCartArr(responseCartCookie);
+        String[] productNoArr = new String[cartArr.length];
+        for (int i = 0; i < cartArr.length; i++) {
+            productNoArr[i] = String.valueOf(cartArr[i].getProductNo());
+        }
+        return productNoArr;
+    }
+
+    /**
+     * 카듸 안의 상품 총 가격 반환 메서드
+     * @param responseCartCookie 응답 카트 쿠키
+     * @return 상품 총 가격
+     * @throws UnsupportedEncodingException 인코딩 예외
+     */
+    public static int getTotalAmount(Cookie responseCartCookie) throws UnsupportedEncodingException {
+        CartItemDTO[] cartArr = getCartArr(responseCartCookie);
+        int totalAmount = 0;
+        for (CartItemDTO cartItemDTO : cartArr) {
+            totalAmount += cartItemDTO.getProductPrice();
+        }
+        return totalAmount;
+    }
+
+    private static CartItemDTO[] getCartArr(Cookie responseCartCookie) throws UnsupportedEncodingException {
+        Map<Integer, CartItemDTO> cartItemDTOMap = getCartItemDTOMap(responseCartCookie);
+        Collection<CartItemDTO> values = cartItemDTOMap.values();
+        return values.toArray(new CartItemDTO[0]);
     }
 }

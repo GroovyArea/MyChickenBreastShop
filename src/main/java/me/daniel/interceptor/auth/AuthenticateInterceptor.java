@@ -56,8 +56,10 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         /* 토큰 body에 존재하는 아이디와 등급 */
         final String tokenUserId = jwtTokenProvider.getUserId(requestToken);
 
-        /* request에 토큰 유저 권한 추가 */
+        /* request에 토큰 유저 권한 및 아이디 추가 */
         request.setAttribute("tokenUserRole", jwtTokenProvider.getUserGrade(requestToken));
+        request.setAttribute("tokenUserId", jwtTokenProvider.getUserId(requestToken));
+        request.setAttribute("token",requestToken);
 
         /* Redis DB에 저장된 토큰 추출 */
         final ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();

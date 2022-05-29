@@ -254,7 +254,7 @@ public class CartController {
      */
     private void createCartCookie() throws UnsupportedEncodingException {
         responseCartCookie = new Cookie(COOKIE_KEY, URLEncoder.encode(JsonUtil.objectToString(cartDTOMap), ENC_TYPE));
-        responseCartCookie.setPath("/api/carts");
+        responseCartCookie.setPath("/api");
     }
 
     /**
