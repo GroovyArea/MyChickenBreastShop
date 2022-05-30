@@ -51,6 +51,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
         /* 토큰 추출 및 검증 */
         String requestToken = authorizationExtractor.extract(request, BEARER_TOKEN);
+        log.info("토큰 값 : "+requestToken);
         jwtTokenProvider.validateToken(requestToken);
 
         /* 토큰 body에 존재하는 아이디와 등급 */
