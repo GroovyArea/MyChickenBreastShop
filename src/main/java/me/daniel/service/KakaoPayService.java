@@ -2,8 +2,8 @@ package me.daniel.service;
 
 import me.daniel.domain.DTO.OrderDTO;
 import me.daniel.domain.DTO.UserDTO;
-import me.daniel.domain.VO.KakaoPayApprovalVO;
-import me.daniel.domain.VO.KakaoPayReadyVO;
+import me.daniel.domain.DTO.KakaoPayApprovalDTO;
+import me.daniel.domain.DTO.KakaoPayReadyDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,18 +37,26 @@ public class KakaoPayService {
     @Value("${admin.key}")
     private String ADMIN_KEY;
 
-    private static final String HOST = "https://kapi.kakao.com";
-    private static final String APPROVAL_URI = "/api/order/completed";
-    private static final String CANCEL_URI = "/api/order/cancel";
-    private static final String FAIL_URI = "/api/order/fail";
-    private static final String KAKAO_PAY_READY = "/v1/payment/ready";
-    private static final String KAKAO_PAY_APPROVE = "/v1/payment/approve";
-    private static final String TEST_CID = "TC0ONETIME";
-    private static final Integer TAX_FREE_AMOUNT = 1000;
+    @Value("${kakao.host}")
+    private String HOST;
+    @Value("${kakao.uri.approval}")
+    private String APPROVAL_URI;
+    @Value("${kakao.uri.cancel}")
+    private String CANCEL_URI;
+    @Value("${kakao.uri.fail}")
+    private String FAIL_URI;
+    @Value("${kakao.pay.ready}")
+    private String KAKAO_PAY_READY;
+    @Value("${kakao.pay.approve}")
+    private String KAKAO_PAY_APPROVE;
+    @Value("${kakao.pay.cid}")
+    private String TEST_CID;
+    @Value("${kakao.pay.taxfree}")
+    private Integer TAX_FREE_AMOUNT;
 
     private static final Logger log = LoggerFactory.getLogger(KakaoPayService.class);
 
-    private KakaoPayReadyVO kakaoPayReadyVO;
+    private KakaoPayReadyDTO kakaoPayReadyDTO;
     private RestTemplate restTemplate;
     private String orderId;
     private String userId;
@@ -57,9 +65,11 @@ public class KakaoPayService {
     private UserDTO user;
 
     private final UserService userService;
+    private final ProductService productService;
 
-    public KakaoPayService(UserService userService) {
+    public KakaoPayService(UserService userService, ProductService productService) {
         this.userService = userService;
+        this.productService = productService;
     }
 
     public String getkakaoPayUrl(OrderDTO orderDTO, HttpServletRequest request) {
@@ -68,7 +78,7 @@ public class KakaoPayService {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        user =  userService.findById((String) request.getAttribute("tokenUserId"));
+        user = userService.findById((String) request.getAttribute("tokenUserId"));
         orderId = user.getUserId() + orderDTO.getItemName();
         userId = user.getUserId();
         itemName = orderDTO.getItemName();
@@ -84,7 +94,7 @@ public class KakaoPayService {
         params.add("total_amount", String.valueOf(totalAmount));
         params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
 
-        return getUrl(headers, params);
+        return getPayUrl(headers, params);
     }
 
     public String getCartKakaoPayUrl(String[] productNoArr, HttpServletRequest request, int totalAmount) {
@@ -93,9 +103,9 @@ public class KakaoPayService {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        user =  userService.findById((String) request.getAttribute("tokenUserId"));
-        itemName = productNoArr[0] + " 그 외 " + (productNoArr.length - 1);
-        orderId =  user.getUserId() + itemName;
+        user = userService.findById((String) request.getAttribute("tokenUserId"));
+        itemName = productService.findByNumber(Integer.parseInt(productNoArr[0])).getProductName() + " 그 외 " + (productNoArr.length - 1) + "개";
+        orderId = user.getUserId() + ", " + itemName;
         userId = user.getUserId();
         this.totalAmount = totalAmount;
 
@@ -110,10 +120,10 @@ public class KakaoPayService {
         params.add("total_amount", String.valueOf(totalAmount));
         params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
 
-        return getUrl(headers, params);
+        return getPayUrl(headers, params);
     }
 
-    public KakaoPayApprovalVO getKakaoPayInfo(String pg_token, String jwtToken) {
+    public KakaoPayApprovalDTO getKakaoPayInfo(String pg_token, String jwtToken) {
 
         log.info("오냐?");
         /* 서버로 요청할 헤더*/
@@ -124,7 +134,7 @@ public class KakaoPayService {
         // 서버로 요청할 Body
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", TEST_CID);
-        params.add("tid", kakaoPayReadyVO.getTid());
+        params.add("tid", kakaoPayReadyDTO.getTid());
         params.add("partner_order_id", orderId);
         params.add("partner_user_id", userId);
         params.add("pg_token", pg_token);
@@ -133,7 +143,7 @@ public class KakaoPayService {
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
         try {
-            return restTemplate.postForObject(HOST + KAKAO_PAY_APPROVE, body, KakaoPayApprovalVO.class);
+            return restTemplate.postForObject(HOST + KAKAO_PAY_APPROVE, body, KakaoPayApprovalDTO.class);
         } catch (RestClientException e) {
             log.error(e.getMessage());
         }
@@ -152,23 +162,27 @@ public class KakaoPayService {
 
     private void setParams(MultiValueMap<String, String> params, HttpServletRequest request) {
         params.add("cid", TEST_CID);
-        params.add("approval_url",  "http://" + request.getServerName() + APPROVAL_URI);
-        params.add("cancel_url", "http://" + request.getServerName() + CANCEL_URI);
-        params.add("fail_url", "http://" + request.getServerName() + FAIL_URI);
+        params.add("approval_url", getUrl(request) + APPROVAL_URI);
+        params.add("cancel_url", getUrl(request) + CANCEL_URI);
+        params.add("fail_url", getUrl(request) + FAIL_URI);
     }
 
-    private String getUrl(HttpHeaders headers, MultiValueMap<String, String> params) {
+    private String getPayUrl(HttpHeaders headers, MultiValueMap<String, String> params) {
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
         try {
             /* 서버 요청 후 응답 객체 받기 */
-            kakaoPayReadyVO = restTemplate.postForObject(HOST + KAKAO_PAY_READY,
-                    body, KakaoPayReadyVO.class);
+            kakaoPayReadyDTO = restTemplate.postForObject(HOST + KAKAO_PAY_READY,
+                    body, KakaoPayReadyDTO.class);
 
-            return kakaoPayReadyVO != null ? kakaoPayReadyVO.getNext_redirect_pc_url() : null;
+            return kakaoPayReadyDTO != null ? kakaoPayReadyDTO.getNext_redirect_pc_url() : null;
         } catch (RestClientException e) {
             log.error(e.getMessage());
         }
         return null;
+    }
+
+    private String getUrl(HttpServletRequest request) {
+        return request.getRequestURL().toString().replace(request.getRequestURI(), "");
     }
 }
