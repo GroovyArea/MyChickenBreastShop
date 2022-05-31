@@ -1,9 +1,11 @@
-package me.daniel.domain.VO;
+package me.daniel.domain.DTO;
 
-import java.beans.ConstructorProperties;
+import me.daniel.domain.VO.AmountVO;
+import me.daniel.domain.VO.CardVO;
+
 import java.util.Date;
 
-public class KakaoPayApprovalVO {
+public class KakaoPayApprovalDTO {
 
     //response
     private String aid, tid, cid, sid;
@@ -14,10 +16,7 @@ public class KakaoPayApprovalVO {
     private Integer quantity, tax_free_amount, vat_amount;
     private Date created_at, approved_at;
 
-    @ConstructorProperties({"aid", "tid","cid","sid","partner_order_id","partner_user_id",
-            "payment_method_type","amount","card_info","item_name","item_code","payload",
-            "quantity","tax_free_amount","vat_amount","created_at","approved_at",})
-    public KakaoPayApprovalVO(String aid, String tid, String cid, String sid, String partner_order_id, String partner_user_id, String payment_method_type, AmountVO amount, CardVO card_info, String item_name, String item_code, String payload, Integer quantity, Integer tax_free_amount, Integer vat_amount, Date created_at, Date approved_at) {
+      public KakaoPayApprovalDTO(String aid, String tid, String cid, String sid, String partner_order_id, String partner_user_id, String payment_method_type, AmountVO amount, CardVO card_info, String item_name, String item_code, String payload, Integer quantity, Integer tax_free_amount, Integer vat_amount, Date created_at, Date approved_at) {
         this.aid = aid;
         this.tid = tid;
         this.cid = cid;
@@ -35,6 +34,9 @@ public class KakaoPayApprovalVO {
         this.vat_amount = vat_amount;
         this.created_at = created_at;
         this.approved_at = approved_at;
+    }
+
+    public KakaoPayApprovalDTO() {
     }
 
     public String getAid() {
