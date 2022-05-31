@@ -1,11 +1,10 @@
 package me.daniel.controller.order;
 
+import me.daniel.domain.DTO.KakaoPayApprovalDTO;
 import me.daniel.domain.DTO.OrderDTO;
-import me.daniel.domain.VO.KakaoPayApprovalVO;
 import me.daniel.interceptor.auth.Auth;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.KakaoPayService;
-import me.daniel.service.UserService;
 import me.daniel.utility.CookieUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,27 +43,22 @@ public class OrderController {
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
 
     private final KakaoPayService kakaoPayService;
-    private final UserService userService;
 
-    public OrderController(KakaoPayService kakaoPayService, UserService userService) {
+    public OrderController(KakaoPayService kakaoPayService) {
         this.kakaoPayService = kakaoPayService;
-        this.userService = userService;
     }
 
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
     public Message orderAction(@RequestBody OrderDTO orderDTO,
-                                  HttpServletRequest request) {
+                               HttpServletRequest request) {
 
         String url = kakaoPayService.getkakaoPayUrl(orderDTO, request);
 
         if (url == null) {
-            return new Message
-                    .Builder(FAILED_PAY_MESSAGE)
-                    .message(INVALID_PARAMS)
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
+            return getFailedPayMessage();
         }
+
         return new Message
                 .Builder(url)
                 .message(PAY_URI_MSG)
@@ -86,16 +80,13 @@ public class OrderController {
         }
 
         String url = kakaoPayService.getCartKakaoPayUrl(CookieUtil.getItemNoArr(cartCookie.get()),
-               request,
+                request,
                 CookieUtil.getTotalAmount(cartCookie.get()));
 
         if (url == null) {
-            return new Message
-                    .Builder(FAILED_PAY_MESSAGE)
-                    .message(INVALID_PARAMS)
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
+            return getFailedPayMessage();
         }
+
         return new Message
                 .Builder(url)
                 .httpStatus(HttpStatus.OK)
@@ -107,9 +98,9 @@ public class OrderController {
     @GetMapping("/completed")
     public Message paySuccessAction(@RequestParam("pg_token") String pg_token, HttpServletRequest request) {
 
-        KakaoPayApprovalVO kakaoPayApprovalVO = kakaoPayService.getKakaoPayInfo(pg_token, (String) request.getAttribute("token"));
+        KakaoPayApprovalDTO kakaoPayReadyDTO = kakaoPayService.getKakaoPayInfo(pg_token, (String) request.getAttribute("token"));
 
-        if (kakaoPayApprovalVO == null) {
+        if (kakaoPayReadyDTO == null) {
             return new Message
                     .Builder(FAILED_INFO_MESSAGE)
                     .message(INVALID_PARAMS)
@@ -117,7 +108,7 @@ public class OrderController {
                     .build();
         }
         return new Message
-                .Builder(kakaoPayService.getKakaoPayInfo(pg_token, (String) request.getAttribute("token")))
+                .Builder(kakaoPayReadyDTO)
                 .message(INFO_URI_MSG)
                 .httpStatus(HttpStatus.OK)
                 .build();
@@ -131,5 +122,13 @@ public class OrderController {
     @GetMapping("/fail")
     public ResponseEntity<String> payFailAction() {
         return ResponseEntity.ok().body("결제에 실패했습니다.");
+    }
+
+    private Message getFailedPayMessage() {
+        return new Message
+                .Builder(FAILED_PAY_MESSAGE)
+                .message(INVALID_PARAMS)
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .build();
     }
 }
