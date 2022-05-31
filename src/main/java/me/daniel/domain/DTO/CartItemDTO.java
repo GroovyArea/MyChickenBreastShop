@@ -6,9 +6,9 @@ public class CartItemDTO {
 
     private final Integer productNo;
     private Integer productStock;
-    private final Integer productPrice;
+    private Integer productPrice;
 
-    @ConstructorProperties({"productNo","productStock","productPrice"})
+    @ConstructorProperties({"productNo", "productStock", "productPrice"})
     public CartItemDTO(Integer productNo, Integer productStock, Integer productPrice) {
         this.productNo = productNo;
         this.productStock = productStock;
@@ -31,4 +31,7 @@ public class CartItemDTO {
         this.productStock = productStock;
     }
 
+    public void setProductPrice(Integer productPrice) {
+        this.productPrice = productPrice;
+    }
 }

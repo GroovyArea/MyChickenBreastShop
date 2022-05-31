@@ -112,10 +112,10 @@ public class CartController {
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
-    public ResponseEntity<String> addCart(@RequestBody(required = true) CartItemDTO addCartDTO, HttpServletRequest request,
+    public ResponseEntity<String> addCart(@RequestBody CartItemDTO addCartDTO, HttpServletRequest request,
                                           HttpServletResponse response) throws UnsupportedEncodingException, InvalidProductException, InvalidPayAmountException {
         productNo = addCartDTO.getProductNo();
-
+        log.info(""+productNo);
         cartValidate(addCartDTO);
 
         getCartCookie(request);
@@ -124,11 +124,10 @@ public class CartController {
         if (responseCartCookie == null) {
             cartDTOMap = new HashMap<>();
 
-            createCartCookie();
-
             cartDTOMap.put(productNo, addCartDTO);
 
-            responseCartCookie.setValue(URLEncoder.encode(JsonUtil.objectToString(cartDTOMap), ENC_TYPE));
+            createCartCookie();
+
             response.addCookie(responseCartCookie);
 
             return ResponseEntity.ok().body(ResponseMessage.ADD_MESSAGE.getValue());
@@ -137,11 +136,15 @@ public class CartController {
         cartDTOMap = getCartItemDTOMap(responseCartCookie);
 
         CartItemDTO cartItem = cartDTOMap.get(productNo);
-        /* 기존 상품이 있을 경우 바꿔치기 해야됨 바뀔 데이터는 수량뿐이다.
+
+        /* 기존 상품이 있을 경우 수량과 가격을 변경
         상품 번호 = key, 상품 객체 = value */
         if (cartItem != null) {
             cartItem.setProductStock(addCartDTO.getProductStock() + cartItem.getProductStock());
+            cartItem.setProductPrice(addCartDTO.getProductPrice() + cartItem.getProductPrice());
             cartDTOMap.put(productNo, cartItem);
+            resetCartCookie(response);
+            return ResponseEntity.ok().body(ResponseMessage.ADD_MESSAGE.getValue());
         }
 
         cartDTOMap.put(productNo, addCartDTO);
@@ -254,7 +257,7 @@ public class CartController {
      */
     private void createCartCookie() throws UnsupportedEncodingException {
         responseCartCookie = new Cookie(COOKIE_KEY, URLEncoder.encode(JsonUtil.objectToString(cartDTOMap), ENC_TYPE));
-        responseCartCookie.setPath("/api/carts");
+        responseCartCookie.setPath("/api");
     }
 
     /**

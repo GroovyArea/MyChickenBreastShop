@@ -1,15 +1,18 @@
 package me.daniel.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpSession;
-
-@Controller
+@RestController
 public class HomeController {
 
-    @GetMapping("/")
-    public String hello(HttpSession session){
-        return "index";
+    @GetMapping("/tete")
+    public String hello(){
+        return "redirect:/aaa";
+    }
+
+    @GetMapping("/aaa")
+    public String ghgh(){
+        return "굿";
     }
 }
