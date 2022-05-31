@@ -43,32 +43,29 @@ public class CookieUtil {
 
     /**
      * 카드 안의 상품 번호 배열 반환 메서드
+     *
      * @param responseCartCookie 응답 카트 쿠키
      * @return 상품 번호 배열
      * @throws UnsupportedEncodingException 인코딩 예외
      */
     public static String[] getItemNoArr(Cookie responseCartCookie) throws UnsupportedEncodingException {
-        CartItemDTO[] cartArr = getCartArr(responseCartCookie);
-        String[] productNoArr = new String[cartArr.length];
-        for (int i = 0; i < cartArr.length; i++) {
-            productNoArr[i] = String.valueOf(cartArr[i].getProductNo());
-        }
-        return productNoArr;
+        return Arrays.stream(getCartArr(responseCartCookie))
+                .map(a -> String.valueOf(a.getProductNo()))
+                .toArray(String[]::new);
     }
 
     /**
-     * 카듸 안의 상품 총 가격 반환 메서드
+     * 카트 안의 상품 총 가격 반환 메서드
+     *
      * @param responseCartCookie 응답 카트 쿠키
      * @return 상품 총 가격
      * @throws UnsupportedEncodingException 인코딩 예외
      */
     public static int getTotalAmount(Cookie responseCartCookie) throws UnsupportedEncodingException {
-        CartItemDTO[] cartArr = getCartArr(responseCartCookie);
-        int totalAmount = 0;
-        for (CartItemDTO cartItemDTO : cartArr) {
-            totalAmount += cartItemDTO.getProductPrice();
-        }
-        return totalAmount;
+        return Arrays.stream(getCartArr(responseCartCookie))
+                .map(CartItemDTO::getProductPrice)
+                .mapToInt(Integer::intValue)
+                .sum();
     }
 
     private static CartItemDTO[] getCartArr(Cookie responseCartCookie) throws UnsupportedEncodingException {
