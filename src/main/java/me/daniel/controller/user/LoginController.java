@@ -10,10 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -44,7 +41,7 @@ public class LoginController {
      * @return Message 응답 정보 객체
      */
     @PostMapping("/login")
-    public Message loginAction(@ModelAttribute UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
+    public Message loginAction(@RequestBody UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
         userService.loginAuth(userLoginDTO);
         String jwtToken = userService.createToken(userLoginDTO);
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
