@@ -4,8 +4,10 @@ import me.daniel.domain.DTO.ProductListDTO;
 import me.daniel.domain.DTO.ProductModifyDTO;
 import me.daniel.enums.global.ResponseMessage;
 import me.daniel.enums.products.ChickenStatus;
+import me.daniel.interceptor.auth.Auth;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.ProductService;
+import me.daniel.utility.PageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,11 +39,11 @@ public class ProductController {
     /**
      * page 당 게시글 리스트를 반환 받기 위한 map 객체
      */
-    private Map<String, Object> pagerMap = new HashMap<>();
+    private final Map<String, Object> pagerMap = new HashMap<>();
     /**
      * 상품 삭제 정보를 담기 위한 map
      */
-    private Map<String, Object> deleteProductMap = new HashMap<>();
+    private final Map<String, Object> deleteProductMap = new HashMap<>();
 
 
     /**
@@ -63,9 +65,14 @@ public class ProductController {
      * @return ResponseEntity 페이지 정보, 상품 카테고리 리스트
      */
     @GetMapping("/list/{productCategoryNo}")
-    public ResponseEntity<List<ProductListDTO>> productList(@PathVariable(value = "productCategoryNo") int productCategoryNo, @RequestParam(defaultValue = "1") int pageNum) {
+    public ResponseEntity<List<ProductListDTO>> productList(@PathVariable(value = "productCategoryNo") int productCategoryNo,
+                                                            @RequestParam(defaultValue = "1") int pageNum,
+                                                            @RequestParam(required = false) String searchKeyword,
+                                                            @RequestParam(required = false) String searchValue) {
+        pagerMap.put("searchKeyword", searchKeyword);
+        pagerMap.put("searchValue", searchValue);
         pagerMap.put("productCategory", productCategoryNo);
-        pagerMap.put("startRow", getStartRow(pageNum) - 1);
+        pagerMap.put("startRow", PageUtil.getStartRow(pageNum, PRODUCT_SIZE) - 1);
         pagerMap.put("rowCount", BLOCK_SIZE);
 
         return ResponseEntity.ok()
@@ -79,6 +86,7 @@ public class ProductController {
      * @param productDTO 추가할 상품 정보
      * @return Message 응답 객체
      */
+    @Auth(role = Auth.Role.ADMIN)
     @PostMapping
     public Message addAction(@ModelAttribute ProductListDTO productDTO) {
         productService.addProduct(productDTO);
@@ -96,6 +104,7 @@ public class ProductController {
      * @param productModifyDTO 수정할 상품 정보
      * @return Message 응답 객체
      */
+    @Auth(role = Auth.Role.ADMIN)
     @PutMapping
     public Message modifyAction(@ModelAttribute ProductModifyDTO productModifyDTO) {
         productService.modifyProduct(productModifyDTO);
@@ -113,21 +122,12 @@ public class ProductController {
      * @param productNo 삭제할 상품 번호
      * @return ResponseEntity Success
      */
+    @Auth(role = Auth.Role.ADMIN)
     @DeleteMapping("/{productNo}")
     public ResponseEntity<String> deleteAction(@PathVariable int productNo) {
         deleteProductMap.put("productNo", productNo);
         deleteProductMap.put("productStatus", ChickenStatus.EXTINCTION.getValue());
         productService.removeProduct(deleteProductMap);
         return ResponseEntity.ok().body(ResponseMessage.DELETE_MESSAGE.getValue());
-    }
-
-    /**
-     * 상품 리스트 시작 행 구하기
-     *
-     * @param pageNum 현재 페이지 번호
-     * @return startRow 시작 행
-     */
-    private int getStartRow(int pageNum) {
-        return (pageNum - 1) * PRODUCT_SIZE + 1;
     }
 }
