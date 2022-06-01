@@ -1,9 +1,6 @@
 package me.daniel.service;
 
-import me.daniel.domain.DTO.UserDTO;
-import me.daniel.domain.DTO.UserJoinDTO;
-import me.daniel.domain.DTO.UserLoginDTO;
-import me.daniel.domain.DTO.UserModifyDTO;
+import me.daniel.domain.DTO.*;
 import me.daniel.domain.VO.UserVO;
 import me.daniel.enums.users.UserGrade;
 import me.daniel.exceptions.LoginFailException;
@@ -20,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -47,6 +46,13 @@ public class UserService {
         return modelMapper.map(userMapper.selectUser(userId), UserDTO.class);
     }
 
+    @Transactional(readOnly = true)
+    public List<UserListDTO> getUserList(Map<String, Object> searchMap) {
+        return userMapper.selectUserList(searchMap).stream()
+                .map(userVO -> modelMapper.map(userVO, UserListDTO.class))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void addUser(UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException {
         if (userMapper.selectUser(joinUser.getUserId()) != null) {
@@ -66,8 +72,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Map<String, Object> map) {
-        userMapper.deleteUser(map);
+    public void changeGradeUser(Map<String, Object> map) {
+        userMapper.changeGradeUser(map);
     }
 
     /**

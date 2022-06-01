@@ -82,7 +82,7 @@ public class UserController {
     public ResponseEntity<String> deleteAction(@PathVariable String userId) {
         deleteUserMap.put("userId", userId);
         deleteUserMap.put("userGrade", UserGrade.WITHDRAWAL_USER.getValue());
-        userService.deleteUser(deleteUserMap);
+        userService.changeGradeUser(deleteUserMap);
         return ResponseEntity.ok().body(ResponseMessage.DELETE_MESSAGE.getValue());
     }
 
