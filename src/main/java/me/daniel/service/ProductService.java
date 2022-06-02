@@ -58,6 +58,10 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public int getStockOfProduct(String productName) {
+        return productMapper.selectStockOfProduct(productName);
+    }
+
     @Transactional
     public void addProduct(ProductListDTO productDTO) {
         productMapper.insertProduct(modelMapper.map(productDTO, ProductVO.class));

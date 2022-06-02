@@ -17,9 +17,13 @@ public interface ProductMapper {
 
     List<ProductVO> selectCategoryList(Map<String, Object> map);
 
+    int selectStockOfProduct(String productName);
+
     void insertProduct(ProductVO productVO);
 
     void updateProduct(ProductVO productVO);
+
+    void updateStockOfProduct(Map<String, Object> map);
 
     void deleteProduct(Map<String, Object> map);
 
