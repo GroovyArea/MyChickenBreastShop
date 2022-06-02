@@ -2,6 +2,7 @@ package me.daniel.controller.order;
 
 import me.daniel.domain.DTO.KakaoPayApprovalDTO;
 import me.daniel.domain.DTO.OrderDTO;
+import me.daniel.exception.RunOutOfStockException;
 import me.daniel.interceptor.auth.Auth;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.KakaoPayService;
@@ -51,7 +52,7 @@ public class OrderController {
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
     public Message orderAction(@RequestBody OrderDTO orderDTO,
-                               HttpServletRequest request) {
+                               HttpServletRequest request) throws RunOutOfStockException {
 
         String url = kakaoPayService.getkakaoPayUrl(orderDTO, request);
 
@@ -68,7 +69,7 @@ public class OrderController {
 
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping("/cart")
-    public Message cartOrderAction(HttpServletRequest request) throws UnsupportedEncodingException {
+    public Message cartOrderAction(HttpServletRequest request) throws UnsupportedEncodingException, RunOutOfStockException {
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> cartCookie = CookieUtil.getCartCookie(cookies);
 
@@ -80,8 +81,8 @@ public class OrderController {
         }
 
         String url = kakaoPayService.getCartKakaoPayUrl(CookieUtil.getItemNoArr(cartCookie.get()),
-                request,
-                CookieUtil.getTotalAmount(cartCookie.get()));
+                CookieUtil.getStockArr(cartCookie.get()),
+                CookieUtil.getTotalAmount(cartCookie.get()), request);
 
         if (url == null) {
             return getFailedPayMessage();

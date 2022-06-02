@@ -1,9 +1,11 @@
 package me.daniel.service;
 
-import me.daniel.domain.DTO.OrderDTO;
-import me.daniel.domain.DTO.UserDTO;
-import me.daniel.domain.DTO.KakaoPayApprovalDTO;
-import me.daniel.domain.DTO.KakaoPayReadyDTO;
+import me.daniel.domain.DTO.*;
+import me.daniel.domain.VO.ProductVO;
+import me.daniel.domain.VO.UserVO;
+import me.daniel.exception.RunOutOfStockException;
+import me.daniel.mapper.ProductMapper;
+import me.daniel.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,12 +14,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 주문 서비스 <br>
@@ -25,11 +30,13 @@ import javax.servlet.http.HttpServletRequest;
  *
  * <pre>
  *     <b>History</b>
- *     김남영, 1.0, 2022.05.28 최초 작성
+ *     1.0, 2022.05.28 최초 작성
+ *     1.1, 2022.05.31 주문 조회 기능 추가
+ *     1.2, 2022.06.02 동시성 문제 및 재고 차감 기능 추가
  * </pre>
  *
  * @author 김남영
- * @version 1.0
+ * @version 1.2
  */
 @Service
 public class KakaoPayService {
@@ -62,23 +69,30 @@ public class KakaoPayService {
     private String userId;
     private String itemName;
     private Integer totalAmount;
-    private UserDTO user;
+    private UserVO user;
 
-    private final UserService userService;
-    private final ProductService productService;
+    private final UserMapper userMapper;
+    private final ProductMapper productMapper;
 
-    public KakaoPayService(UserService userService, ProductService productService) {
-        this.userService = userService;
-        this.productService = productService;
+    public KakaoPayService(UserMapper userMapper, ProductMapper productMapper) {
+        this.userMapper = userMapper;
+        this.productMapper = productMapper;
     }
 
-    public String getkakaoPayUrl(OrderDTO orderDTO, HttpServletRequest request) {
+    @Transactional
+    public String getkakaoPayUrl(OrderDTO orderDTO, HttpServletRequest request) throws RunOutOfStockException {
+
+        /* 재고 확인 */
+        int productStock = productMapper.selectStockOfProduct(orderDTO.getItemName());
+        if (orderDTO.getQuantity() > productStock) {
+            throw new RunOutOfStockException("해당 상품이 품절되었습니다.");
+        }
 
         /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        user = userService.findById((String) request.getAttribute("tokenUserId"));
+        user = userMapper.selectUser((String) request.getAttribute("tokenUserId"));
         orderId = user.getUserId() + orderDTO.getItemName();
         userId = user.getUserId();
         itemName = orderDTO.getItemName();
@@ -94,17 +108,29 @@ public class KakaoPayService {
         params.add("total_amount", String.valueOf(totalAmount));
         params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
 
+        /* 재고 차감 */
+        updateStock(productStock - orderDTO.getQuantity(), orderDTO.getItemName(), "product_name");
+
         return getPayUrl(headers, params);
     }
 
-    public String getCartKakaoPayUrl(String[] productNoArr, HttpServletRequest request, int totalAmount) {
+    @Transactional
+    public String getCartKakaoPayUrl(String[] productNoArr, Integer[] productStockArr, int totalAmount, HttpServletRequest request) throws RunOutOfStockException {
+
+        /* 재고 확인 */
+        for (int i = 0; i < productNoArr.length; i++) {
+            ProductVO product = productMapper.selectNoProduct(Integer.parseInt(productNoArr[i]));
+            if (productStockArr[i] > productMapper.selectStockOfProduct(product.getProductName())) {
+                throw new RunOutOfStockException("해당 상품이 품절되었습니다.");
+            }
+        }
 
         /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        user = userService.findById((String) request.getAttribute("tokenUserId"));
-        itemName = productService.findByNumber(Integer.parseInt(productNoArr[0])).getProductName() + " 그 외 " + (productNoArr.length - 1) + "개";
+        user = userMapper.selectUser((String) request.getAttribute("tokenUserId"));
+        itemName = productMapper.selectNoProduct(Integer.parseInt(productNoArr[0])).getProductName() + " 그 외 " + (productNoArr.length - 1) + "개";
         orderId = user.getUserId() + ", " + itemName;
         userId = user.getUserId();
         this.totalAmount = totalAmount;
@@ -120,12 +146,18 @@ public class KakaoPayService {
         params.add("total_amount", String.valueOf(totalAmount));
         params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
 
+        /* 재고 차감 */
+        for (int i = 0; i < productNoArr.length; i++) {
+            ProductVO product = productMapper.selectNoProduct(Integer.parseInt(productNoArr[i]));
+            updateStock(product.getProductStock() - productStockArr[i],
+                    product.getProductName(), "product_name");
+        }
+
         return getPayUrl(headers, params);
     }
 
     public KakaoPayApprovalDTO getKakaoPayInfo(String pg_token, String jwtToken) {
 
-        log.info("오냐?");
         /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
@@ -151,6 +183,12 @@ public class KakaoPayService {
         return null;
     }
 
+    /*    public KakaoPayOrderInfoDTO getOrderInfo(){
+     *//* 서버로 요청할 헤더*//*
+        HttpHeaders headers = new HttpHeaders();
+        setHeaders(headers);
+    }*/
+
     private void setHeaders(HttpHeaders headers) {
         restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
@@ -165,6 +203,14 @@ public class KakaoPayService {
         params.add("approval_url", getUrl(request) + APPROVAL_URI);
         params.add("cancel_url", getUrl(request) + CANCEL_URI);
         params.add("fail_url", getUrl(request) + FAIL_URI);
+    }
+
+    private void updateStock(int productStock, String columnData, String searchColumn) {
+        Map<String, Object> modifier = new HashMap<>();
+        modifier.put("productStock", productStock);
+        modifier.put("columnData", columnData);
+        modifier.put("searchColumn", searchColumn);
+        productMapper.updateStockOfProduct(modifier);
     }
 
     private String getPayUrl(HttpHeaders headers, MultiValueMap<String, String> params) {
