@@ -2,7 +2,7 @@ package me.daniel.controller.order;
 
 import me.daniel.domain.DTO.KakaoPayApprovalDTO;
 import me.daniel.domain.DTO.OrderDTO;
-import me.daniel.exception.RunOutOfStockException;
+import me.daniel.exceptions.RunOutOfStockException;
 import me.daniel.interceptor.auth.Auth;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.KakaoPayService;

@@ -3,7 +3,7 @@ package me.daniel.service;
 import me.daniel.domain.DTO.*;
 import me.daniel.domain.VO.ProductVO;
 import me.daniel.domain.VO.UserVO;
-import me.daniel.exception.RunOutOfStockException;
+import me.daniel.exceptions.RunOutOfStockException;
 import me.daniel.mapper.ProductMapper;
 import me.daniel.mapper.UserMapper;
 import org.slf4j.Logger;
@@ -41,9 +41,10 @@ import java.util.Map;
 @Service
 public class KakaoPayService {
 
+    private static final String RUN_OUT_OFF_STOCK = "해당 상품이 품절되었습니다.";
+
     @Value("${admin.key}")
     private String ADMIN_KEY;
-
     @Value("${kakao.host}")
     private String HOST;
     @Value("${kakao.uri.approval}")
@@ -85,7 +86,7 @@ public class KakaoPayService {
         /* 재고 확인 */
         int productStock = productMapper.selectStockOfProduct(orderDTO.getItemName());
         if (orderDTO.getQuantity() > productStock) {
-            throw new RunOutOfStockException("해당 상품이 품절되었습니다.");
+            throw new RunOutOfStockException(RUN_OUT_OFF_STOCK);
         }
 
         /* 서버로 요청할 헤더*/
@@ -121,7 +122,7 @@ public class KakaoPayService {
         for (int i = 0; i < productNoArr.length; i++) {
             ProductVO product = productMapper.selectNoProduct(Integer.parseInt(productNoArr[i]));
             if (productStockArr[i] > productMapper.selectStockOfProduct(product.getProductName())) {
-                throw new RunOutOfStockException("해당 상품이 품절되었습니다.");
+                throw new RunOutOfStockException(RUN_OUT_OFF_STOCK);
             }
         }
 
