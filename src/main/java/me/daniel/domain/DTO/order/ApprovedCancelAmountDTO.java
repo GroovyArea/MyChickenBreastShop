@@ -1,29 +1,19 @@
-
-package me.daniel.domain.VO;
+package me.daniel.domain.DTO.order;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class AmountVO {
+public class ApprovedCancelAmountDTO {
 
-    private String tid;
     private Integer total, taxFree, vat, point, discount;
 
-    public AmountVO() {
-    }
-
-    public AmountVO(String tid, Integer total, Integer taxFree, Integer vat, Integer point, Integer discount) {
-        this.tid = tid;
+    public ApprovedCancelAmountDTO(Integer total, Integer taxFree, Integer vat, Integer point, Integer discount) {
         this.total = total;
         this.taxFree = taxFree;
         this.vat = vat;
         this.point = point;
         this.discount = discount;
-    }
-
-    public String getTid() {
-        return tid;
     }
 
     public Integer getTaxFree() {
@@ -33,7 +23,6 @@ public class AmountVO {
     public Integer getTotal() {
         return total;
     }
-
 
     public Integer getVat() {
         return vat;
