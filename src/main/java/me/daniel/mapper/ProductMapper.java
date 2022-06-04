@@ -11,7 +11,7 @@ import java.util.Map;
 @Mapper
 public interface ProductMapper {
 
-    ProductVO selectNoProduct(Integer productNo);
+    ProductVO selectNoProduct(int productNo);
 
     ProductVO selectNameProduct(String productName);
 

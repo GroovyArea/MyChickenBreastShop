@@ -1,6 +1,6 @@
 package me.daniel.controller.cart;
 
-import me.daniel.domain.DTO.CartItemDTO;
+import me.daniel.domain.DTO.cart.CartItemDTO;
 import me.daniel.enums.global.ResponseMessage;
 import me.daniel.exceptions.InvalidPayAmountException;
 import me.daniel.exceptions.InvalidProductException;
