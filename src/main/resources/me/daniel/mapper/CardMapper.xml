@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.daniel.mapper.CardMapper">
+
+    <resultMap id="card" type="CardVO">
+        <result property="tid" column="tid"/>
+        <result property="issuerCorp" column="issuer_corp"/>
+        <result property="issuerCorpCode" column="issuer_corp_code"/>
+        <result property="bin" column="bin"/>
+        <result property="cardType" column="card_type"/>
+        <result property="installMonth" column="install_month"/>
+        <result property="interestFreeInstall" column="interest_free_install"/>
+    </resultMap>
+
+    <select id="selectCard" resultType="me.daniel.domain.VO.CardVO" resultMap="card">
+        SELECT *
+        FROM CARDINFO
+        WHERE tid = #{tid}
+    </select>
+
+    <insert id="insertCard">
+        INSERT INTO CARDINFO
+        VALUES (#{tId},
+                #{CardVO.issuerCorp},
+                #{CardVO.issuerCorpCode},
+                #{CardVO.bin},
+                #{CardVO.cardType},
+                #{CardVO.installMonth},
+                #{CardVO.interestFreeInstall})
+    </insert>
+</mapper>
