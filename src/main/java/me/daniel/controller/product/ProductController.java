@@ -1,7 +1,7 @@
 package me.daniel.controller.product;
 
-import me.daniel.domain.DTO.ProductListDTO;
-import me.daniel.domain.DTO.ProductModifyDTO;
+import me.daniel.domain.DTO.product.ProductListDTO;
+import me.daniel.domain.DTO.product.ProductModifyDTO;
 import me.daniel.enums.global.ResponseMessage;
 import me.daniel.enums.products.ChickenStatus;
 import me.daniel.responseMessage.Message;

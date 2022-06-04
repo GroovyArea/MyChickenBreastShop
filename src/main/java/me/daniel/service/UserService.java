@@ -1,9 +1,9 @@
 package me.daniel.service;
 
-import me.daniel.domain.DTO.UserDTO;
-import me.daniel.domain.DTO.UserJoinDTO;
-import me.daniel.domain.DTO.UserLoginDTO;
-import me.daniel.domain.DTO.UserModifyDTO;
+import me.daniel.domain.DTO.user.UserDTO;
+import me.daniel.domain.DTO.user.UserJoinDTO;
+import me.daniel.domain.DTO.user.UserLoginDTO;
+import me.daniel.domain.DTO.user.UserModifyDTO;
 import me.daniel.domain.VO.UserVO;
 import me.daniel.enums.users.UserGrade;
 import me.daniel.exceptions.LoginFailException;

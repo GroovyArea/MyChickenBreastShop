@@ -1,17 +1,14 @@
-package me.daniel.domain.DTO;
+package me.daniel.domain.DTO.product;
 
-public class ProductDTO {
+public class ProductListDTO {
 
     private Integer productNo;
     private String productName;
-    private String productCategory;
     private Integer productPrice;
     private Integer productStock;
-    private String productDetail;
     private String productImage;
-    private Integer productStatus;
 
-    public ProductDTO() {
+    public ProductListDTO() {
 
     }
 
@@ -31,14 +28,6 @@ public class ProductDTO {
         this.productName = productName;
     }
 
-    public String getProductCategory() {
-        return productCategory;
-    }
-
-    public void setProductCategory(String productCategory) {
-        this.productCategory = productCategory;
-    }
-
     public Integer getProductPrice() {
         return productPrice;
     }
@@ -55,27 +44,11 @@ public class ProductDTO {
         this.productStock = productStock;
     }
 
-    public String getProductDetail() {
-        return productDetail;
-    }
-
-    public void setProductDetail(String productDetail) {
-        this.productDetail = productDetail;
-    }
-
     public String getProductImage() {
         return productImage;
     }
 
     public void setProductImage(String productImage) {
         this.productImage = productImage;
-    }
-
-    public Integer getProductStatus() {
-        return productStatus;
-    }
-
-    public void setProductStatus(Integer productStatus) {
-        this.productStatus = productStatus;
     }
 }

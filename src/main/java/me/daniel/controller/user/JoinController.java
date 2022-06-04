@@ -1,7 +1,7 @@
 package me.daniel.controller.user;
 
-import me.daniel.domain.DTO.UserEmailRequestDTO;
-import me.daniel.domain.DTO.UserJoinDTO;
+import me.daniel.domain.DTO.user.UserEmailRequestDTO;
+import me.daniel.domain.DTO.user.UserJoinDTO;
 import me.daniel.exceptions.EmailAuthException;
 import me.daniel.exceptions.UserExistsException;
 import me.daniel.responseMessage.Message;
@@ -42,11 +42,7 @@ public class JoinController {
      */
     @PostMapping
     public Message joinAction(@RequestBody UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException, EmailAuthException {
-        try {
-            emailService.authEmail(joinUser);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
+        emailService.authEmail(joinUser);
         userService.addUser(joinUser);
         return new Message
                 .Builder(userService.findById(joinUser.getUserId()))

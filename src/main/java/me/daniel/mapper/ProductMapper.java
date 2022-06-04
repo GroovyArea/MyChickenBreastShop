@@ -11,15 +11,19 @@ import java.util.Map;
 @Mapper
 public interface ProductMapper {
 
-    ProductVO selectNoProduct(Integer productNo);
+    ProductVO selectNoProduct(int productNo);
 
     ProductVO selectNameProduct(String productName);
 
     List<ProductVO> selectCategoryList(Map<String, Object> map);
 
+    int selectStockOfProduct(String productName);
+
     void insertProduct(ProductVO productVO);
 
     void updateProduct(ProductVO productVO);
+
+    void updateStockOfProduct(Map<String, Object> map);
 
     void deleteProduct(Map<String, Object> map);
 
