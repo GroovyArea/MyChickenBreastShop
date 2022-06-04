@@ -1,11 +1,10 @@
 package me.daniel.service;
 
-import me.daniel.domain.DTO.*;
-import me.daniel.domain.VO.ProductVO;
-import me.daniel.domain.VO.UserVO;
+import me.daniel.domain.DTO.order.*;
+import me.daniel.domain.VO.*;
 import me.daniel.exceptions.RunOutOfStockException;
-import me.daniel.mapper.ProductMapper;
-import me.daniel.mapper.UserMapper;
+import me.daniel.mapper.*;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +42,7 @@ public class KakaoPayService {
 
     private static final String RUN_OUT_OFF_STOCK = "해당 상품이 품절되었습니다.";
 
-    @Value("${admin.key}")
+    @Value("${kakao.admin.key}")
     private String ADMIN_KEY;
     @Value("${kakao.host}")
     private String HOST;
@@ -61,10 +60,14 @@ public class KakaoPayService {
     private String TEST_CID;
     @Value("${kakao.pay.taxfree}")
     private Integer TAX_FREE_AMOUNT;
+    @Value("${kakao.pay.cancel}")
+    private String KAKAO_PAY_CANCEL;
+    @Value("${kakao.pay.order}")
+    private String KAKAP_PAY_ORDER;
 
     private static final Logger log = LoggerFactory.getLogger(KakaoPayService.class);
 
-    private KakaoPayReadyDTO kakaoPayReadyDTO;
+    private PayReadyDTO payReadyDTO;
     private RestTemplate restTemplate;
     private String orderId;
     private String userId;
@@ -72,32 +75,41 @@ public class KakaoPayService {
     private Integer totalAmount;
     private UserVO user;
 
+    private final ModelMapper modelMapper;
     private final UserMapper userMapper;
     private final ProductMapper productMapper;
+    private final CardMapper cardMapper;
+    private final AmountMapper amountMapper;
+    private final OrderMapper orderMapper;
 
-    public KakaoPayService(UserMapper userMapper, ProductMapper productMapper) {
+    public KakaoPayService(ModelMapper modelMapper, UserMapper userMapper, ProductMapper productMapper, CardMapper cardMapper, AmountMapper amountMapper, OrderMapper orderMapper) {
+        this.modelMapper = modelMapper;
         this.userMapper = userMapper;
         this.productMapper = productMapper;
+        this.cardMapper = cardMapper;
+        this.amountMapper = amountMapper;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
-    public String getkakaoPayUrl(OrderDTO orderDTO, HttpServletRequest request) throws RunOutOfStockException {
+    public String getkakaoPayUrl(Map<String, Object> map, HttpServletRequest request) throws RunOutOfStockException {
 
         /* 재고 확인 */
-        int productStock = productMapper.selectStockOfProduct(orderDTO.getItemName());
-        if (orderDTO.getQuantity() > productStock) {
+        int productStock = productMapper.selectStockOfProduct(String.valueOf(map.get("itemName")));
+        if (Integer.parseInt(map.get("quantity").toString()) > productStock) {
             throw new RunOutOfStockException(RUN_OUT_OFF_STOCK);
+            //log.info("얌마");
         }
 
         /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        user = userMapper.selectUser((String) request.getAttribute("tokenUserId"));
-        orderId = user.getUserId() + orderDTO.getItemName();
+        user = userMapper.selectUser(request.getAttribute("tokenUserId").toString());
+        orderId = user.getUserId() + " / " + map.get("itemName");
         userId = user.getUserId();
-        itemName = orderDTO.getItemName();
-        totalAmount = orderDTO.getTotalAmount();
+        itemName = String.valueOf(map.get("itemName"));
+        totalAmount = Integer.valueOf(map.get("totalAmount").toString());
 
         /* 서버로 요청할 body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -105,12 +117,12 @@ public class KakaoPayService {
         params.add("partner_order_id", orderId);
         params.add("partner_user_id", userId);
         params.add("item_name", itemName);
-        params.add("quantity", String.valueOf(orderDTO.getQuantity()));
+        params.add("quantity", String.valueOf(map.get("quantity").toString()));
         params.add("total_amount", String.valueOf(totalAmount));
         params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
 
         /* 재고 차감 */
-        updateStock(productStock - orderDTO.getQuantity(), orderDTO.getItemName(), "product_name");
+        updateStock(productStock - Integer.parseInt(map.get("quantity").toString()), String.valueOf(map.get("itemName")), "product_name");
 
         return getPayUrl(headers, params);
     }
@@ -157,17 +169,17 @@ public class KakaoPayService {
         return getPayUrl(headers, params);
     }
 
-    public KakaoPayApprovalDTO getKakaoPayInfo(String pg_token, String jwtToken) {
+    @Transactional
+    public PayApprovalDTO getKakaoPayInfo(String pg_token) {
 
         /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
-        headers.add("AuthorizationToken", "Bearer " + jwtToken);
 
-        // 서버로 요청할 Body
+        /* 서버로 요청할 Body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", TEST_CID);
-        params.add("tid", kakaoPayReadyDTO.getTid());
+        params.add("tid", payReadyDTO.getTid());
         params.add("partner_order_id", orderId);
         params.add("partner_user_id", userId);
         params.add("pg_token", pg_token);
@@ -175,8 +187,15 @@ public class KakaoPayService {
 
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
+        PayApprovalDTO approvalDTO = restTemplate.postForObject(HOST + KAKAO_PAY_APPROVE, body, PayApprovalDTO.class);
+        approvalDTO.setOrderStatus("결제 승인");
+
+        cardMapper.insertCard(modelMapper.map(approvalDTO.getCardInfo(), CardVO.class), approvalDTO.getTid());
+        amountMapper.insertAmount(modelMapper.map(approvalDTO.getAmount(), AmountVO.class), approvalDTO.getTid());
+        orderMapper.insertOrder(modelMapper.map(approvalDTO, OrderVO.class));
+
         try {
-            return restTemplate.postForObject(HOST + KAKAO_PAY_APPROVE, body, KakaoPayApprovalDTO.class);
+            return approvalDTO;
         } catch (RestClientException e) {
             log.error(e.getMessage());
         }
@@ -184,11 +203,59 @@ public class KakaoPayService {
         return null;
     }
 
-    /*    public KakaoPayOrderInfoDTO getOrderInfo(){
-     *//* 서버로 요청할 헤더*//*
+    @Transactional
+    public OrderInfoDTO getOrderDetail(String tid, String cid) {
+
+        /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
-    }*/
+
+        /* 서버로 요청할 Body */
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("cid", cid);
+        params.add("tid", tid);
+
+        HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
+
+        try {
+            OrderInfoDTO orderInfoDTO =
+                    restTemplate.postForObject(HOST + KAKAP_PAY_ORDER, body, OrderInfoDTO.class);
+            return orderInfoDTO;
+        } catch (RestClientException e) {
+            log.error(e.getMessage());
+        }
+        return null;
+    }
+
+    @Transactional
+    public OrderCancelDTO cancelKakaoPay(Map<String, Object> map) {
+
+        /* 서버로 요청할 헤더*/
+        HttpHeaders headers = new HttpHeaders();
+        setHeaders(headers);
+
+        /* 서버로 요청할 Body */
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("tid", String.valueOf(map.get("tid")));
+        params.add("cancel_amount", String.valueOf(map.get("cancelAmount")));
+        params.add("cancel_tax_free_amount", String.valueOf(map.get("cancelTaxFreeAmount")));
+        params.add("cid", TEST_CID);
+
+        HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
+
+        try {
+            OrderCancelDTO responseDTO =
+                    restTemplate.postForObject(HOST + KAKAO_PAY_CANCEL, body, OrderCancelDTO.class);
+            orderMapper.updateOrder(responseDTO.getTid());
+            return responseDTO;
+
+        } catch (RestClientException e) {
+            log.error(e.getMessage());
+        }
+
+        return null;
+    }
+
 
     private void setHeaders(HttpHeaders headers) {
         restTemplate = new RestTemplate();
@@ -219,10 +286,10 @@ public class KakaoPayService {
 
         try {
             /* 서버 요청 후 응답 객체 받기 */
-            kakaoPayReadyDTO = restTemplate.postForObject(HOST + KAKAO_PAY_READY,
-                    body, KakaoPayReadyDTO.class);
+            payReadyDTO = restTemplate.postForObject(HOST + KAKAO_PAY_READY,
+                    body, PayReadyDTO.class);
 
-            return kakaoPayReadyDTO != null ? kakaoPayReadyDTO.getNext_redirect_pc_url() : null;
+            return payReadyDTO != null ? payReadyDTO.getNextRedirectPcUrl() : null;
         } catch (RestClientException e) {
             log.error(e.getMessage());
         }

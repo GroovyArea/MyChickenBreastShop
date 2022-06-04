@@ -1,6 +1,13 @@
 package me.daniel.service;
 
+import me.daniel.domain.DTO.order.OrderInfoDTO;
+import me.daniel.mapper.OrderMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 주문 서비스 <br>
@@ -16,6 +23,21 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OrderService {
+
+    private final OrderMapper orderMapper;
+    private final ModelMapper modelMapper;
+
+    public OrderService(OrderMapper orderMapper, ModelMapper modelMapper) {
+        this.orderMapper = orderMapper;
+        this.modelMapper = modelMapper;
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderInfoDTO> getOrderInfoList(String userId) {
+        return orderMapper.selectOrderList(userId).stream()
+                .map(a -> modelMapper.map(a, OrderInfoDTO.class))
+                .collect(Collectors.toList());
+    }
 
 
 }
