@@ -4,7 +4,7 @@ import me.daniel.domain.DTO.UserListDTO;
 import me.daniel.interceptor.auth.Auth;
 import me.daniel.service.ProductService;
 import me.daniel.service.UserService;
-import me.daniel.utility.PageUtil;
+import me.daniel.utility.Pager;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,14 +76,9 @@ public class AdminController {
     public ResponseEntity<List<UserListDTO>> userSearchList(@RequestParam(defaultValue = "1") int pageNum,
                                                             @RequestParam String searchKeyword,
                                                             @RequestParam String searchValue) {
-        pagerMap.put("searchKeyword", searchKeyword);
-        pagerMap.put("searchValue", searchValue);
-        pagerMap.put("startRow", PageUtil.getStartRow(pageNum, USERS_SIZE));
-        pagerMap.put("rowCount", BLOCK_SIZE);
-
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(userService.getUserList(pagerMap));
+                .body(userService.getUserList(new Pager(searchKeyword, searchValue, Pager.getStartRow(pageNum, USERS_SIZE), BLOCK_SIZE)));
     }
 }

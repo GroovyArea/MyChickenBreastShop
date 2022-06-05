@@ -7,6 +7,7 @@ import me.daniel.domain.VO.ProductVO;
 import me.daniel.exceptions.InvalidPayAmountException;
 import me.daniel.exceptions.InvalidProductException;
 import me.daniel.mapper.ProductMapper;
+import me.daniel.utility.Pager;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,8 +53,8 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductListDTO> getCategoryList(Map<String, Object> map) {
-        return productMapper.selectCategoryList(map).stream()
+    public List<ProductListDTO> getCategoryList(Pager pager, int productCategoryNo) {
+        return productMapper.selectCategoryList(pager, productCategoryNo).stream()
                 .map(productVO -> modelMapper.map(productVO, ProductListDTO.class))
                 .collect(Collectors.toList());
     }

@@ -7,7 +7,7 @@ import me.daniel.enums.products.ChickenStatus;
 import me.daniel.interceptor.auth.Auth;
 import me.daniel.responseMessage.Message;
 import me.daniel.service.ProductService;
-import me.daniel.utility.PageUtil;
+import me.daniel.utility.Pager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,15 +69,9 @@ public class ProductController {
                                                             @RequestParam(defaultValue = "1") int pageNum,
                                                             @RequestParam(required = false) String searchKeyword,
                                                             @RequestParam(required = false) String searchValue) {
-        pagerMap.put("searchKeyword", searchKeyword);
-        pagerMap.put("searchValue", searchValue);
-        pagerMap.put("productCategory", productCategoryNo);
-        pagerMap.put("startRow", PageUtil.getStartRow(pageNum, PRODUCT_SIZE) - 1);
-        pagerMap.put("rowCount", BLOCK_SIZE);
-
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productService.getCategoryList(pagerMap));
+                .body(productService.getCategoryList(new Pager(searchKeyword, searchValue, Pager.getStartRow(pageNum, PRODUCT_SIZE), BLOCK_SIZE), productCategoryNo));
     }
 
     /**

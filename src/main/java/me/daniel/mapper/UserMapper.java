@@ -1,6 +1,7 @@
 package me.daniel.mapper;
 
 import me.daniel.domain.VO.UserVO;
+import me.daniel.utility.Pager;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,7 @@ public interface UserMapper {
 
     UserVO selectUser(String userId);
 
-    List<UserVO> selectUserList(Map<String, Object> map);
+    List<UserVO> selectUserList(Pager pager);
 
     void insertUser(UserVO userVO);
 

@@ -35,7 +35,7 @@
                 (SELECT PRODUCT_NO, PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_STOCK,
                 PRODUCT_IMAGE, PRODUCT_CATEGORY
                 FROM PRODUCT
-                WHERE ${searchKeyword} LIKE '%${searchValue}%') subQuery
+                WHERE ${pager.searchKeyword} LIKE '%${pager.searchValue}%') subQuery
                 WHERE subQuery.PRODUCT_CATEGORY = #{productCategory}
             </if>
             <if test="searchValue == null or searchValue ==''">
@@ -43,7 +43,7 @@
                 WHERE PRODUCT_CATEGORY = #{productCategory}
             </if>
         </trim>
-        LIMIT #{startRow}, #{rowCount}
+        LIMIT #{pager.startRow}, #{pager.rowCount}
     </select>
 
     <insert id="insertProduct">

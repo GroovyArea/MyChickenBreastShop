@@ -9,6 +9,7 @@ import me.daniel.exceptions.WithDrawUserException;
 import me.daniel.exceptions.WrongPasswordException;
 import me.daniel.jwt.JwtTokenProvider;
 import me.daniel.mapper.UserMapper;
+import me.daniel.utility.Pager;
 import me.daniel.utility.PasswordEncrypt;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -47,8 +48,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserListDTO> getUserList(Map<String, Object> searchMap) {
-        return userMapper.selectUserList(searchMap).stream()
+    public List<UserListDTO> getUserList(Pager pager) {
+        return userMapper.selectUserList(pager).stream()
                 .map(userVO -> modelMapper.map(userVO, UserListDTO.class))
                 .collect(Collectors.toList());
     }
@@ -78,11 +79,12 @@ public class UserService {
 
     /**
      * 로그인 인증 검사
+     *
      * @param userLoginDTO 로그인 회원
-     * @throws LoginFailException 회원 정보가 존재하지 않을 시 예외
+     * @throws LoginFailException       회원 정보가 존재하지 않을 시 예외
      * @throws NoSuchAlgorithmException 암호화 알고리즘 부적절 시 예외
-     * @throws WithDrawUserException 탈퇴 회원일 시 예외
-     * @throws WrongPasswordException 비밀번호 불일치 시 예외
+     * @throws WithDrawUserException    탈퇴 회원일 시 예외
+     * @throws WrongPasswordException   비밀번호 불일치 시 예외
      */
     public void loginAuth(UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
         UserVO authUser = userMapper.selectUser(userLoginDTO.getUserId());
@@ -105,6 +107,7 @@ public class UserService {
 
     /**
      * 로그인 유저 토큰 생성
+     *
      * @param userLoginDTO 로그인 회원
      * @return 토큰 값
      */
