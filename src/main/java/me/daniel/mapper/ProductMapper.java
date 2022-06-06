@@ -1,7 +1,9 @@
 package me.daniel.mapper;
 
 import me.daniel.domain.VO.ProductVO;
+import me.daniel.utility.Pager;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public interface ProductMapper {
 
     ProductVO selectNameProduct(String productName);
 
-    List<ProductVO> selectCategoryList(Map<String, Object> map);
+    List<ProductVO> selectCategoryList(@Param("pager") Pager pager, @Param("productCategory") int productCategoryNo);
 
     void insertProduct(ProductVO productVO);
 

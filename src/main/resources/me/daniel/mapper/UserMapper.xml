@@ -24,22 +24,36 @@
         WHERE user_id = #{userId}
     </select>
 
+    <select id="selectUserList" parameterType="java.util.Map" resultMap="user" resultType="UserVO">
+        SELECT *
+        FROM
+        <trim>
+            <if test="searchKeyword != null and searchValue != ''">
+                (SELECT USER_ID, USER_NAME, USER_PHONE, USER_EMAIL,
+                USER_MAIN_ADDRESS, USER_DETAIL_ADDRESS, USER_ZIPCODE, USER_GRADE
+                FROM USER
+                WHERE ${searchKeyword} LIKE '%${searchValue}%') subQuery
+            </if>
+            <if test="searchValue == null or searchValue == ''">
+                USER
+            </if>
+        </trim>
+        LIMIT #{startRow}, #{rowCount}
+    </select>
+
     <insert id="insertUser" parameterType="UserVO">
-        INSERT INTO
-        user (USER_ID, USER_PW, USER_NAME, USER_PHONE, USER_EMAIL,
-              USER_MAIN_ADDRESS, USER_DETAIL_ADDRESS, USER_ZIPCODE,
-              USER_SALT)
-        VALUES (
-                    #{userId},
-                    #{userPw},
-                    #{userName},
-                    #{userPhone},
-                    #{userEmail},
-                    #{userMainAddress},
-                    #{userDetailAddress},
-                    #{userZipcode},
-                    #{userSalt}
-                           )
+        INSERT INTO user (USER_ID, USER_PW, USER_NAME, USER_PHONE, USER_EMAIL,
+                          USER_MAIN_ADDRESS, USER_DETAIL_ADDRESS, USER_ZIPCODE,
+                          USER_SALT)
+        VALUES (#{userId},
+                #{userPw},
+                #{userName},
+                #{userPhone},
+                #{userEmail},
+                #{userMainAddress},
+                #{userDetailAddress},
+                #{userZipcode},
+                #{userSalt})
     </insert>
 
     <update id="updateUser">
@@ -64,13 +78,12 @@
                 user_zipcode = #{userZipcode}
             </if>
         </trim>
-            WHERE user_id = #{userId}
+        WHERE user_id = #{userId}
     </update>
 
-    <update id="deleteUser">
+    <update id="changeGradeUser">
         UPDATE user
-        SET
-        user_grade = #{userGrade}
+        SET user_grade = #{userGrade}
         WHERE user_id = #{userId}
     </update>
 </mapper>
