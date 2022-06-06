@@ -1,8 +1,8 @@
 package me.daniel.service;
 
-import me.daniel.domain.DTO.CartItemDTO;
-import me.daniel.domain.DTO.ProductListDTO;
-import me.daniel.domain.DTO.ProductModifyDTO;
+import me.daniel.domain.DTO.cart.CartItemDTO;
+import me.daniel.domain.DTO.product.ProductListDTO;
+import me.daniel.domain.DTO.product.ProductModifyDTO;
 import me.daniel.domain.VO.ProductVO;
 import me.daniel.exceptions.InvalidPayAmountException;
 import me.daniel.exceptions.InvalidProductException;
@@ -57,6 +57,10 @@ public class ProductService {
         return productMapper.selectCategoryList(pager, productCategoryNo).stream()
                 .map(productVO -> modelMapper.map(productVO, ProductListDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    public int getStockOfProduct(String productName) {
+        return productMapper.selectStockOfProduct(productName);
     }
 
     @Transactional

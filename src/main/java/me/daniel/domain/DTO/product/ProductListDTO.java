@@ -1,4 +1,4 @@
-package me.daniel.domain.DTO;
+package me.daniel.domain.DTO.product;
 
 public class ProductListDTO {
 

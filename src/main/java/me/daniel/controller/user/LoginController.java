@@ -1,6 +1,6 @@
 package me.daniel.controller.user;
 
-import me.daniel.domain.DTO.UserLoginDTO;
+import me.daniel.domain.DTO.user.UserLoginDTO;
 import me.daniel.exceptions.LoginFailException;
 import me.daniel.exceptions.WithDrawUserException;
 import me.daniel.exceptions.WrongPasswordException;

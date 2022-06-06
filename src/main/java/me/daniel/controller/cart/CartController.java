@@ -1,6 +1,6 @@
 package me.daniel.controller.cart;
 
-import me.daniel.domain.DTO.CartItemDTO;
+import me.daniel.domain.DTO.cart.CartItemDTO;
 import me.daniel.enums.global.ResponseMessage;
 import me.daniel.exceptions.InvalidPayAmountException;
 import me.daniel.exceptions.InvalidProductException;
@@ -54,6 +54,7 @@ public class CartController {
     private static final String NULL_CART_COOKIE = "장바구니 쿠키가 없습니다.";
     private static final String NULL_MODIFY_COOKIE = "변경하려는 장바구니의 상품 쿠키가 없습니다.";
     private static final String NULL_REMOVE_COOKIE = "삭제하려는 장바구니의 상품 쿠키가 없습니다.";
+    private static final String CART_INFO = "장바구니 목록 정보입니다.";
     private static final int KILL_COOKIE = 0;
 
     private final ProductService productService;
@@ -92,6 +93,7 @@ public class CartController {
             return new Message
                     .Builder(cartList)
                     .httpStatus(HttpStatus.OK)
+                    .message(CART_INFO)
                     .mediaType(MediaType.APPLICATION_JSON)
                     .build();
         }

@@ -1,6 +1,6 @@
 package me.daniel.utility;
 
-import me.daniel.domain.DTO.CartItemDTO;
+import me.daniel.domain.DTO.cart.CartItemDTO;
 
 import javax.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
@@ -42,7 +42,7 @@ public class CookieUtil {
     }
 
     /**
-     * 카드 안의 상품 번호 배열 반환 메서드
+     * 카트 안의 상품 번호 배열 반환 메서드
      *
      * @param responseCartCookie 응답 카트 쿠키
      * @return 상품 번호 배열
@@ -52,6 +52,19 @@ public class CookieUtil {
         return Arrays.stream(getCartArr(responseCartCookie))
                 .map(a -> String.valueOf(a.getProductNo()))
                 .toArray(String[]::new);
+    }
+
+    /**
+     * 카트 안의 상품 재고량 배열 반환 메서드
+     *
+     * @param responseCartCookie 응답 카트 쿠키
+     * @return 상품 재고량 배열
+     * @throws UnsupportedEncodingException 인코딩 예외
+     */
+    public static Integer[] getStockArr(Cookie responseCartCookie) throws UnsupportedEncodingException {
+        return Arrays.stream(getCartArr(responseCartCookie))
+                .map(CartItemDTO::getProductStock)
+                .toArray(Integer[]::new);
     }
 
     /**

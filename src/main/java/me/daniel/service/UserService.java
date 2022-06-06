@@ -1,6 +1,9 @@
 package me.daniel.service;
 
-import me.daniel.domain.DTO.*;
+import me.daniel.domain.DTO.user.UserDTO;
+import me.daniel.domain.DTO.user.UserJoinDTO;
+import me.daniel.domain.DTO.user.UserLoginDTO;
+import me.daniel.domain.DTO.user.UserModifyDTO;
 import me.daniel.domain.VO.UserVO;
 import me.daniel.enums.users.UserGrade;
 import me.daniel.exceptions.LoginFailException;
@@ -9,7 +12,6 @@ import me.daniel.exceptions.WithDrawUserException;
 import me.daniel.exceptions.WrongPasswordException;
 import me.daniel.jwt.JwtTokenProvider;
 import me.daniel.mapper.UserMapper;
-import me.daniel.utility.Pager;
 import me.daniel.utility.PasswordEncrypt;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -18,9 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -47,13 +47,6 @@ public class UserService {
         return modelMapper.map(userMapper.selectUser(userId), UserDTO.class);
     }
 
-    @Transactional(readOnly = true)
-    public List<UserListDTO> getUserList(Pager pager) {
-        return userMapper.selectUserList(pager).stream()
-                .map(userVO -> modelMapper.map(userVO, UserListDTO.class))
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public void addUser(UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException {
         if (userMapper.selectUser(joinUser.getUserId()) != null) {
@@ -73,18 +66,17 @@ public class UserService {
     }
 
     @Transactional
-    public void changeGradeUser(Map<String, Object> map) {
-        userMapper.changeGradeUser(map);
+    public void deleteUser(Map<String, Object> map) {
+        userMapper.deleteUser(map);
     }
 
     /**
      * 로그인 인증 검사
-     *
      * @param userLoginDTO 로그인 회원
-     * @throws LoginFailException       회원 정보가 존재하지 않을 시 예외
+     * @throws LoginFailException 회원 정보가 존재하지 않을 시 예외
      * @throws NoSuchAlgorithmException 암호화 알고리즘 부적절 시 예외
-     * @throws WithDrawUserException    탈퇴 회원일 시 예외
-     * @throws WrongPasswordException   비밀번호 불일치 시 예외
+     * @throws WithDrawUserException 탈퇴 회원일 시 예외
+     * @throws WrongPasswordException 비밀번호 불일치 시 예외
      */
     public void loginAuth(UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
         UserVO authUser = userMapper.selectUser(userLoginDTO.getUserId());
@@ -107,7 +99,6 @@ public class UserService {
 
     /**
      * 로그인 유저 토큰 생성
-     *
      * @param userLoginDTO 로그인 회원
      * @return 토큰 값
      */

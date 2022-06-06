@@ -1,7 +1,7 @@
 package me.daniel.service;
 
-import me.daniel.domain.DTO.UserEmailRequestDTO;
-import me.daniel.domain.DTO.UserJoinDTO;
+import me.daniel.domain.DTO.user.UserEmailRequestDTO;
+import me.daniel.domain.DTO.user.UserJoinDTO;
 import me.daniel.exceptions.EmailAuthException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class EmailService {
      * 인증 번호 검증
      *
      * @param joinUser 회원 가입 유저
-     * @throws EmailAuthException 인증 번호 불일 치 시 에외 발생
+     * @throws EmailAuthException 인증 번호 불일 치 시 예외 발생
      */
     public void authEmail(UserJoinDTO joinUser) throws EmailAuthException {
         String redisValue = redisService.getData(joinUser.getUserEmail());

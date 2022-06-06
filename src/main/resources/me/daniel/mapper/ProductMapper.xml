@@ -16,14 +16,12 @@
     </resultMap>
 
     <select id="selectNoProduct" resultType="ProductVO" resultMap="product">
-        select *
-        from product
+        select * from product
         where product_no = #{productNo}
     </select>
 
     <select id="selectNameProduct" resultType="ProductVO" resultMap="product">
-        select *
-        from product
+        select * from product
         where product_name = #{productName}
     </select>
 
@@ -51,20 +49,20 @@
             select nextval('product_seq') from dual
         </selectKey>
         INSERT INTO product VALUES (
-        #{productNo},
-        #{productName},
-        #{productCategory},
-        #{productPrice},
-        #{productStock},
-        #{productDetail},
-        #{productImage}
+                                    #{productNo},
+                                    #{productName},
+                                    #{productCategory},
+                                    #{productPrice},
+                                    #{productStock},
+                                    #{productDetail},
+                                    #{productImage}
         )
     </insert>
 
     <update id="updateProduct">
         UPDATE product
         <trim prefix="set" suffixOverrides=",">
-            <if test="productName != null and productName != ''">
+           <if test="productName != null and productName != ''">
                 product_name = #{productName},
             </if>
             <if test="productCategory != null">
@@ -86,12 +84,13 @@
                 product_status = #{productStatus}
             </if>
         </trim>
-        where product_no = #{productNo}
+         where product_no = #{productNo}
     </update>
 
     <update id="deleteProduct">
         UPDATE product
-        SET product_status = #{productStatus}
+        SET
+        product_status = #{productStatus}
         WHERE product_no = #{productNo}
     </update>
 </mapper>

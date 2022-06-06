@@ -2,69 +2,54 @@ package me.daniel.domain.VO;
 
 public class CardVO {
 
-    private String purchase_corp, purchase_corp_code;
-    private String issuer_corp, issuer_corp_code;
-    private String bin, card_type, install_month, approved_id, card_mid;
-    private String interest_free_install, card_item_code;
+    private String tid, userId;
+    private String issuerCorp, issuerCorpCode;
+    private String bin, cardType, installMonth;
+    private String interestFreeInstall;
 
     public CardVO() {
     }
 
-    public CardVO(String purchase_corp, String purchase_corp_code, String issuer_corp, String issuer_corp_code, String bin, String card_type, String install_month, String approved_id, String card_mid, String interest_free_install, String card_item_code) {
-        this.purchase_corp = purchase_corp;
-        this.purchase_corp_code = purchase_corp_code;
-        this.issuer_corp = issuer_corp;
-        this.issuer_corp_code = issuer_corp_code;
+    public CardVO(String tid, String userId, String issuerCorp, String issuerCorpCode, String bin, String cardType, String installMonth, String interestFreeInstall) {
+        this.tid = tid;
+        this.userId = userId;
+        this.issuerCorp = issuerCorp;
+        this.issuerCorpCode = issuerCorpCode;
         this.bin = bin;
-        this.card_type = card_type;
-        this.install_month = install_month;
-        this.approved_id = approved_id;
-        this.card_mid = card_mid;
-        this.interest_free_install = interest_free_install;
-        this.card_item_code = card_item_code;
+        this.cardType = cardType;
+        this.installMonth = installMonth;
+        this.interestFreeInstall = interestFreeInstall;
     }
 
-    public String getPurchase_corp() {
-        return purchase_corp;
+    public String getTid() {
+        return tid;
     }
 
-    public String getPurchase_corp_code() {
-        return purchase_corp_code;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getIssuer_corp() {
-        return issuer_corp;
+    public String getIssuerCorp() {
+        return issuerCorp;
     }
 
-    public String getIssuer_corp_code() {
-        return issuer_corp_code;
+    public String getIssuerCorpCode() {
+        return issuerCorpCode;
     }
 
     public String getBin() {
         return bin;
     }
 
-    public String getCard_type() {
-        return card_type;
+    public String getCardType() {
+        return cardType;
     }
 
-    public String getInstall_month() {
-        return install_month;
+    public String getInstallMonth() {
+        return installMonth;
     }
 
-    public String getApproved_id() {
-        return approved_id;
-    }
-
-    public String getCard_mid() {
-        return card_mid;
-    }
-
-    public String getInterest_free_install() {
-        return interest_free_install;
-    }
-
-    public String getCard_item_code() {
-        return card_item_code;
+    public String getInterestFreeInstall() {
+        return interestFreeInstall;
     }
 }
