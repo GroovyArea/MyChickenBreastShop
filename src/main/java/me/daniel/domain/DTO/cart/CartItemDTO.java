@@ -1,7 +1,12 @@
 package me.daniel.domain.DTO.cart;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.beans.ConstructorProperties;
 
+@Getter
+@Setter
 public class CartItemDTO {
 
     private final Integer productNo;
@@ -12,26 +17,6 @@ public class CartItemDTO {
     public CartItemDTO(Integer productNo, Integer productStock, Integer productPrice) {
         this.productNo = productNo;
         this.productStock = productStock;
-        this.productPrice = productPrice;
-    }
-
-    public Integer getProductNo() {
-        return productNo;
-    }
-
-    public Integer getProductStock() {
-        return productStock;
-    }
-
-    public Integer getProductPrice() {
-        return productPrice;
-    }
-
-    public void setProductStock(Integer productStock) {
-        this.productStock = productStock;
-    }
-
-    public void setProductPrice(Integer productPrice) {
         this.productPrice = productPrice;
     }
 }

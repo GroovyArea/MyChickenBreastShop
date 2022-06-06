@@ -1,6 +1,6 @@
 package me.daniel.controller.admin;
 
-import me.daniel.domain.DTO.UserListDTO;
+import me.daniel.domain.DTO.user.UserListDTO;
 import me.daniel.interceptor.auth.Auth;
 import me.daniel.service.ProductService;
 import me.daniel.service.UserService;

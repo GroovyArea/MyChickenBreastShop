@@ -1,4 +1,4 @@
-package me.daniel.domain.VO;
+package me.daniel.domain.DTO.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class UserVO {
+public class UserListDTO {
 
-    private String userId;
-    private String userPw;
+    private String userID;
     private String userName;
     private String userPhone;
     private String userEmail;
@@ -18,6 +17,4 @@ public class UserVO {
     private String userDetailAddress;
     private String userZipcode;
     private Integer userGrade;
-    private Integer userReserves;
-    private String userSalt;
 }

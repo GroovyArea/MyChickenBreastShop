@@ -66,8 +66,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Map<String, Object> map) {
-        userMapper.deleteUser(map);
+    public void changeGradeUser(Map<String, Object> map) {
+        userMapper.changeGradeUser(map);
     }
 
     /**
