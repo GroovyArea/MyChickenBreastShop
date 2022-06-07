@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.daniel.mapper.UserMapper">
+
+    <resultMap type="UserVO" id="user">
+        <result property="userId" column="user_id"/>
+        <result property="userPw" column="user_pw"/>
+        <result property="userName" column="user_name"/>
+        <result property="userPhone" column="user_phone"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="userMainAddress" column="user_main_address"/>
+        <result property="userDetailAddress" column="user_detail_address"/>
+        <result property="userZipcode" column="user_zipcode"/>
+        <result property="userGrade" column="user_grade"/>
+        <result property="userReserves" column="user_reserves"/>
+        <result property="userSalt" column="user_salt"/>
+    </resultMap>
+
+    <select id="selectUser" parameterType="java.lang.String" resultType="UserVO" resultMap="user">
+        SELECT *
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectUserList" parameterType="java.util.Map" resultMap="user" resultType="UserVO">
+        SELECT *
+        FROM
+        <trim>
+            <if test="searchKeyword != null and searchValue != ''">
+                (SELECT USER_ID, USER_NAME, USER_PHONE, USER_EMAIL,
+                USER_MAIN_ADDRESS, USER_DETAIL_ADDRESS, USER_ZIPCODE, USER_GRADE
+                FROM USER
+                WHERE ${searchKeyword} LIKE '%${searchValue}%') subQuery
+            </if>
+            <if test="searchValue == null or searchValue == ''">
+                USER
+            </if>
+        </trim>
+        LIMIT #{startRow}, #{rowCount}
+    </select>
+
+    <insert id="insertUser" parameterType="UserVO">
+        INSERT INTO user (USER_ID, USER_PW, USER_NAME, USER_PHONE, USER_EMAIL,
+                          USER_MAIN_ADDRESS, USER_DETAIL_ADDRESS, USER_ZIPCODE,
+                          USER_SALT)
+        VALUES (#{userId},
+                #{userPw},
+                #{userName},
+                #{userPhone},
+                #{userEmail},
+                #{userMainAddress},
+                #{userDetailAddress},
+                #{userZipcode},
+                #{userSalt})
+    </insert>
+
+    <update id="updateUser">
+        UPDATE user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userPw != null and userPw != ''">
+                user_pw = #{user_pw},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                user_phone = #{userPhone},
+            </if>
+            <if test="userMainAddress != null and userMainAddress != ''">
+                user_main_address = #{userMainAddress},
+            </if>
+            <if test="userDetailAddress != null and userDetailAddress != ''">
+                user_detail_address = #{userDetailAddress},
+            </if>
+            <if test="userZipcode != null and userZipcode != ''">
+                user_zipcode = #{userZipcode}
+            </if>
+        </trim>
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="changeGradeUser">
+        UPDATE user
+        SET user_grade = #{userGrade}
+        WHERE user_id = #{userId}
+    </update>
+</mapper>

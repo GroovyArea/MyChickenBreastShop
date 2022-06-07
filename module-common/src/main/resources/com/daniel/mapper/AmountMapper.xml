@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daniel.mapper.AmountMapper">
+
+    <resultMap id="amount" type="com.daniel.domain.VO.AmountVO">
+        <result property="tid" column="tid"/>
+        <result property="total" column="total"/>
+        <result property="taxFree" column="tax_free"/>
+        <result property="vat" column="vat"/>
+        <result property="point" column="point"/>
+        <result property="discount" column="discount"/>
+    </resultMap>
+
+    <select id="selectAmount" resultMap="amount" resultType="AmountVO">
+        SELECT *
+        FROM AMOUNT
+        WHERE tid = #{tid}
+    </select>
+
+    <insert id="insertAmount">
+        INSERT INTO AMOUNT
+        VALUES (#{tId},
+                #{amountVO.total},
+                #{amountVO.taxFree},
+                #{amountVO.vat},
+                #{amountVO.point},
+                #{amountVO.discount})
+    </insert>
+</mapper>

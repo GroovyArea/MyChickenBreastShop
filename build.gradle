@@ -1,62 +1,87 @@
+buildscript {
+    ext {
+        springBootVersion = '2.3.12.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.3.12.RELEASE'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
 
-repositories {
-    mavenCentral()
+    group 'com.example'
+    version '0.0.1-SNAPSHOT'
+    sourceCompatibility = '11'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        //Spring Boot
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+        //Lombok
+        implementation 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        // DataBase Connection
+        implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+        runtimeOnly 'mysql:mysql-connector-java:8.0.25'
+
+        // Thymeleaf
+        //implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+        //implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
+        //implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+        //jdbcLogging
+        implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
+        //Flyway
+        implementation("org.flywaydb:flyway-core:6.5.7")
+
+        //modelMapper
+        implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+
+        //JWT
+        implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+        implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+        implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+        //compile "javax.xml.bind:jaxb-api"
+        /*https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api*/
+        implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+
+        // RedisDB
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+        // Mail
+        implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+        implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }
 
-dependencies {
-    //Spring Boot
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+/*project(':module-mail') {
 
-    //Lombok
-    implementation 'org.projectlombok:lombok'
-    annotationProcessor('org.projectlombok:lombok')
+}*/
 
-    // DataBase Connection
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    runtimeOnly 'mysql:mysql-connector-java:8.0.25'
-
-    // Thymeleaf
-    //implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    //implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
-    //implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-
-    //jdbcLogging
-    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
-
-    //Flyway
-    implementation("org.flywaydb:flyway-core:6.5.7")
-
-    //modelMapper
-    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
-
-    //JWT
-    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
-    implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
-    implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
-    //compile "javax.xml.bind:jaxb-api"
-    /*https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api*/
-    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-
-    // RedisDB
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-    // Mail
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
-
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
