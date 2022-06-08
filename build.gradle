@@ -81,7 +81,9 @@ subprojects {
     }
 }
 
-/*project(':module-mail') {
-
-}*/
+project(':module-mail') {
+    dependencies {
+        compileOnly project(':module-common')
+    }
+}
 
