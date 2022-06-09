@@ -61,7 +61,7 @@ public class JoinController {
      */
     @PostMapping("/email")
     public ResponseEntity<String> authEmail(@RequestBody UserEmailRequestDTO emailRequestDTO) {
-        emailService.sendEmail(emailRequestDTO);
+        emailService.saveEmailOutBox(emailRequestDTO);
         return ResponseEntity.ok().body(EMAIL_MESSAGE);
     }
 }
