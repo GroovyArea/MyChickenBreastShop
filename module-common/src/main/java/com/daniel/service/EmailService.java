@@ -61,7 +61,7 @@ public class EmailService {
      * @param emailRequestDTO 이메일 DTO
      */
     @Transactional
-    public void saveEmailOutBox(UserEmailRequestDTO emailRequestDTO) {
+    public void saveEmailKey(UserEmailRequestDTO emailRequestDTO) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiredTime = now.plusMinutes(5);
         EmailKey emailKey = toEmailKeyVO(expiredTime, emailRequestDTO.getUserEmail());
