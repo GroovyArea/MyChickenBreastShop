@@ -48,9 +48,22 @@ public class CookieUtil {
      * @return 상품 번호 배열
      * @throws UnsupportedEncodingException 인코딩 예외
      */
-    public static String[] getItemNoArr(Cookie responseCartCookie) throws UnsupportedEncodingException {
+    public static Integer[] getItemNoArr(Cookie responseCartCookie) throws UnsupportedEncodingException {
         return Arrays.stream(getCartArr(responseCartCookie))
-                .map(a -> String.valueOf(a.getProductNo()))
+                .map(CartItemDTO::getProductNo)
+                .toArray(Integer[]::new);
+    }
+
+    /**
+     * 카트 안의 상품 이름 배열 반환 메서드
+     *
+     * @param responseCartCookie 응답 카트 쿠키
+     * @return 상품 이름 배열
+     * @throws UnsupportedEncodingException 인코딩 예외
+     */
+    public static String[] getItemNameArr(Cookie responseCartCookie) throws UnsupportedEncodingException {
+        return Arrays.stream(getCartArr(responseCartCookie))
+                .map(CartItemDTO::getProductName)
                 .toArray(String[]::new);
     }
 
