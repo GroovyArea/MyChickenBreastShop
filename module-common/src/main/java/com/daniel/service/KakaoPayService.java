@@ -141,12 +141,12 @@ public class KakaoPayService {
     @Transactional
     public String getCartKakaoPayUrl(Integer[] productNoArr, String[] productNameArr, Integer[] productStockArr, int totalAmount, HttpServletRequest request) throws RunOutOfStockException {
 
-        List<OrderCreated> orderCartList =
+        List<OrderCreated> orderCreatedCartList =
                 getOrderCreatedList(productNoArr, productNameArr, productStockArr, totalAmount);
 
         /* 재고 확인 이벤트 발생 */
         applicationEventPublisher.publishEvent(
-                outBoxEventCartBuilder.createOutBoxEvent(orderCartList)
+                outBoxEventCartBuilder.createOutBoxEvent(orderCreatedCartList)
         );
 
         /* 서버로 요청할 헤더*/
