@@ -117,7 +117,7 @@ public class CartController {
     public ResponseEntity<String> addCart(@RequestBody CartItemDTO addCartDTO, HttpServletRequest request,
                                           HttpServletResponse response) throws UnsupportedEncodingException, InvalidProductException, InvalidPayAmountException {
         productNo = addCartDTO.getProductNo();
-        log.info(""+productNo);
+
         cartValidate(addCartDTO);
 
         getCartCookie(request);

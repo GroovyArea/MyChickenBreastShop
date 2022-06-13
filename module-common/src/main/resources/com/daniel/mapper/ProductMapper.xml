@@ -98,7 +98,7 @@
     <update id="updateStockOfProduct">
         UPDATE PRODUCT
         SET PRODUCT_STOCK = #{productStock}
-        WHERE ${searchColumn} = #{columndata}
+        WHERE ${searchColumn} = #{columnData}
     </update>
 
     <update id="deleteProduct">

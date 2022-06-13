@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface OutBoxEmailMapper {
 
-    List<OutBox> selectAllOutBox();
+    List<OutBox> selectAllEmailOutBox();
 
     void insertOutBox(OutBox outBox);
 

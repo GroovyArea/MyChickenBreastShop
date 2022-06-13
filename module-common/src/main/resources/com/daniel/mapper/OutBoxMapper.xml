@@ -4,13 +4,41 @@
 
 <mapper namespace="com.daniel.mapper.OutBoxMapper">
 
-    <insert id="insertOutBox">
+    <resultMap id="outBoxOrder" type="OutBox">
+        <result property="id" column="id"/>
+        <result property="aggregateId" column="aggregate_id"/>
+        <result property="aggregateType" column="aggregate_type"/>
+        <result property="eventType" column="event_type"/>
+        <result property="payload" column="payload"/>
+    </resultMap>
+
+    <select id="selectAllOrderOutBox" resultType="com.daniel.domain.VO.OutBox" resultMap="outBoxOrder">
+        SELECT *
+        FROM `OUTBOX-ORDER`
+    </select>
+
+    <insert id="insertEmailOutBox">
         INSERT INTO `OUTBOX-EMAIL`(AGGREGATE_ID, AGGREGATE_TYPE, EVENT_TYPE, PAYLOAD)
-        VALUES (
-                #{aggregateId},
+        VALUES (#{aggregateId},
                 #{aggregateType},
                 #{eventType},
                 #{payload})
     </insert>
 
+    <insert id="insertOrderOutBox">
+        INSERT INTO `OUTBOX-ORDER`(AGGREGATE_ID, AGGREGATE_TYPE, EVENT_TYPE, PAYLOAD)
+        VALUES (#{aggregateId},
+                #{aggregateType},
+                #{eventType},
+                #{payload})
+    </insert>
+
+    <delete id="deleteAllById" parameterType="java.util.List">
+        DELETE FROM `OUTBOX-ORDER`
+        WHERE
+        ID IN
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

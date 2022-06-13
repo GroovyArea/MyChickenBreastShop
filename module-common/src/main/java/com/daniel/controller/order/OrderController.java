@@ -1,5 +1,6 @@
 package com.daniel.controller.order;
 
+import com.daniel.domain.DTO.order.OrderProductDTO;
 import com.daniel.domain.DTO.order.PayApprovalDTO;
 import com.daniel.exceptions.RunOutOfStockException;
 import com.daniel.interceptor.auth.Auth;
@@ -7,8 +8,8 @@ import com.daniel.responseMessage.Message;
 import com.daniel.service.KakaoPayService;
 import com.daniel.service.OrderService;
 import com.daniel.utility.CookieUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -33,6 +33,8 @@ import java.util.Optional;
  * @version 1.0
  */
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/order")
 public class OrderController {
 
@@ -46,15 +48,8 @@ public class OrderController {
     private static final String ORDER_INFO = "주문 상세 조회입니다.";
     private static final String CANCELED_PAY_MESSAGE = "결제를 취소하셨습니다.";
 
-    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
-
     private final KakaoPayService kakaoPayService;
     private final OrderService orderService;
-
-    public OrderController(KakaoPayService kakaoPayService, OrderService orderService) {
-        this.kakaoPayService = kakaoPayService;
-        this.orderService = orderService;
-    }
 
     @GetMapping("/{userId}")
     public Message getDBOrderInfo(@PathVariable String userId) {
@@ -78,10 +73,10 @@ public class OrderController {
 
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
-    public Message orderAction(@RequestBody Map<String, Object> map,
+    public Message orderAction(@RequestBody OrderProductDTO orderProductDTO,
                                HttpServletRequest request) throws RunOutOfStockException {
 
-        String url = kakaoPayService.getkakaoPayUrl(map, request);
+        String url = kakaoPayService.getkakaoPayUrl(orderProductDTO, request);
 
         if (url == null) {
             return new Message
@@ -111,9 +106,13 @@ public class OrderController {
                     .build();
         }
 
-        String url = kakaoPayService.getCartKakaoPayUrl(CookieUtil.getItemNoArr(cartCookie.get()),
-                CookieUtil.getStockArr(cartCookie.get()),
-                CookieUtil.getTotalAmount(cartCookie.get()), request);
+        Integer[] productNoArr = CookieUtil.getItemNoArr(cartCookie.get());
+        String[] productNameArr = CookieUtil.getItemNameArr(cartCookie.get());
+        Integer[] productStockArr = CookieUtil.getStockArr(cartCookie.get());
+        int totalAmount = CookieUtil.getTotalAmount(cartCookie.get());
+
+        String url = kakaoPayService.getCartKakaoPayUrl(productNoArr, productNameArr,
+                productStockArr, totalAmount, request);
 
         if (url == null) {
             return getFailedPayMessage();
@@ -163,4 +162,5 @@ public class OrderController {
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .build();
     }
+
 }

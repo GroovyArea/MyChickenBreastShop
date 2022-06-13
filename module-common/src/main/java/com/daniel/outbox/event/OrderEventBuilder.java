@@ -1,33 +1,30 @@
 package com.daniel.outbox.event;
 
-import com.daniel.domain.VO.EmailKey;
 import com.daniel.utility.ObjectMapperUtil;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-/**
- * 이벤트 빌더 <br>
- * 발생된 이벤트를 가공, payload를 json 형태로 변환 후 객체로 반환
- */
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class EmailEventBuilder implements OutBoxEventBuilder<EmailKeyCreated> {
+public class OrderEventBuilder implements OutBoxEventBuilder<OrderCreated> {
 
-    private static final String EVENT_ACTION = "이메일";
+    private static final String EVENT_ACTION = "주문";
 
     @Override
-    public OutBoxEvent createOutBoxEvent(EmailKeyCreated domainEvent) {
+    public OutBoxEvent createOutBoxEvent(OrderCreated domainEvent) {
 
         JsonNode jsonNode = ObjectMapperUtil.getMapper().convertValue(domainEvent, JsonNode.class);
 
         return new OutBoxEvent.OutBoxEventBuilder()
-                .aggregateId(domainEvent.getEmailKeyId())
-                .aggregateType(EmailKey.class.getSimpleName())
+                .aggregateId((long) domainEvent.getItemNumber())
+                .aggregateType(OrderCreated.class.getSimpleName())
                 .eventType(domainEvent.getClass().getSimpleName())
-                .eventAction(EVENT_ACTION)
                 .payload(jsonNode.toString())
+                .eventAction(EVENT_ACTION)
                 .build();
-
     }
+
 }

@@ -4,10 +4,14 @@ import com.daniel.domain.DTO.order.*;
 import com.daniel.domain.VO.*;
 import com.daniel.exceptions.RunOutOfStockException;
 import com.daniel.mapper.*;
+import com.daniel.outbox.event.OrderCreated;
+import com.daniel.outbox.event.OutBoxEventBuilder;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,8 +24,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * 주문 서비스 <br>
@@ -38,6 +42,7 @@ import java.util.Map;
  * @version 1.2
  */
 @Service
+@RequiredArgsConstructor
 public class KakaoPayService {
 
     private static final String RUN_OUT_OFF_STOCK = "해당 상품이 품절되었습니다.";
@@ -74,7 +79,11 @@ public class KakaoPayService {
     private String itemName;
     private Integer totalAmount;
     private UserVO user;
+    private boolean exceptionFlag = true;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final OutBoxEventBuilder<OrderCreated> outBoxEventOrderBuilder;
+    private final OutBoxEventBuilder<List<OrderCreated>> outBoxEventCartBuilder;
     private final ModelMapper modelMapper;
     private final UserMapper userMapper;
     private final ProductMapper productMapper;
@@ -82,34 +91,28 @@ public class KakaoPayService {
     private final AmountMapper amountMapper;
     private final OrderMapper orderMapper;
 
-    public KakaoPayService(ModelMapper modelMapper, UserMapper userMapper, ProductMapper productMapper, CardMapper cardMapper, AmountMapper amountMapper, OrderMapper orderMapper) {
-        this.modelMapper = modelMapper;
-        this.userMapper = userMapper;
-        this.productMapper = productMapper;
-        this.cardMapper = cardMapper;
-        this.amountMapper = amountMapper;
-        this.orderMapper = orderMapper;
-    }
-
     @Transactional
-    public String getkakaoPayUrl(Map<String, Object> map, HttpServletRequest request) throws RunOutOfStockException {
+    public String getkakaoPayUrl(OrderProductDTO orderProductDTO, HttpServletRequest request) throws RunOutOfStockException {
 
-        /* 재고 확인 */
-        int productStock = productMapper.selectStockOfProduct(String.valueOf(map.get("itemName")));
-        if (Integer.parseInt(map.get("quantity").toString()) > productStock) {
-            throw new RunOutOfStockException(RUN_OUT_OFF_STOCK);
-            //log.info("얌마");
-        }
+        /* 재고 확인 이벤트 발생 */
+        applicationEventPublisher.publishEvent(
+                outBoxEventOrderBuilder.createOutBoxEvent(OrderCreated.builder()
+                        .itemNumber(orderProductDTO.getItemNumber())
+                        .quantity(orderProductDTO.getQuantity())
+                        .itemName(orderProductDTO.getItemName())
+                        .totalAmount(orderProductDTO.getTotalAmount())
+                        .build())
+        );
 
         /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
         user = userMapper.selectUser(request.getAttribute("tokenUserId").toString());
-        orderId = user.getUserId() + " / " + map.get("itemName");
+        orderId = user.getUserId() + " / " + orderProductDTO.getItemName();
         userId = user.getUserId();
-        itemName = String.valueOf(map.get("itemName"));
-        totalAmount = Integer.valueOf(map.get("totalAmount").toString());
+        itemName = orderProductDTO.getItemName();
+        totalAmount = orderProductDTO.getTotalAmount();
 
         /* 서버로 요청할 body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -117,33 +120,41 @@ public class KakaoPayService {
         params.add("partner_order_id", orderId);
         params.add("partner_user_id", userId);
         params.add("item_name", itemName);
-        params.add("quantity", String.valueOf(map.get("quantity").toString()));
+        params.add("quantity", String.valueOf(orderProductDTO.getQuantity()));
         params.add("total_amount", String.valueOf(totalAmount));
         params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
 
+        /* 재고 품절 예외 발생 */
+        if (!this.exceptionFlag) {
+            throw new RunOutOfStockException();
+        }
+
+        int dbStock = productMapper.selectStockOfProduct(itemName);
+        int updateStock = dbStock - orderProductDTO.getQuantity();
+
         /* 재고 차감 */
-        updateStock(productStock - Integer.parseInt(map.get("quantity").toString()), String.valueOf(map.get("itemName")), "product_name");
+        updateStock(updateStock, itemName, "product_name");
 
         return getPayUrl(headers, params);
     }
 
     @Transactional
-    public String getCartKakaoPayUrl(String[] productNoArr, Integer[] productStockArr, int totalAmount, HttpServletRequest request) throws RunOutOfStockException {
+    public String getCartKakaoPayUrl(Integer[] productNoArr, String[] productNameArr, Integer[] productStockArr, int totalAmount, HttpServletRequest request) throws RunOutOfStockException {
 
-        /* 재고 확인 */
-        for (int i = 0; i < productNoArr.length; i++) {
-            ProductVO product = productMapper.selectNoProduct(Integer.parseInt(productNoArr[i]));
-            if (productStockArr[i] > productMapper.selectStockOfProduct(product.getProductName())) {
-                throw new RunOutOfStockException(RUN_OUT_OFF_STOCK);
-            }
-        }
+        List<OrderCreated> orderCreatedCartList =
+                getOrderCreatedList(productNoArr, productNameArr, productStockArr, totalAmount);
+
+        /* 재고 확인 이벤트 발생 */
+        applicationEventPublisher.publishEvent(
+                outBoxEventCartBuilder.createOutBoxEvent(orderCreatedCartList)
+        );
 
         /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
         user = userMapper.selectUser((String) request.getAttribute("tokenUserId"));
-        itemName = productMapper.selectNoProduct(Integer.parseInt(productNoArr[0])).getProductName() + " 그 외 " + (productNoArr.length - 1) + "개";
+        itemName = productMapper.selectNoProduct(productNoArr[0]).getProductName() + " 그 외 " + (productNoArr.length - 1) + "개";
         orderId = user.getUserId() + ", " + itemName;
         userId = user.getUserId();
         this.totalAmount = totalAmount;
@@ -154,18 +165,24 @@ public class KakaoPayService {
         params.add("partner_order_id", orderId);
         params.add("partner_user_id", userId);
         params.add("item_name", itemName);
-        params.add("item_code", String.join(", ", productNoArr));
+        params.add("item_code", String.join(", ", Arrays.stream(productNoArr).map(String::valueOf)
+                .toArray(String[]::new)));
         params.add("quantity", String.valueOf(productNoArr.length));
         params.add("total_amount", String.valueOf(totalAmount));
         params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
 
-        /* 재고 차감 */
-        for (int i = 0; i < productNoArr.length; i++) {
-            ProductVO product = productMapper.selectNoProduct(Integer.parseInt(productNoArr[i]));
-            int stockToChange = product.getProductStock() - productStockArr[i];
-            updateStock(stockToChange,
-                    product.getProductName(), "product_name");
+        /* 재고 품절 예외 발생 */
+        if (!this.exceptionFlag) {
+            throw new RunOutOfStockException();
         }
+
+        /* 재고 차감 */
+        IntStream.range(0, productStockArr.length).forEach(i -> {
+            int dbStock = productMapper.selectStockOfProduct(productNameArr[i]);
+            int updateStock = dbStock - productStockArr[i];
+            updateStock(updateStock,
+                    productNameArr[i], "product_name");
+        });
 
         return getPayUrl(headers, params);
     }
@@ -255,6 +272,14 @@ public class KakaoPayService {
         return null;
     }
 
+    @Transactional
+    public void updateStock(int productStock, String columnData, String searchColumn) {
+        Map<String, Object> modifier = new HashMap<>();
+        modifier.put("productStock", productStock);
+        modifier.put("columnData", columnData);
+        modifier.put("searchColumn", searchColumn);
+        productMapper.updateStockOfProduct(modifier);
+    }
 
     private void setHeaders(HttpHeaders headers) {
         restTemplate = new RestTemplate();
@@ -270,14 +295,6 @@ public class KakaoPayService {
         params.add("approval_url", getUrl(request) + APPROVAL_URI);
         params.add("cancel_url", getUrl(request) + CANCEL_URI);
         params.add("fail_url", getUrl(request) + FAIL_URI);
-    }
-
-    private void updateStock(int productStock, String columnData, String searchColumn) {
-        Map<String, Object> modifier = new HashMap<>();
-        modifier.put("productStock", productStock);
-        modifier.put("columnData", columnData);
-        modifier.put("searchColumn", searchColumn);
-        productMapper.updateStockOfProduct(modifier);
     }
 
     private String getPayUrl(HttpHeaders headers, MultiValueMap<String, String> params) {
@@ -297,5 +314,22 @@ public class KakaoPayService {
 
     private String getUrl(HttpServletRequest request) {
         return request.getRequestURL().toString().replace(request.getRequestURI(), "");
+    }
+
+    private List<OrderCreated> getOrderCreatedList(Integer[] productNoArr, String[] productNameArr, Integer[] productStockArr, int totalAmount) {
+        List<OrderCreated> orderCartList = new ArrayList<>();
+        for (int i = 0; i < productNameArr.length; i++) {
+            orderCartList.add(OrderCreated.builder()
+                    .itemNumber(productNoArr[i])
+                    .quantity(productStockArr[i])
+                    .itemName(productNameArr[i])
+                    .totalAmount(totalAmount)
+                    .build());
+        }
+        return orderCartList;
+    }
+
+    public void changeStockFlag(boolean flag) {
+        this.exceptionFlag = flag;
     }
 }

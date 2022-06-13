@@ -4,10 +4,17 @@ import com.daniel.domain.VO.OutBox;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface OutBoxMapper {
 
-    void insertOutBox(OutBox outbox);
+    List<OutBox> selectAllOrderOutBox();
 
+    void insertEmailOutBox(OutBox outbox);
+
+    void insertOrderOutBox(OutBox outBox);
+
+    void deleteAllById(List<Long> completedList);
 }

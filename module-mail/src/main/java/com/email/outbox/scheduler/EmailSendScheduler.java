@@ -42,7 +42,7 @@ public class EmailSendScheduler {
 
         log.info("이메일 전송 중...");
 
-        List<OutBox> outBoxList = outBoxMapper.selectAllOutBox();
+        List<OutBox> outBoxList = outBoxMapper.selectAllEmailOutBox();
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
             outBoxList.forEach(outBox -> {
