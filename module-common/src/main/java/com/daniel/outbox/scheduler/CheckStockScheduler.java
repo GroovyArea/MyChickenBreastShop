@@ -29,7 +29,6 @@ public class CheckStockScheduler {
     private final ProductMapper productMapper;
     private final KakaoPayService kakaoPayService;
 
-    @Transactional
     @Scheduled(cron = "0/10 * * * * ?")
     public void schedulingCheckStock() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -40,24 +39,30 @@ public class CheckStockScheduler {
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
             outBoxList.forEach(outBox -> {
-                String payload = outBox.getPayload();
-                try {
-                    JsonNode jsonNode = objectMapper.readTree(payload);
-                    String itemName = jsonNode.get("item_name").asText();
-
-                    if (productMapper.selectStockOfProduct(itemName) < Integer.parseInt(jsonNode.get("quantity").asText())) {
-                        kakaoPayService.changeStockFlag(false);
-                    }
-
-                    completedList.add(outBox.getId());
-
-                } catch (JsonProcessingException e) {
-                    log.error(e.getMessage());
-                }
+                outBoxStockCheck(objectMapper, completedList, outBox);
             });
             if (!completedList.isEmpty()) {
                 outBoxMapper.deleteAllById(completedList);
             }
+        }
+    }
+
+    @Transactional
+    void outBoxStockCheck(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
+        String payload = outBox.getPayload();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(payload);
+            String itemName = jsonNode.get("item_name").asText();
+
+            if (productMapper.selectStockOfProduct(itemName) < Integer.parseInt(jsonNode.get("quantity").asText())) {
+                kakaoPayService.changeStockFlag(false);
+            }
+
+            completedList.add(outBox.getId());
+
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            outBoxMapper.insertOrderOutBox(outBox);
         }
     }
 }
