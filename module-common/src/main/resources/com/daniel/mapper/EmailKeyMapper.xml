@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.daniel.mapper.EmailKeyMapper">
+
+    <resultMap id="email" type="EmailKey">
+        <result property="id" column="id"/>
+        <result property="emailKey" column="email_key"/>
+        <result property="email" column="email"/>
+        <result property="expiredAt" column="expired_at"/>
+    </resultMap>
+
+    <select id="selectEmailKey" parameterType="long" resultType="com.daniel.domain.VO.EmailKey" resultMap="email">
+        SELECT *
+        FROM EMAIL
+        WHERE ID = #{id}
+    </select>
+
+    <insert id="insertEmailKey" useGeneratedKeys="true" keyProperty="id" parameterType="com.daniel.domain.VO.EmailKey">
+        INSERT INTO EMAIL (EMAIL_KEY, EMAIL, EXPIRED_AT)
+        VALUES (#{emailKey},
+                #{email},
+                #{expiredAt})
+    </insert>
+
+</mapper>

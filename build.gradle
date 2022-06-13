@@ -23,7 +23,7 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
-    group 'com.example'
+    group 'com.daniel'
     version '0.0.1-SNAPSHOT'
     sourceCompatibility = '11'
 
@@ -35,6 +35,9 @@ subprojects {
         //Spring Boot
         implementation 'org.springframework.boot:spring-boot-starter-web'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+//        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+//        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
         //Lombok
         implementation 'org.projectlombok:lombok'
@@ -81,7 +84,9 @@ subprojects {
     }
 }
 
-/*project(':module-mail') {
-
-}*/
+project(':module-mail') {
+    dependencies {
+        compileOnly project(':module-common')
+    }
+}
 

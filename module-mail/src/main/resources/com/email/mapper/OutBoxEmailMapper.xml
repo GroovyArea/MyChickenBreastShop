@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.email.mapper.OutBoxEmailMapper">
+
+    <resultMap id="outBoxEmail" type="OutBox">
+        <result property="id" column="id"/>
+        <result property="aggregateId" column="aggregate_id"/>
+        <result property="aggregateType" column="aggregate_type"/>
+        <result property="eventType" column="event_type"/>
+        <result property="payload" column="payload"/>
+    </resultMap>
+
+    <select id="selectAllOutBox" resultType="com.email.domain.VO.OutBox">
+        SELECT *
+        FROM `OUTBOX-EMAIL`
+    </select>
+
+    <insert id="insertOutBox">
+        INSERT INTO `OUTBOX-EMAIL`(AGGREGATE_ID, AGGREGATE_TYPE, EVENT_TYPE, PAYLOAD)
+        VALUES (#{aggregateId},
+                #{aggregateType},
+                #{eventType},
+                #{payload})
+    </insert>
+
+    <delete id="deleteAllById" parameterType="java.util.List">
+        DELETE FROM `OUTBOX-EMAIL`
+        WHERE
+        ID IN
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>
