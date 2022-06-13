@@ -17,6 +17,14 @@
         FROM `OUTBOX-EMAIL`
     </select>
 
+    <insert id="insertOutBox">
+        INSERT INTO `OUTBOX-EMAIL`(AGGREGATE_ID, AGGREGATE_TYPE, EVENT_TYPE, PAYLOAD)
+        VALUES (#{aggregateId},
+                #{aggregateType},
+                #{eventType},
+                #{payload})
+    </insert>
+
     <delete id="deleteAllById" parameterType="java.util.List">
         DELETE FROM `OUTBOX-EMAIL`
         WHERE

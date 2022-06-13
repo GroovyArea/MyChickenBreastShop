@@ -36,7 +36,6 @@ public class EmailSendScheduler {
     private final SendMailService sendMailService;
     private final MailContentService mailContentService;
 
-    @Transactional
     @Scheduled(cron = "0/10 * * * * ?")
     public void schedulingValidNumberEmail() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -47,29 +46,37 @@ public class EmailSendScheduler {
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
             outBoxList.forEach(outBox -> {
-                String payload = outBox.getPayload();
-                try {
-                    JsonNode jsonNode = objectMapper.readTree(payload);
-                    String userEmail = jsonNode.get("email").asText();
-                    String authKey = jsonNode.get("email_key").asText();
-
-                    MailDTO content = mailContentService.createMailContent(payload);
-
-                    sendMailService.sendEmail(content);
-
-                    completedList.add(outBox.getId());
-
-                    redisService.setDataExpire(userEmail, authKey, EXPIRE_DURATION);
-                } catch (MailException e) {
-                    log.error("메일 발송 중 오류 발생 . . .");
-                } catch (FailedPayloadConvertException | JsonProcessingException e) {
-                    log.error(e.getMessage());
-                }
+                extracted(objectMapper, completedList, outBox);
             });
             if (!completedList.isEmpty()) {
                 outBoxMapper.deleteAllById(completedList);
             }
         }
     }
+
+    @Transactional
+    void extracted(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
+        String payload = outBox.getPayload();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(payload);
+            String userEmail = jsonNode.get("email").asText();
+            String authKey = jsonNode.get("email_key").asText();
+
+            MailDTO content = mailContentService.createMailContent(payload);
+
+            sendMailService.sendEmail(content);
+
+            completedList.add(outBox.getId());
+
+            redisService.setDataExpire(userEmail, authKey, EXPIRE_DURATION);
+        } catch (MailException e) {
+            log.error("메일 발송 중 오류 발생 . . .");
+            outBoxMapper.insertOutBox(outBox);
+        } catch (FailedPayloadConvertException | JsonProcessingException e) {
+            log.error(e.getMessage());
+            outBoxMapper.insertOutBox(outBox);
+        }
+    }
+
 
 }
