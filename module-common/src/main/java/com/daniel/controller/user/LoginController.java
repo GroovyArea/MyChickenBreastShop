@@ -1,16 +1,19 @@
 package com.daniel.controller.user;
 
 import com.daniel.domain.DTO.user.UserLoginDTO;
-import com.daniel.exceptions.LoginFailException;
-import com.daniel.exceptions.WithDrawUserException;
-import com.daniel.exceptions.WrongPasswordException;
-import com.daniel.responseMessage.Message;
+import com.daniel.exceptions.error.LoginFailException;
+import com.daniel.exceptions.error.WithDrawUserException;
+import com.daniel.exceptions.error.WrongPasswordException;
+import com.daniel.response.Message;
+import com.daniel.service.RedisService;
 import com.daniel.service.UserService;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -21,18 +24,14 @@ import java.security.NoSuchAlgorithmException;
  * @author 김남영
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class LoginController {
 
     private static final String LOGIN_MESSAGE = "Login succeed";
 
     private final UserService userService;
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    public LoginController(UserService userService, RedisTemplate<String, Object> redisTemplate) {
-        this.userService = userService;
-        this.redisTemplate = redisTemplate;
-    }
+    private final RedisService redisService;
 
     /**
      * login 처리
@@ -41,17 +40,17 @@ public class LoginController {
      * @return Message 응답 정보 객체
      */
     @PostMapping("/login")
-    public Message loginAction(@RequestBody UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
+    public ResponseEntity<Message> loginAction(@RequestBody UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
         userService.loginAuth(userLoginDTO);
-        String jwtToken = userService.createToken(userLoginDTO);
-        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(userLoginDTO.getUserId(), jwtToken);
 
-        return new Message
-                .Builder(jwtToken)
-                .message(LOGIN_MESSAGE)
-                .mediaType(MediaType.APPLICATION_JSON)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        String jwtToken = userService.createToken(userLoginDTO);
+        redisService.setData(userLoginDTO.getUserId(), jwtToken);
+
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(jwtToken)
+                        .message(LOGIN_MESSAGE)
+                        .build()
+        );
     }
 }

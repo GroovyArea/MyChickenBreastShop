@@ -2,7 +2,7 @@ package com.daniel.service;
 
 import com.daniel.domain.DTO.order.*;
 import com.daniel.domain.VO.*;
-import com.daniel.exceptions.RunOutOfStockException;
+import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.mapper.*;
 import com.daniel.outbox.event.OrderCreated;
 import com.daniel.outbox.event.OutBoxEventBuilder;

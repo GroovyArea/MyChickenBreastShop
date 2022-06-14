@@ -2,10 +2,9 @@ package com.daniel.controller.cart;
 
 import com.daniel.domain.DTO.cart.CartItemDTO;
 import com.daniel.enums.global.ResponseMessage;
-import com.daniel.exceptions.InvalidPayAmountException;
-import com.daniel.exceptions.InvalidProductException;
+import com.daniel.exceptions.error.InvalidPayAmountException;
+import com.daniel.exceptions.error.InvalidProductException;
 import com.daniel.interceptor.auth.Auth;
-import com.daniel.responseMessage.Message;
 import com.daniel.service.ProductService;
 import com.daniel.utility.CookieUtil;
 import com.daniel.utility.JsonUtil;
@@ -75,33 +74,24 @@ public class CartController {
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @GetMapping
-    public Message getCartList(HttpServletRequest request) throws UnsupportedEncodingException {
+    public ResponseEntity<Object> getCartList(HttpServletRequest request) throws UnsupportedEncodingException {
         getCartCookie(request);
         List<CartItemDTO> cartList;
         /* 장바구니 쿠키가 존재하지 않을 경우*/
         if (responseCartCookie == null) {
-            return new Message
-                    .Builder(NULL_CART_COOKIE)
-                    .httpStatus(HttpStatus.NO_CONTENT)
-                    .build();
+            return ResponseEntity
+                    .badRequest()
+                    .body(NULL_CART_COOKIE);
         }
 
         getCartDTOMap(responseCartCookie);
 
         if (cartDTOMap != null && !cartDTOMap.isEmpty()) {
             cartList = new ArrayList<>(cartDTOMap.values());
-            return new Message
-                    .Builder(cartList)
-                    .httpStatus(HttpStatus.OK)
-                    .message(CART_INFO)
-                    .mediaType(MediaType.APPLICATION_JSON)
-                    .build();
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(cartList);
         }
 
-        return new Message
-                .Builder(CART_EMPTY)
-                .httpStatus(HttpStatus.NO_CONTENT)
-                .build();
+        return ResponseEntity.badRequest().body(CART_EMPTY);
     }
 
     /**

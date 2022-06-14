@@ -1,7 +1,7 @@
-package com.daniel.controller.exception;
+package com.daniel.exceptions.handler;
 
-import com.daniel.exceptions.EmailAuthException;
-import com.daniel.exceptions.UserExistsException;
+import com.daniel.exceptions.error.EmailAuthException;
+import com.daniel.exceptions.error.UserExistsException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

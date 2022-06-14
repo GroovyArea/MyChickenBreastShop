@@ -2,15 +2,14 @@ package com.daniel.controller.order;
 
 import com.daniel.domain.DTO.order.OrderProductDTO;
 import com.daniel.domain.DTO.order.PayApprovalDTO;
-import com.daniel.exceptions.RunOutOfStockException;
+import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.interceptor.auth.Auth;
-import com.daniel.responseMessage.Message;
+import com.daniel.response.Message;
 import com.daniel.service.KakaoPayService;
 import com.daniel.service.OrderService;
 import com.daniel.utility.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,58 +51,53 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/{userId}")
-    public Message getDBOrderInfo(@PathVariable String userId) {
-        return new Message
-                .Builder(orderService.getOrderInfoList(userId))
-                .message(MEMBER_ORDER_LIST)
-                .httpStatus(HttpStatus.OK)
-                .mediaType(MediaType.APPLICATION_JSON)
-                .build();
+    public ResponseEntity<Message> getDBOrderInfo(@PathVariable String userId) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(orderService.getOrderInfoList(userId))
+                        .message(MEMBER_ORDER_LIST)
+                        .build());
     }
 
     @GetMapping("/detail")
-    public Message getOrderDetail(@RequestParam String tid, @RequestParam String cid) {
-        return new Message
-                .Builder(kakaoPayService.getOrderDetail(tid, cid))
-                .message(ORDER_INFO)
-                .httpStatus(HttpStatus.OK)
-                .mediaType(MediaType.APPLICATION_JSON)
-                .build();
+    public ResponseEntity<Message> getOrderDetail(@RequestParam String tid, @RequestParam String cid) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(kakaoPayService.getOrderDetail(tid, cid))
+                        .message(ORDER_INFO)
+                        .build());
     }
 
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
-    public Message orderAction(@RequestBody OrderProductDTO orderProductDTO,
-                               HttpServletRequest request) throws RunOutOfStockException {
+    public ResponseEntity<Message> orderAction(@RequestBody OrderProductDTO orderProductDTO,
+                                               HttpServletRequest request) throws RunOutOfStockException {
 
         String url = kakaoPayService.getkakaoPayUrl(orderProductDTO, request);
 
         if (url == null) {
-            return new Message
-                    .Builder(FAILED_PAY_MESSAGE)
-                    .message(INVALID_PARAMS)
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
+            getFailedPayMessage();
         }
 
-        return new Message
-                .Builder(url)
-                .message(PAY_URI_MSG)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(url)
+                        .message(PAY_URI_MSG)
+                        .build());
     }
 
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping("/cart")
-    public Message cartOrderAction(HttpServletRequest request) throws UnsupportedEncodingException, RunOutOfStockException {
+    public ResponseEntity<Message> cartOrderAction(HttpServletRequest request) throws UnsupportedEncodingException, RunOutOfStockException {
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> cartCookie = CookieUtil.getCartCookie(cookies);
 
         if (cartCookie.isEmpty()) {
-            return new Message
-                    .Builder(EMPTY_CART_DATA)
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
+            return ResponseEntity.badRequest().body(
+                    Message.builder()
+                            .message(EMPTY_CART_DATA)
+                            .build()
+            );
         }
 
         Integer[] productNoArr = CookieUtil.getItemNoArr(cartCookie.get());
@@ -118,31 +112,29 @@ public class OrderController {
             return getFailedPayMessage();
         }
 
-        return new Message
-                .Builder(url)
-                .httpStatus(HttpStatus.OK)
-                .message(PAY_URI_MSG)
-                .build();
+        return ResponseEntity.ok().body(
+                Message.builder()
+                        .data(url)
+                        .message(PAY_URI_MSG)
+                        .build()
+        );
     }
 
 
     @GetMapping("/completed")
-    public Message paySuccessAction(@RequestParam("pg_token") String pg_token) {
-
+    public ResponseEntity<Message> paySuccessAction(@RequestParam("pg_token") String pg_token) {
         PayApprovalDTO kakaoPayReadyDTO = kakaoPayService.getKakaoPayInfo(pg_token);
 
         if (kakaoPayReadyDTO == null) {
-            return new Message
-                    .Builder(FAILED_INFO_MESSAGE)
-                    .message(INVALID_PARAMS)
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .build();
+            getFailedPayMessage();
         }
-        return new Message
-                .Builder(kakaoPayReadyDTO)
-                .message(INFO_URI_MSG)
-                .httpStatus(HttpStatus.OK)
-                .build();
+
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(kakaoPayReadyDTO)
+                        .message(INFO_URI_MSG)
+                        .build()
+        );
     }
 
     @GetMapping("/cancel")
@@ -155,12 +147,12 @@ public class OrderController {
         return ResponseEntity.ok().body(FAILED_PAY_MESSAGE);
     }
 
-    private Message getFailedPayMessage() {
-        return new Message
-                .Builder(FAILED_PAY_MESSAGE)
-                .message(INVALID_PARAMS)
-                .httpStatus(HttpStatus.BAD_REQUEST)
-                .build();
+    private ResponseEntity<Message> getFailedPayMessage() {
+        return ResponseEntity.badRequest().body(
+                Message.builder()
+                        .message(FAILED_INFO_MESSAGE + "<br>" + INVALID_PARAMS)
+                        .build()
+        );
     }
 
 }

@@ -1,6 +1,6 @@
-package com.daniel.controller.exception;
+package com.daniel.exceptions.handler;
 
-import com.daniel.exceptions.RunOutOfStockException;
+import com.daniel.exceptions.error.RunOutOfStockException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

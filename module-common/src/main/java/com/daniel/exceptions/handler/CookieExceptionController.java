@@ -1,6 +1,6 @@
-package com.daniel.controller.exception;
+package com.daniel.exceptions.handler;
 
-import com.daniel.exceptions.EmptyCookiesException;
+import com.daniel.exceptions.error.EmptyCookiesException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -2,17 +2,19 @@ package com.daniel.controller.user;
 
 import com.daniel.domain.DTO.user.UserEmailRequestDTO;
 import com.daniel.domain.DTO.user.UserJoinDTO;
-import com.daniel.exceptions.EmailAuthException;
-import com.daniel.exceptions.UserExistsException;
-import com.daniel.responseMessage.Message;
+import com.daniel.exceptions.error.EmailAuthException;
+import com.daniel.exceptions.error.UserExistsException;
+import com.daniel.response.Message;
 import com.daniel.service.EmailService;
 import com.daniel.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -42,15 +44,15 @@ public class JoinController {
      * @throws NoSuchAlgorithmException 암호화 알고리즘 잘못 사용시 예외 발생
      */
     @PostMapping
-    public Message joinAction(@RequestBody UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException, EmailAuthException {
+    public ResponseEntity<Message> joinAction(@RequestBody UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException, EmailAuthException {
         emailService.authEmail(joinUser);
         userService.addUser(joinUser);
-        return new Message
-                .Builder(userService.findById(joinUser.getUserId()))
-                .message(JOIN_MESSAGE)
-                .mediaType(MediaType.APPLICATION_JSON)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(userService.findById(joinUser.getUserId()))
+                        .message(JOIN_MESSAGE)
+                        .build()
+        );
     }
 
     /**

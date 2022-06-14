@@ -1,13 +1,13 @@
 package com.daniel.interceptor.auth;
 
-import com.daniel.exceptions.RedisNullTokenException;
-import com.daniel.exceptions.TokenMismatchException;
+import com.daniel.exceptions.error.RedisNullTokenException;
+import com.daniel.exceptions.error.TokenMismatchException;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;
+import com.daniel.service.RedisService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  * @version 1.0
  */
 @Component
+@RequiredArgsConstructor
 public class AuthenticateInterceptor implements HandlerInterceptor {
 
     private static final String BEARER_TOKEN = "Bearer";
@@ -37,13 +38,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
     private final AuthorizationExtractor authorizationExtractor;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    public AuthenticateInterceptor(AuthorizationExtractor authorizationExtractor, JwtTokenProvider jwtTokenProvider, RedisTemplate<String, Object> redisTemplate) {
-        this.authorizationExtractor = authorizationExtractor;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.redisTemplate = redisTemplate;
-    }
+    private final RedisService redisService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -63,8 +58,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         request.setAttribute("token",requestToken);
 
         /* Redis DB에 저장된 토큰 추출 */
-        final ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
-        final String redisToken = (String) valueOperations.get(tokenUserId);
+        final String redisToken = redisService.getData(tokenUserId);
 
         /* DB에 토큰이 존재하지 않을 경우 */
         if (redisToken == null) {

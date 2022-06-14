@@ -1,10 +1,10 @@
-package com.daniel.controller.exception;
+package com.daniel.exceptions.handler;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import com.daniel.exceptions.TokenEmptyException;
+import com.daniel.exceptions.error.TokenEmptyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

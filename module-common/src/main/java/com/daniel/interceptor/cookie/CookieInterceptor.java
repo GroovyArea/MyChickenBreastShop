@@ -1,6 +1,6 @@
 package com.daniel.interceptor.cookie;
 
-import com.daniel.exceptions.EmptyCookiesException;
+import com.daniel.exceptions.error.EmptyCookiesException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

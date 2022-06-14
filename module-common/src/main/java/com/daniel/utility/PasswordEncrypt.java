@@ -20,7 +20,7 @@ public class PasswordEncrypt {
 
         StringBuffer sb = new StringBuffer();
 
-        for(int i=0; i<salt.length; i++) {
+        for (int i = 0; i < salt.length; i++) {
             sb.append(String.format("%02x", salt[i]));
         }
 
@@ -35,19 +35,21 @@ public class PasswordEncrypt {
         byte[] temp = pwd.getBytes();
         byte[] bytes = new byte[temp.length + bytesArrOfSalt.length];
 
+        System.arraycopy(temp, 0, bytes, 0, temp.length);
+        System.arraycopy(salt.getBytes(), 0, bytes, temp.length, salt.getBytes().length);
 
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(bytes);
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(bytes);
 
-            byte[] b = md.digest();
+        byte[] b = md.digest();
 
-            StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-            for(int i=0; i<b.length; i++) {
-                sb.append(Integer.toString((b[i] & 0xFF) + 256, 16).substring(1));
-            }
+        for (int i = 0; i < b.length; i++) {
+            sb.append(Integer.toString((b[i] & 0xFF) + 256, 16).substring(1));
+        }
 
-            result = sb.toString();
+        result = sb.toString();
 
         return result;
     }

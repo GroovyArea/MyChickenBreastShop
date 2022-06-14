@@ -5,10 +5,10 @@ import com.daniel.domain.DTO.product.ProductModifyDTO;
 import com.daniel.enums.global.ResponseMessage;
 import com.daniel.enums.products.ChickenStatus;
 import com.daniel.interceptor.auth.Auth;
-import com.daniel.responseMessage.Message;
+import com.daniel.response.Message;
 import com.daniel.service.ProductService;
 import com.daniel.utility.Pager;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +24,7 @@ import java.util.Map;
  * @author Nam Young Kim
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/products")
 public class ProductController {
 
@@ -32,19 +33,10 @@ public class ProductController {
 
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    /**
-     * page 당 게시글 리스트를 반환 받기 위한 map 객체
-     */
-    private final Map<String, Object> pagerMap = new HashMap<>();
     /**
      * 상품 삭제 정보를 담기 위한 map
      */
     private final Map<String, Object> deleteProductMap = new HashMap<>();
-
 
     /**
      * 단일 상품 디테일 객체를 반환하는 메서드
@@ -54,7 +46,7 @@ public class ProductController {
      */
     @GetMapping("/{productNo}")
     public ResponseEntity<ProductListDTO> productDetail(@PathVariable int productNo) {
-        return ResponseEntity.ok().body(productService.findByNumber(productNo));
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(productService.findByNumber(productNo));
     }
 
     /**
@@ -82,14 +74,14 @@ public class ProductController {
      */
     @Auth(role = Auth.Role.ADMIN)
     @PostMapping
-    public Message addAction(@ModelAttribute ProductListDTO productDTO) {
+    public ResponseEntity<Message> addAction(@ModelAttribute ProductListDTO productDTO) {
         productService.addProduct(productDTO);
-        return new Message
-                .Builder(productService.findByName(productDTO.getProductName()))
-                .message(ResponseMessage.ADD_MESSAGE.getValue())
-                .mediaType(MediaType.APPLICATION_JSON)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(productService.findByName(productDTO.getProductName()))
+                        .message(ResponseMessage.ADD_MESSAGE.getValue())
+                        .build()
+        );
     }
 
     /**
@@ -100,14 +92,14 @@ public class ProductController {
      */
     @Auth(role = Auth.Role.ADMIN)
     @PutMapping
-    public Message modifyAction(@ModelAttribute ProductModifyDTO productModifyDTO) {
+    public ResponseEntity<Message> modifyAction(@ModelAttribute ProductModifyDTO productModifyDTO) {
         productService.modifyProduct(productModifyDTO);
-        return new Message
-                .Builder(productService.findByNumber(productModifyDTO.getProductNo()))
-                .message(ResponseMessage.MODIFY_MESSAGE.getValue())
-                .mediaType(MediaType.APPLICATION_JSON)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(productService.findByNumber(productModifyDTO.getProductNo()))
+                        .message(ResponseMessage.MODIFY_MESSAGE.getValue())
+                        .build()
+        );
     }
 
     /**

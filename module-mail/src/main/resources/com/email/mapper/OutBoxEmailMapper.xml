@@ -12,7 +12,7 @@
         <result property="payload" column="payload"/>
     </resultMap>
 
-    <select id="selectAllOutBox" resultType="com.email.domain.VO.OutBox" resultMap="outBoxEmail">
+    <select id="selectAllEmailOutBox" resultType="com.email.domain.VO.OutBox" resultMap="outBoxEmail">
         SELECT *
         FROM `OUTBOX-EMAIL`
     </select>

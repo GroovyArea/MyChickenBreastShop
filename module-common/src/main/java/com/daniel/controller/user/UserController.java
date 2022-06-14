@@ -5,9 +5,9 @@ import com.daniel.domain.DTO.user.UserModifyDTO;
 import com.daniel.enums.global.ResponseMessage;
 import com.daniel.enums.users.UserGrade;
 import com.daniel.interceptor.auth.Auth;
-import com.daniel.responseMessage.Message;
+import com.daniel.response.Message;
 import com.daniel.service.UserService;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +22,7 @@ import java.util.Map;
  * @author Nam Young Kim
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -31,10 +32,6 @@ public class UserController {
      */
     private final Map<String, Object> deleteUserMap = new HashMap<>();
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
     /**
      * 회원 정보 디테일 조회
      *
@@ -43,14 +40,14 @@ public class UserController {
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @GetMapping("/{userId}")
-    public Message detailAction(@PathVariable String userId) {
+    public ResponseEntity<Message> detailAction(@PathVariable String userId) {
         UserDTO userDTO = userService.findById(userId);
-        return new Message
-                .Builder(userDTO)
-                .message("권한 : " + UserGrade.of(userDTO.getUserGrade()).orElse(UserGrade.BASIC_USER))
-                .mediaType(MediaType.APPLICATION_JSON)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(userDTO)
+                        .message("권한 : " + UserGrade.of(userDTO.getUserGrade()).orElse(UserGrade.BASIC_USER))
+                        .build()
+        );
     }
 
     /**
@@ -61,14 +58,14 @@ public class UserController {
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @PutMapping
-    public Message modifyAction(@ModelAttribute UserModifyDTO userModifyDTO) {
+    public ResponseEntity<Message> modifyAction(@ModelAttribute UserModifyDTO userModifyDTO) {
         userService.modifyUser(userModifyDTO);
-        return new Message
-                .Builder(userService.findById(userModifyDTO.getUserId()))
-                .message(ResponseMessage.MODIFY_MESSAGE.getValue())
-                .mediaType(MediaType.APPLICATION_JSON)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+                Message.builder()
+                        .data(userService.findById(userModifyDTO.getUserId()))
+                        .message(ResponseMessage.MODIFY_MESSAGE.getValue())
+                        .build()
+        );
     }
 
     /**
