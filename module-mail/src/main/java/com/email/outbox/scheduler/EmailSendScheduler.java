@@ -46,7 +46,7 @@ public class EmailSendScheduler {
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
             outBoxList.forEach(outBox -> {
-                extracted(objectMapper, completedList, outBox);
+                validateEmailNumber(objectMapper, completedList, outBox);
             });
             if (!completedList.isEmpty()) {
                 outBoxMapper.deleteAllById(completedList);
@@ -55,7 +55,7 @@ public class EmailSendScheduler {
     }
 
     @Transactional
-    void extracted(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
+    void validateEmailNumber(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
         String payload = outBox.getPayload();
         try {
             JsonNode jsonNode = objectMapper.readTree(payload);
