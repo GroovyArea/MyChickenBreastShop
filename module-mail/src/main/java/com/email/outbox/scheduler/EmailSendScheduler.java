@@ -37,6 +37,7 @@ public class EmailSendScheduler {
     private final MailContentService mailContentService;
 
     @Scheduled(cron = "0/10 * * * * ?")
+    @Transactional
     public void schedulingValidNumberEmail() {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -54,7 +55,6 @@ public class EmailSendScheduler {
         }
     }
 
-    @Transactional
     void validateEmailNumber(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
         String payload = outBox.getPayload();
         try {

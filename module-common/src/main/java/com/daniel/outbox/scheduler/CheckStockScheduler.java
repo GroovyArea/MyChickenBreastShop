@@ -30,6 +30,7 @@ public class CheckStockScheduler {
     private final KakaoPayService kakaoPayService;
 
     @Scheduled(cron = "0/10 * * * * ?")
+    @Transactional
     public void schedulingCheckStock() {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -47,7 +48,6 @@ public class CheckStockScheduler {
         }
     }
 
-    @Transactional
     void outBoxStockCheck(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
         String payload = outBox.getPayload();
         try {
