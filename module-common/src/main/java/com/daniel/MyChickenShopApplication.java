@@ -12,7 +12,7 @@ public class MyChickenShopApplication {
     public static void main(String[] args) {
         SpringApplicationBuilder springApplicationBuilder = new SpringApplicationBuilder(MyChickenShopApplication.class);
         springApplicationBuilder.properties("spring.config.location=" +
-                "classpath:/application.yml" + ", classpath:/kakaoPay.yml");
+                "classpath:/application.yml" + ", classpath:/service.yml");
         SpringApplication springApplication = springApplicationBuilder.build();
         springApplication.run(args);
     }
