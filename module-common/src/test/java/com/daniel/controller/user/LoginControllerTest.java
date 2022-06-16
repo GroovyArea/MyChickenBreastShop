@@ -2,34 +2,29 @@ package com.daniel.controller.user;
 
 import com.daniel.domain.DTO.user.UserLoginDTO;
 import com.daniel.enums.users.UserGrade;
-import com.daniel.exceptions.error.WrongPasswordException;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;
-import com.daniel.mapper.UserMapper;
 import com.daniel.service.RedisService;
 import com.daniel.service.UserService;
 import com.daniel.utility.JsonUtil;
 import com.jayway.jsonpath.JsonPath;
-import org.assertj.core.api.Assertions;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -40,15 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @version 1.0
  */
+
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(LoginController.class)
-@MockBeans({
-        @MockBean(UserService.class),
-        @MockBean(RedisService.class),
-        @MockBean(JwtTokenProvider.class)
-})
-@Import(value = {AuthorizationExtractor.class,
-        JwtTokenProvider.class,
-        RedisService.class})
+@Slf4j
+@Import(value = {AuthorizationExtractor.class})
 class LoginControllerTest {
 
     @Autowired
@@ -58,12 +49,10 @@ class LoginControllerTest {
     UserService userService;
 
     @MockBean
-    JwtTokenProvider jwtTokenProvider;
+    RedisService redisService;
 
     @MockBean
-    UserMapper userMapper;
-
-    private final Logger  log = LoggerFactory.getLogger(this.getClass());
+    JwtTokenProvider jwtTokenProvider;
 
     final UserLoginDTO userLoginDTO = UserLoginDTO.builder()
             .userId("aa11")
@@ -72,62 +61,23 @@ class LoginControllerTest {
 
     final String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMb2dpbiBUb2tlbiIsInVzZXJJZCI6ImFhMTEiLCJ1c2VyR3JhZGUiOiJCQVNJQ19VU0VSIiwiaWF0IjoxNjU1Mjc4MjM5LCJleHAiOjE2NTUyODAwMzl9.2ESgVgmrOEl7LWtZ9XV447B9jGuU5wwEidkDDlcghtk";
 
-
-/*    @BeforeEach
-    void mockSetup() {
-        LoginController loginController = new LoginController();
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(loginController)
-                .setControllerAdvice(WrongPasswordException.class)
-                .setControllerAdvice(LoginFailException.class)
-                .setControllerAdvice(WithDrawUserException.class)
-                .setControllerAdvice(UserExistsException.class)
-                .build();
-    }*/
-
     @Test
     @DisplayName("올바른 아이디 로그인 시 응답 값 검증 테스트")
     void loginTest() throws Exception {
+        Mockito.doAnswer(invocation -> jwtToken).when(userService).createToken(userLoginDTO);
+        Mockito.doAnswer(invocation -> jwtToken).when(jwtTokenProvider).createToken(userLoginDTO.getUserId(), UserGrade.BASIC_USER.toString());
 
-        BDDMockito.when(jwtTokenProvider.createToken(userLoginDTO.getUserId(), String.valueOf(UserGrade.BASIC_USER))).thenReturn(jwtToken);
-
-        MockHttpServletResponse mokitoResponse =  mockMvc.perform(post("/user/login")
+        MockHttpServletResponse mockitoResponse = mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.objectToString(userLoginDTO)))
                 .andExpect(status().isOk())
-              .andReturn().getResponse();
+                .andDo(print())
+                .andReturn().getResponse();
 
-        String response = mokitoResponse.getContentAsString();
-        String data = JsonPath.parse(response).read("$.data");
+        String response = mockitoResponse.getContentAsString();
         String message = JsonPath.parse(response).read("$.message");
 
-        log.info(data);
-        log.info(message);
-
-        Assertions.assertThat(data.equals(jwtToken)).isTrue();
-        Assertions.assertThat(message.equals("Login succeed")).isTrue();
-    }
-
-    @Test
-    @DisplayName("비밀번호 틀렸을 경우")
-    void wrongPasswordTest() throws Exception {
-
-        String
-
-        given(userMapper.selectUser(userLoginDTO.getUserId())).willThrow(new WrongPasswordException());
-
-
-
-        MvcResult result = mockMvc.perform(post("/user/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.objectToString(userLoginDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(result1 -> assertTrue(result1.getResolvedException() instanceof WrongPasswordException))
-                .andExpect(result1 -> assertEquals("비밀번호가 일치하지 않습니다.",
-                        result1.getResolvedException().getMessage()))
-                .andReturn();
-
-
+        assertThat(message.equals("Login succeed")).isTrue();
     }
 
 }
