@@ -3,7 +3,7 @@ package com.daniel.service;
 import com.daniel.domain.DTO.user.*;
 import com.daniel.domain.VO.UserVO;
 import com.daniel.enums.users.UserGrade;
-import com.daniel.exceptions.error.LoginFailException;
+import com.daniel.exceptions.error.UserNotExistsException;
 import com.daniel.exceptions.error.UserExistsException;
 import com.daniel.exceptions.error.WithDrawUserException;
 import com.daniel.exceptions.error.WrongPasswordException;
@@ -43,7 +43,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDTO findById(String userId) {
+    public UserDTO findById(String userId) throws UserNotExistsException {
         return modelMapper.map(userMapper.selectUser(userId), UserDTO.class);
     }
 
@@ -55,7 +55,7 @@ public class UserService {
     }
 
     @Transactional
-    public void addUser(UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException {
+    public void addUser(UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException, UserNotExistsException {
         if (userMapper.selectUser(joinUser.getUserId()) != null) {
             throw new UserExistsException(USER_EXISTS_MESSAGE);
         }
@@ -81,15 +81,15 @@ public class UserService {
      * 로그인 인증 검사
      *
      * @param userLoginDTO 로그인 회원
-     * @throws LoginFailException       회원 정보가 존재하지 않을 시 예외
+     * @throws UserNotExistsException   회원 정보가 존재하지 않을 시 예외
      * @throws NoSuchAlgorithmException 암호화 알고리즘 부적절 시 예외
      * @throws WithDrawUserException    탈퇴 회원일 시 예외
      * @throws WrongPasswordException   비밀번호 불일치 시 예외
      */
-    public void loginAuth(UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
+    public UserDTO loginAuth(UserLoginDTO userLoginDTO) throws UserNotExistsException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
         UserVO authUser = userMapper.selectUser(userLoginDTO.getUserId());
         if (authUser == null) {
-            throw new LoginFailException(LOGIN_FAIL_MESSAGE);
+            throw new UserNotExistsException(LOGIN_FAIL_MESSAGE);
         }
 
         if (authUser.getUserGrade() == UserGrade.WITHDRAWAL_USER.getValue()) {
@@ -103,6 +103,8 @@ public class UserService {
         if (!loginPassword.equals(dbPassword)) {
             throw new WrongPasswordException(WRONG_PASSWORD_MESSAGE);
         }
+
+        return modelMapper.map(authUser, UserDTO.class);
     }
 
     /**

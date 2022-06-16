@@ -1,14 +1,13 @@
 package com.daniel.controller.user;
 
 import com.daniel.domain.DTO.user.UserLoginDTO;
-import com.daniel.exceptions.error.LoginFailException;
+import com.daniel.exceptions.error.UserNotExistsException;
 import com.daniel.exceptions.error.WithDrawUserException;
 import com.daniel.exceptions.error.WrongPasswordException;
 import com.daniel.response.Message;
 import com.daniel.service.RedisService;
 import com.daniel.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 public class LoginController {
 
     private static final String LOGIN_MESSAGE = "Login succeed";
+    private static final long VALIDATE_IN_MILLISECONDS = 1000 * 60L * 30L;
 
     private final UserService userService;
     private final RedisService redisService;
@@ -40,13 +40,12 @@ public class LoginController {
      * @return Message 응답 정보 객체
      */
     @PostMapping("/login")
-    public ResponseEntity<Message> loginAction(@RequestBody UserLoginDTO userLoginDTO) throws LoginFailException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
+    public ResponseEntity<Message> loginAction(@RequestBody UserLoginDTO userLoginDTO) throws UserNotExistsException, NoSuchAlgorithmException, WithDrawUserException, WrongPasswordException {
         userService.loginAuth(userLoginDTO);
 
         String jwtToken = userService.createToken(userLoginDTO);
-        redisService.setData(userLoginDTO.getUserId(), jwtToken);
-
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+        redisService.setDataExpire(userLoginDTO.getUserId(), jwtToken, VALIDATE_IN_MILLISECONDS);
+        return ResponseEntity.ok().body(
                 Message.builder()
                         .data(jwtToken)
                         .message(LOGIN_MESSAGE)

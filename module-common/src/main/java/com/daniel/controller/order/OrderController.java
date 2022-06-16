@@ -2,6 +2,7 @@ package com.daniel.controller.order;
 
 import com.daniel.domain.DTO.order.OrderProductDTO;
 import com.daniel.domain.DTO.order.PayApprovalDTO;
+import com.daniel.exceptions.error.UserNotExistsException;
 import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.interceptor.auth.Auth;
 import com.daniel.response.Message;
@@ -71,7 +72,7 @@ public class OrderController {
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
     public ResponseEntity<Message> orderAction(@RequestBody OrderProductDTO orderProductDTO,
-                                               HttpServletRequest request) throws RunOutOfStockException {
+                                               HttpServletRequest request) throws RunOutOfStockException, UserNotExistsException {
 
         String url = kakaoPayService.getkakaoPayUrl(orderProductDTO, request);
 
@@ -88,7 +89,7 @@ public class OrderController {
 
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping("/cart")
-    public ResponseEntity<Message> cartOrderAction(HttpServletRequest request) throws UnsupportedEncodingException, RunOutOfStockException {
+    public ResponseEntity<Message> cartOrderAction(HttpServletRequest request) throws UnsupportedEncodingException, RunOutOfStockException, UserNotExistsException {
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> cartCookie = CookieUtil.getCartCookie(cookies);
 

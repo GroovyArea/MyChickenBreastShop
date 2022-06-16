@@ -1,6 +1,6 @@
 package com.daniel.exceptions.handler;
 
-import com.daniel.exceptions.error.LoginFailException;
+import com.daniel.exceptions.error.UserNotExistsException;
 import com.daniel.exceptions.error.UserExistsException;
 import com.daniel.exceptions.error.WithDrawUserException;
 import com.daniel.exceptions.error.WrongPasswordException;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class LoginExceptionController {
 
-    @ExceptionHandler(value = LoginFailException.class)
-    public ResponseEntity<String> loginFailHandler(LoginFailException exception) {
+    @ExceptionHandler(value = UserNotExistsException.class)
+    public ResponseEntity<String> loginFailHandler(UserNotExistsException exception) {
         return ResponseEntity.badRequest().body(exception.getMessage());
     }
 

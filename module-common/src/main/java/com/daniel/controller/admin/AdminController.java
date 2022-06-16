@@ -2,9 +2,9 @@ package com.daniel.controller.admin;
 
 import com.daniel.domain.DTO.user.UserListDTO;
 import com.daniel.interceptor.auth.Auth;
-import com.daniel.service.ProductService;
 import com.daniel.service.UserService;
 import com.daniel.utility.Pager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +26,7 @@ import java.util.Map;
  * @version 1.0
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/admin")
 public class AdminController {
 
@@ -34,17 +35,6 @@ public class AdminController {
     private static final int BLOCK_SIZE = 10;
 
     private final UserService userService;
-    private final ProductService productService;
-
-    /**
-     * page 당 게시글 리스트를 반환 받기 위한 map 객체
-     */
-    private final Map<String, Object> pagerMap = new HashMap<>();
-
-    public AdminController(UserService userService, ProductService productService) {
-        this.userService = userService;
-        this.productService = productService;
-    }
 
     /**
      * 회원 등급 변경
