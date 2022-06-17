@@ -55,7 +55,7 @@ public class UserService {
     }
 
     @Transactional
-    public void addUser(UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException, UserNotExistsException {
+    public void addUser(UserJoinDTO joinUser) throws UserExistsException, NoSuchAlgorithmException {
         if (userMapper.selectUser(joinUser.getUserId()) != null) {
             throw new UserExistsException(USER_EXISTS_MESSAGE);
         }
