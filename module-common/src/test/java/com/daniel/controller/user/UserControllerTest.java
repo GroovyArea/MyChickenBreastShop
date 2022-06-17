@@ -33,8 +33,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * 회원 컨트롤러 mvc 테스트 <Br>
+ *
+ * <pre>History</pre>
  * 2022.06.16 ver 1.0
  *
+ * @author 김남영
  * @version 1.0
  */
 @ExtendWith(SpringExtension.class)
