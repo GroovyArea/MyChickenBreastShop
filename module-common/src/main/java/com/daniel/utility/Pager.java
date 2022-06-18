@@ -5,24 +5,12 @@ package com.daniel.utility;
  */
 public class Pager {
 
-    private final String searchKeyword;
-    private final String searchValue;
     private final int startRow;
     private final int rowCount;
 
-    public Pager(String searchKeyword, String searchValue, int startRow, int rowCount) {
-        this.searchKeyword = searchKeyword;
-        this.searchValue = searchValue;
+    public Pager(int startRow, int rowCount) {
         this.startRow = startRow;
         this.rowCount = rowCount;
-    }
-
-    public String getSearchKeyword() {
-        return searchKeyword;
-    }
-
-    public String getSearchValue() {
-        return searchValue;
     }
 
     public int getStartRow() {

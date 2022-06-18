@@ -14,7 +14,7 @@ public interface UserMapper {
 
     UserVO selectUser(String userId);
 
-    List<UserVO> selectUserList(Pager pager);
+    List<UserVO> selectUserList(String searchKeyword, String searchValue, Pager pager);
 
     void insertUser(UserVO userVO);
 

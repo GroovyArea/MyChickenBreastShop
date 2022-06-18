@@ -69,6 +69,6 @@ public class AdminController {
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(userService.getUserList(new Pager(searchKeyword, searchValue, Pager.getStartRow(pageNum, USERS_SIZE), BLOCK_SIZE)));
+                .body(userService.getUserList(searchKeyword, searchValue, new Pager(Pager.getStartRow(pageNum, USERS_SIZE), BLOCK_SIZE)));
     }
 }

@@ -48,8 +48,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserListDTO> getUserList(Pager pager) {
-        return userMapper.selectUserList(pager).stream()
+    public List<UserListDTO> getUserList(String searchKeyword, String searchValue, Pager pager) {
+        return userMapper.selectUserList(searchKeyword, searchValue, pager).stream()
                 .map(userVO -> modelMapper.map(userVO, UserListDTO.class))
                 .collect(Collectors.toList());
     }
