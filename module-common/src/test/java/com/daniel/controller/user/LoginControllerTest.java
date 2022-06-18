@@ -1,7 +1,6 @@
 package com.daniel.controller.user;
 
 import com.daniel.domain.DTO.user.UserLoginDTO;
-import com.daniel.enums.users.UserGrade;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;
 import com.daniel.service.RedisService;
@@ -23,8 +22,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -64,13 +65,13 @@ class LoginControllerTest {
     @Test
     @DisplayName("올바른 아이디 로그인 시 응답 값 검증 테스트")
     void loginTest() throws Exception {
-        Mockito.doAnswer(invocation -> jwtToken).when(userService).createToken(userLoginDTO);
-        Mockito.doAnswer(invocation -> jwtToken).when(jwtTokenProvider).createToken(userLoginDTO.getUserId(), UserGrade.BASIC_USER.toString());
+        Mockito.when(userService.createToken(any())).thenReturn(jwtToken);
 
         MockHttpServletResponse mockitoResponse = mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.objectToString(userLoginDTO)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").exists())
                 .andDo(print())
                 .andReturn().getResponse();
 
