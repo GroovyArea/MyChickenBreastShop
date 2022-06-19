@@ -1,0 +1,148 @@
+=  Spring REST docs
+:doctype: book
+:icons: font
+:source-highlighter: hightlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+[[User_API]]
+== User API
+
+
+[[User_조회]]
+=== 회원 조회
+
+==== URL
+include::{snippets}/detailUser/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/detailUser/curl-request.adoc[]
+
+==== Response
+include::{snippets}/detailUser/http-response.adoc[]
+|===
+|Name |Type |Description
+
+|data
+|UserDTO
+|회원 정보
+
+|message
+|String
+|회원 권한 정보 메시지
+
+|===
+==== data
+|===
+|Name |Type |Description
+
+|userId
+|String
+|회원 아이디
+
+|userName
+|String
+|회원 이름
+
+|userPhone
+|String
+|회원 휴대폰 번호
+
+|userEmail
+|String
+|회원 이메일 주소
+
+|userMainAddress
+|String
+|회원 주소
+
+|userDetailAddress
+|String
+|회원 상세 주소
+
+|userZipcode
+|String
+|우편 번호
+
+|userGrade
+|Integer
+|권한 등급
+
+|userReserves
+|Integer
+|적립금, 최대 10만원
+
+|===
+
+
+=== 회원 수정
+
+==== URL
+include::{snippets}/modifyUser/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/modifyUser/curl-request.adoc[]
+
+==== Response
+include::{snippets}/modifyUser/http-response.adoc[]
+|===
+|Name |Type |Description
+
+|data
+|UserModifyDTO
+|수정 회원 정보
+
+|message
+|String
+|수정 완료 메시지
+
+|===
+==== data
+|===
+|Name |Type |Description
+
+|userId
+|String
+|회원 아이디
+
+|userPhone
+|String
+|회원 휴대폰 번호
+
+|userEmail
+|String
+|회원 이메일 주소
+
+|userMainAddress
+|String
+|회원 주소
+
+|userDetailAddress
+|String
+|회원 상세 주소
+
+|userReserves
+|Integer
+|적립금, 최대 10만원
+
+|===
+
+=== 회원 탈퇴
+
+==== URL
+include::{snippets}/deleteUser/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/deleteUser/curl-request.adoc[]
+
+==== Response
+include::{snippets}/deleteUser/http-response.adoc[]
