@@ -146,3 +146,119 @@ include::{snippets}/deleteUser/curl-request.adoc[]
 
 ==== Response
 include::{snippets}/deleteUser/http-response.adoc[]
+
+=== 회원 가입
+
+==== URL
+include::{snippets}/joinActionTest/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/joinActionTest/curl-request.adoc[]
+
+==== Response
+include::{snippets}/joinActionTest/http-response.adoc[]
+
+|===
+|Name |Type |Description
+
+|data
+|UserJoinDTO
+|회원 가입 회원 정보
+
+|message
+|String
+|회원 가입 메시지
+
+|===
+==== data
+|===
+|Name |Type |Description
+
+|userId
+|String
+|회원 아이디
+
+|userName
+|String
+|회원 이름
+
+|userPhone
+|String
+|회원 휴대폰 번호
+
+|userEmail
+|String
+|회원 이메일 주소
+
+|userMainAddress
+|String
+|회원 주소
+
+|userDetailAddress
+|String
+|회원 상세 주소
+
+|userZipcode
+|String
+|우편 번호
+
+|userGrade
+|Integer
+|권한 등급
+
+|userReserves
+|Integer
+|적립금, 최대 10만원
+
+|===
+
+=== 이메일 전송
+
+==== URL
+include::{snippets}/authEmailSendActionTest/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/authEmailSendActionTest/curl-request.adoc[]
+
+==== Response
+include::{snippets}/authEmailSendActionTest/http-response.adoc[]
+
+=== 로그인
+
+==== URL
+include::{snippets}/loginTest/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/loginTest/curl-request.adoc[]
+
+==== Response
+include::{snippets}/loginTest/http-response.adoc[]
+
+|===
+|Name |Type |Description
+
+|data
+|String
+|jwt 웹 토큰, 30분 유효
+
+|message
+|String
+|로그인 메시지
+|===
+
+=== 로그아웃
+
+==== URL
+include::{snippets}/logoutActionTest/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/logoutActionTest/curl-request.adoc[]
+
+==== Response
+include::{snippets}/logoutActionTest/http-response.adoc[]
+
+

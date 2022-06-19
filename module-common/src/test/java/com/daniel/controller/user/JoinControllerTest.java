@@ -15,18 +15,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -41,8 +44,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @version 1.0
  */
 @WebMvcTest(JoinController.class)
-@ExtendWith(SpringExtension.class)
+@ExtendWith(RestDocumentationExtension.class)
 @Import(value = {AuthorizationExtractor.class, JwtTokenProvider.class})
+@AutoConfigureRestDocs
 class JoinControllerTest {
 
     @Autowired
@@ -81,10 +85,12 @@ class JoinControllerTest {
             .build();
 
     @BeforeEach
-    public void setUp() {
+    public void setUp(RestDocumentationContextProvider restDocumentationContextProvider) {
         mockMvc =
                 MockMvcBuilders.standaloneSetup(new JoinController(userService, emailService))
+                        .apply(documentationConfiguration(restDocumentationContextProvider))
                         .addFilters(new CharacterEncodingFilter("utf-8", true))
+                        .alwaysDo(document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                         .build();
     }
 
@@ -99,20 +105,22 @@ class JoinControllerTest {
                 .andExpect(jsonPath("$.message", is("Join succeed")))
                 .andExpect(jsonPath("$.data.userId", is(userJoinDTO.getUserId())))
                 .andExpect(jsonPath("$.data.userEmail", is(userJoinDTO.getUserEmail())))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("joinActionTest", preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
 
     }
 
     @Test
     @DisplayName("이메일 전송 테스트")
     void authEmailSendActionTest() throws Exception {
-        MockHttpServletResponse mockitoResponse = mockMvc.perform(post("/join/email")
+        mockMvc.perform(post("/join/email")
                         .content(JsonUtil.objectToString(userJoinDTO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(content().string("Email auth key sent"))
                 .andDo(print())
-                .andReturn().getResponse();
-        String response = mockitoResponse.getContentAsString();
-        assertThat(response.equals("Email auth key sent")).isTrue();
+                .andDo(document("authEmailSendActionTest", preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
     }
 }

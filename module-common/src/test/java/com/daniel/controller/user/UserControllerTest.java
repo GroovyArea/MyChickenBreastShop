@@ -14,22 +14,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * 회원 컨트롤러 mvc 테스트 <Br>
@@ -40,9 +42,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author 김남영
  * @version 1.0
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @WebMvcTest(UserController.class)
 @Import(value = {AuthorizationExtractor.class, JwtTokenProvider.class})
+@AutoConfigureRestDocs
 class UserControllerTest {
 
     @Autowired
@@ -88,24 +91,28 @@ class UserControllerTest {
             .build();
 
     @BeforeEach
-    public void setUp() {
+    public void setUp(RestDocumentationContextProvider restDocumentationContextProvider) {
         mockMvc =
                 MockMvcBuilders.standaloneSetup(new UserController(userService))
+                        .apply(documentationConfiguration(restDocumentationContextProvider))
                         .addFilters(new CharacterEncodingFilter("utf-8", true))
+                        .alwaysDo(document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                         .build();
     }
 
     @Test
     @DisplayName("회원 디테일 조회 테스트")
     void detailActionTest() throws Exception {
-        Mockito.when(userService.findById("aa11")).thenReturn(userDTO);
+        Mockito.when(userService.findById(userDTO.getUserId())).thenReturn(userDTO);
         this.mockMvc
-                .perform(get("/api/users/aa11").accept(MediaType.APPLICATION_JSON))
+                .perform(get("/api/users/{userId}", userDTO.getUserId()).accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer ${AUTH_TOKEN}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.userId", is(userDTO.getUserId())))
                 .andExpect(jsonPath("$.data.userMainAddress", is(userDTO.getUserMainAddress())))
                 .andExpect(jsonPath("$.message", is("권한 : BASIC_USER")))
-                .andDo(print())
+                .andDo(document("detailUser", preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())))
         ;
     }
 
@@ -115,25 +122,27 @@ class UserControllerTest {
         Mockito.when(userService.findById(modifyUserDTO.getUserId())).thenReturn(modifiedUserDTO);
 
         mockMvc.perform(put("/api/users")
+                        .header("Authorization", "Bearer ${AUTH_TOKEN}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.objectToString(modifyUserDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.userMainAddress", is(modifiedUserDTO.getUserMainAddress())))
                 .andExpect(jsonPath("$.data.userDetailAddress", is(modifiedUserDTO.getUserDetailAddress())))
                 .andExpect(jsonPath("$.message", is("Modify successful")))
-                .andDo(print());
+                .andDo(document("modifyUser", preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
     }
 
     @Test
     @DisplayName("회원 탈퇴 테스트")
     void deleteActionTest() throws Exception {
-        MockHttpServletResponse mockHttpServletResponse = mockMvc.perform(delete("/api/users/aa11"))
+        mockMvc.perform(delete("/api/users/{userId}", userDTO.getUserId())
+                        .header("Authorization", "Bearer ${AUTH_TOKEN}"))
                 .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn().getResponse();
+                .andExpect(content().string("Delete successful"))
+                .andDo(document("deleteUser", preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
 
-        String response = mockHttpServletResponse.getContentAsString();
-        assertThat(response.equals("Delete successful")).isTrue();
     }
 
 }
