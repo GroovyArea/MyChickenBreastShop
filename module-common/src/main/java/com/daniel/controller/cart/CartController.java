@@ -5,9 +5,8 @@ import com.daniel.enums.global.ResponseMessage;
 import com.daniel.exceptions.error.InvalidPayAmountException;
 import com.daniel.exceptions.error.InvalidProductException;
 import com.daniel.interceptor.auth.Auth;
+import com.daniel.service.CartService;
 import com.daniel.service.ProductService;
-import com.daniel.utility.CookieUtil;
-import com.daniel.utility.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,13 +17,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.daniel.utility.CookieUtil.getCartItemDTOMap;
 
 /**
  * 장바구니 컨트롤러 <br>
@@ -35,25 +31,23 @@ import static com.daniel.utility.CookieUtil.getCartItemDTOMap;
  *     김남영, 1.0, 2022.05.20 최초 작성
  *     김남영, 1.1, 2022.05.24 코드 리팩토링 (중복 제거 메서드 분리)
  *     김남영, 1.2, 2022.05.28 장바구니 데이터 유효성 검사
+ *     김남영, 1.3, 2022.06.18 코드 리팩토링 (비즈니스 로직 Service Class로 분리)
  * </pre>
  *
  * @author 김남영
- * @version 1.2
+ * @version 1.3
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/carts")
 public class CartController {
 
-    private static final String COOKIE_KEY = "Chicken";
-    private static final String ENC_TYPE = "utf-8";
     private static final String CART_EMPTY = "장바구니가 비었습니다.";
     private static final String NULL_CART_COOKIE = "장바구니 쿠키가 없습니다.";
     private static final String NULL_MODIFY_COOKIE = "변경하려는 장바구니의 상품 쿠키가 없습니다.";
     private static final String NULL_REMOVE_COOKIE = "삭제하려는 장바구니의 상품 쿠키가 없습니다.";
-    private static final String CART_INFO = "장바구니 목록 정보입니다.";
-    private static final int KILL_COOKIE = 0;
 
+    private final CartService cartService;
     private final ProductService productService;
 
     private Cookie responseCartCookie;
@@ -63,23 +57,25 @@ public class CartController {
     /**
      * 장바구니 목록 조회 메서드
      *
-     * @param request servlet Request
-     * @return Message 장바구니 목록
+     * @param request Servlet Request
+     * @return 응답코드 & 장바구니 목록
+     * @throws UnsupportedEncodingException url 인코드, 디코드 예외
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @GetMapping
     public ResponseEntity<Object> getCartList(HttpServletRequest request) throws UnsupportedEncodingException {
-        getCartCookie(request);
-        List<CartItemDTO> cartList;
+
+        responseCartCookie = cartService.getCartCookie(request.getCookies());
+
         /* 장바구니 쿠키가 존재하지 않을 경우*/
         if (responseCartCookie == null) {
             return ResponseEntity.badRequest().body(NULL_CART_COOKIE);
         }
 
-        getCartDTOMap(responseCartCookie);
+        cartDTOMap = cartService.getCartDTOMap(responseCartCookie);
 
         if (cartDTOMap != null && !cartDTOMap.isEmpty()) {
-            cartList = new ArrayList<>(cartDTOMap.values());
+            List<CartItemDTO> cartList = new ArrayList<>(cartDTOMap.values());
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(cartList);
         }
 
@@ -90,9 +86,12 @@ public class CartController {
      * 단일 상품 장바구니 추가 메서드
      *
      * @param addCartDTO 추가할 장바구니 상품 데이터
+     * @param request    servlet Request
      * @param response   servlet Response
      * @return 상태코드 & 메시지
      * @throws UnsupportedEncodingException url 인코드, 디코드 예외
+     * @throws InvalidProductException      상품 번호 오입력 예외
+     * @throws InvalidPayAmountException    상품 총액 예외
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
@@ -102,7 +101,7 @@ public class CartController {
 
         cartValidate(addCartDTO);
 
-        getCartCookie(request);
+        responseCartCookie = cartService.getCartCookie(request.getCookies());
 
         /* 응답 장바구니 쿠키가 없을 경우 쿠키 생성 */
         if (responseCartCookie == null) {
@@ -110,30 +109,30 @@ public class CartController {
 
             cartDTOMap.put(productNo, addCartDTO);
 
-            createCartCookie();
+            responseCartCookie = cartService.createCartCookie(cartDTOMap);
 
             response.addCookie(responseCartCookie);
 
             return ResponseEntity.ok().body(ResponseMessage.ADD_MESSAGE.getValue());
         }
 
-        cartDTOMap = getCartItemDTOMap(responseCartCookie);
+        cartDTOMap = cartService.getCartDTOMap(responseCartCookie);
 
         CartItemDTO cartItem = cartDTOMap.get(productNo);
 
-        /* 기존 상품이 있을 경우 수량과 가격을 변경
+        /* 기존 상품이 있을 경우 수량과 가격을 변경 후 응답 
         상품 번호 = key, 상품 객체 = value */
         if (cartItem != null) {
             cartItem.setProductStock(addCartDTO.getProductStock() + cartItem.getProductStock());
             cartItem.setProductPrice(addCartDTO.getProductPrice() + cartItem.getProductPrice());
             cartDTOMap.put(productNo, cartItem);
-            resetCartCookie(response);
+            responseNewCartCookie(response);
             return ResponseEntity.ok().body(ResponseMessage.ADD_MESSAGE.getValue());
         }
 
         cartDTOMap.put(productNo, addCartDTO);
 
-        resetCartCookie(response);
+        responseNewCartCookie(response);
 
         return ResponseEntity.ok().body(ResponseMessage.ADD_MESSAGE.getValue());
     }
@@ -142,19 +141,22 @@ public class CartController {
      * 장바구니 상품 변경 메서드
      *
      * @param modifyCartDTO 변경할 카트 객체
-     * @param response      Servlet Response 객체
-     * @return 변경 메시지
-     * @throws UnsupportedEncodingException 인코딩 문제 시 예외 발생
+     * @param request       Servlet Request
+     * @param response      Servlet Response
+     * @return 상태코드 & 메시지
+     * @throws UnsupportedEncodingException url 인코드, 디코드 예외
+     * @throws InvalidProductException      상품 번호 오입력 예외
+     * @throws InvalidPayAmountException    상품 총액 예외
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @PutMapping
-    public ResponseEntity<String> modifyCart(@RequestBody(required = true) CartItemDTO modifyCartDTO, HttpServletRequest request,
+    public ResponseEntity<String> modifyCart(@RequestBody CartItemDTO modifyCartDTO, HttpServletRequest request,
                                              HttpServletResponse response) throws UnsupportedEncodingException, InvalidProductException, InvalidPayAmountException {
         productNo = modifyCartDTO.getProductNo();
 
         cartValidate(modifyCartDTO);
 
-        getCartCookie(request);
+        responseCartCookie = cartService.getCartCookie(request.getCookies());
 
         if (responseCartCookie == null) {
             return ResponseEntity
@@ -162,13 +164,13 @@ public class CartController {
                     .body(NULL_MODIFY_COOKIE);
         }
 
-        getCartDTOMap(responseCartCookie);
+        cartDTOMap = cartService.getCartDTOMap(responseCartCookie);
 
-        removeProductFromMap(productNo);
+        cartService.removeProductFromMap(productNo, cartDTOMap);
 
         cartDTOMap.put(productNo, modifyCartDTO);
 
-        resetCartCookie(response);
+        responseNewCartCookie(response);
 
         return ResponseEntity.ok().body(ResponseMessage.MODIFY_MESSAGE.getValue());
     }
@@ -176,10 +178,13 @@ public class CartController {
     /**
      * 장바구니 상품 삭제 메서드
      *
-     * @param deleteCartDTO 삭제할 카트 객체
-     * @param response      Servlet Response 객체
-     * @return 삭제 메시지
-     * @throws UnsupportedEncodingException 인코딩 문제 시 예외 발생
+     * @param deleteCartDTO 삭제할 장바구니 객체
+     * @param request       Servlet Request
+     * @param response      Servlet Response
+     * @return 상태코드 & 메시지
+     * @throws UnsupportedEncodingException url 인코드, 디코드 예외
+     * @throws InvalidProductException      상품 번호 오입력 예외
+     * @throws InvalidPayAmountException    상품 총액 예외
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @DeleteMapping
@@ -189,59 +194,21 @@ public class CartController {
 
         cartValidate(deleteCartDTO);
 
-        getCartCookie(request);
+        responseCartCookie = cartService.getCartCookie(request.getCookies());
 
         if (responseCartCookie == null) {
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
+                    .status(HttpStatus.BAD_REQUEST)
                     .body(NULL_REMOVE_COOKIE);
         }
 
-        getCartDTOMap(responseCartCookie);
+        cartDTOMap = cartService.getCartDTOMap(responseCartCookie);
 
-        removeProductFromMap(productNo);
+        cartService.removeProductFromMap(productNo, cartDTOMap);
 
-        resetCartCookie(response);
+        responseNewCartCookie(response);
 
         return ResponseEntity.ok().body(ResponseMessage.DELETE_MESSAGE.getValue());
-    }
-
-    /**
-     * 장바구니 쿠키를 반환
-     *
-     * @param request servlet request 객체
-     */
-    private void getCartCookie(HttpServletRequest request) {
-        responseCartCookie = CookieUtil.getCartCookie(request.getCookies()).orElse(null);
-    }
-
-    /**
-     * 장바구니 쿠키 값에서 map 객체 추출
-     *
-     * @param responseCookie 장바구니 쿠키
-     * @throws UnsupportedEncodingException 인코딩 문제 시 예외 발생
-     */
-    private void getCartDTOMap(Cookie responseCookie) throws UnsupportedEncodingException {
-        cartDTOMap = CookieUtil.getCartItemDTOMap(responseCookie);
-    }
-
-    /**
-     * 장바구니 map 객체에서 상품 삭제
-     *
-     * @param productNo 장바구니에 추가, 수정, 삭제할 상품 번호
-     */
-    private void removeProductFromMap(int productNo) {
-        cartDTOMap.remove(productNo);
-    }
-
-    /**
-     * 장바구니의 정보를 담은 map 객체를 값으로 장바구니 쿠키를 생성
-     *
-     * @throws UnsupportedEncodingException 인코딩 문제 시 예외 발생
-     */
-    private void createCartCookie() throws UnsupportedEncodingException {
-        responseCartCookie = new Cookie(COOKIE_KEY, URLEncoder.encode(JsonUtil.objectToString(cartDTOMap), ENC_TYPE));
-        responseCartCookie.setPath("/api");
     }
 
     /**
@@ -250,10 +217,9 @@ public class CartController {
      * @param response servlet response 객체
      * @throws UnsupportedEncodingException 인코딩 문제 시 예외 발생
      */
-    private void resetCartCookie(HttpServletResponse response) throws UnsupportedEncodingException {
-        responseCartCookie.setMaxAge(KILL_COOKIE);
-        createCartCookie();
-        response.addCookie(responseCartCookie);
+    private void responseNewCartCookie(HttpServletResponse response) throws UnsupportedEncodingException {
+        Cookie newCookie = cartService.resetCartCookie(responseCartCookie, cartDTOMap);
+        response.addCookie(newCookie);
     }
 
     /**
