@@ -17,12 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -30,17 +31,20 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
-@ExtendWith(SpringExtension.class)
+@ExtendWith(RestDocumentationExtension.class)
 @Import(value = {AuthorizationExtractor.class, JwtTokenProvider.class})
+@AutoConfigureRestDocs
 class ProductControllerTest {
 
     @Autowired
@@ -59,6 +63,7 @@ class ProductControllerTest {
             .productPrice(12222)
             .productStock(1400)
             .productDetail("건강한 맛입니다.")
+            .productImage("Steam1-1.png")
             .productStatus(ChickenStatus.SALE.getValue())
             .build();
 
@@ -67,6 +72,7 @@ class ProductControllerTest {
             .productName("테스트 상품1")
             .productPrice(12222)
             .productStock(100)
+            .productImage("steam1-3.png")
             .build();
 
     ProductListDTO listDTO2 = ProductListDTO.builder()
@@ -74,6 +80,7 @@ class ProductControllerTest {
             .productName("테스트 상품2")
             .productPrice(12222)
             .productStock(400)
+            .productImage("steam1-2.png")
             .build();
 
     final List<ProductListDTO> productListDTOList = new ArrayList<>();
@@ -82,16 +89,14 @@ class ProductControllerTest {
 
     final ObjectMapper mapper = new ObjectMapper();
 
-    private static final int PRODUCT_SIZE = 5;
-    private static final int BLOCK_SIZE = 8;
-
     @BeforeEach
-    public void setUp() {
+    public void setUp(RestDocumentationContextProvider restDocumentationContextProvider) {
         mockMvc =
                 MockMvcBuilders.standaloneSetup(new ProductController(productService))
+                        .apply(documentationConfiguration(restDocumentationContextProvider))
                         .addFilters(new CharacterEncodingFilter("utf-8", true))
                         .alwaysExpect(content().contentType(MediaType.APPLICATION_JSON))
-                        .alwaysDo(print())
+                        .alwaysDo(document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                         .build();
     }
 
@@ -100,12 +105,10 @@ class ProductControllerTest {
     void productDetailTest() throws Exception {
         Mockito.when(productService.findByNumber(productDTO.getProductNo())).thenReturn(productDTO);
 
-        MockHttpServletResponse mockHttpServletResponse = mockMvc.perform(get("/api/products/" + productDTO.getProductNo()))
+        mockMvc.perform(get("/api/products/{productNo}", productDTO.getProductNo()))
                 .andExpect(status().isOk())
-                .andReturn().getResponse();
-
-        String response = mockHttpServletResponse.getContentAsString();
-        assertThat(response.equals(mapper.writeValueAsString(productDTO))).isTrue();
+                .andExpect(content().string(mapper.writeValueAsString(productDTO)))
+                .andDo(print());
     }
 
     @Test
@@ -133,26 +136,27 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("상품 추가 테스트")
-    void addAction() throws Exception {
-
+    void productAddAction() throws Exception {
         Mockito.when(productService.findByName(productDTO.getProductName())).thenReturn(productDTO);
 
         mockMvc.perform(post("/api/products")
+                        .header("Authorization", "Bearer ${ADMIN_AUTH_TOKEN}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.objectToString(productDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.productName", is(productDTO.getProductName())))
-                .andExpect(jsonPath("$.message", is(ResponseMessage.ADD_MESSAGE.getValue())));
-
+                .andExpect(jsonPath("$.message", is(ResponseMessage.ADD_MESSAGE.getValue())))
+                .andDo(print());
     }
 
     @Test
     @DisplayName("상품 수정 테스트")
-    void modifyAction() throws Exception {
+    void productModifyAction() throws Exception {
         modifiedDTO.setProductStock(1200);
         Mockito.when(productService.findByNumber(modifiedDTO.getProductNo())).thenReturn(modifiedDTO);
 
         mockMvc.perform(put("/api/products")
+                        .header("Authorization", "Bearer ${ADMIN_AUTH_TOKEN}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.objectToString(modifiedDTO)))
                 .andExpect(status().isOk())
@@ -163,13 +167,11 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("상품 삭제 테스트")
-    void deleteAction() throws Exception {
-        MockHttpServletResponse mockitoResponse = mockMvc.perform(delete("/api/products/" + productDTO.getProductNo()))
+    void productDeleteAction() throws Exception {
+        mockMvc.perform(delete("/api/products/" + productDTO.getProductNo())
+                        .header("Authorization", "Bearer ${ADMIN_AUTH_TOKEN}"))
                 .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn().getResponse();
-
-        String response = mockitoResponse.getContentAsString();
-        assertThat(response.equals(ResponseMessage.DELETE_MESSAGE.getValue())).isTrue();
+                .andExpect(content().string(ResponseMessage.DELETE_MESSAGE.getValue()))
+                .andDo(print());
     }
 }

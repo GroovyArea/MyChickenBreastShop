@@ -115,6 +115,6 @@ public class ProductController {
         deleteProductMap.put("productNo", productNo);
         deleteProductMap.put("productStatus", ChickenStatus.EXTINCTION.getValue());
         productService.removeProduct(deleteProductMap);
-        return ResponseEntity.ok().body(ResponseMessage.DELETE_MESSAGE.getValue());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(ResponseMessage.DELETE_MESSAGE.getValue());
     }
 }
