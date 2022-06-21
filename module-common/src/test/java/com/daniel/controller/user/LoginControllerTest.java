@@ -6,23 +6,24 @@ import com.daniel.jwt.JwtTokenProvider;
 import com.daniel.service.RedisService;
 import com.daniel.service.UserService;
 import com.daniel.utility.JsonUtil;
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -41,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(LoginController.class)
 @Slf4j
 @Import(value = {AuthorizationExtractor.class})
+@AutoConfigureRestDocs
 class LoginControllerTest {
 
     @Autowired
@@ -67,18 +69,16 @@ class LoginControllerTest {
     void loginTest() throws Exception {
         Mockito.when(userService.createToken(any())).thenReturn(jwtToken);
 
-        MockHttpServletResponse mockitoResponse = mockMvc.perform(post("/user/login")
+        mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.objectToString(userLoginDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.message", is("Login succeed")))
                 .andDo(print())
-                .andReturn().getResponse();
+                .andDo(document("loginTest", preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
 
-        String response = mockitoResponse.getContentAsString();
-        String message = JsonPath.parse(response).read("$.message");
-
-        assertThat(message.equals("Login succeed")).isTrue();
     }
 
 }

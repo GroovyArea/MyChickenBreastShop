@@ -2,10 +2,6 @@ package com.daniel.outbox.scheduler;
 
 import com.daniel.domain.VO.OutBox;
 import com.daniel.mapper.OutBoxMapper;
-import com.daniel.mapper.ProductMapper;
-import com.daniel.service.KakaoPayService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +22,7 @@ import java.util.List;
 public class CheckStockScheduler {
 
     private final OutBoxMapper outBoxMapper;
-    private final ProductMapper productMapper;
-    private final KakaoPayService kakaoPayService;
+    private final StockCheck stockCheck;
 
     @Scheduled(cron = "0/10 * * * * ?")
     @Transactional
@@ -40,7 +35,7 @@ public class CheckStockScheduler {
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
             outBoxList.forEach(outBox -> {
-                outBoxStockCheck(objectMapper, completedList, outBox);
+                stockCheck.outBoxStockCheck(objectMapper, completedList, outBox);
             });
             if (!completedList.isEmpty()) {
                 outBoxMapper.deleteAllById(completedList);
@@ -48,21 +43,4 @@ public class CheckStockScheduler {
         }
     }
 
-    void outBoxStockCheck(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
-        String payload = outBox.getPayload();
-        try {
-            JsonNode jsonNode = objectMapper.readTree(payload);
-            String itemName = jsonNode.get("item_name").asText();
-
-            if (productMapper.selectStockOfProduct(itemName) < Integer.parseInt(jsonNode.get("quantity").asText())) {
-                kakaoPayService.changeStockFlag(false);
-            }
-
-            completedList.add(outBox.getId());
-
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-            outBoxMapper.insertOrderOutBox(outBox);
-        }
-    }
 }

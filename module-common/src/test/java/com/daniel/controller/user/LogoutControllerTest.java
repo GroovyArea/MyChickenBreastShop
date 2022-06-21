@@ -9,6 +9,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,10 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -29,11 +32,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * <pre>History</pre>
  * 김남영, 2022.06.17 ver 1.0
  *
- * @version 1.0
  * @author 김남영
+ * @version 1.0
  */
 @SpringBootTest(properties = {"spring.config.location = classpath:/application.yml, classpath:/service.yml"})
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
 class LogoutControllerTest {
 
     @Autowired
@@ -71,13 +75,13 @@ class LogoutControllerTest {
     @Test
     @DisplayName("로그아웃 테스트")
     void logoutActionTest() throws Exception {
-        MockHttpServletResponse mockitoResponse = mockMvc.perform(get("/api/user/logout/" + userLoginDTO.getUserId())
+        mockMvc.perform(get("/api/user/logout/" + userLoginDTO.getUserId())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + getJwtToken()))
                 .andExpect(status().isOk())
+                .andExpect(content().string("Logout succeed"))
                 .andDo(print())
-                .andReturn().getResponse();
+                .andDo(document("logoutActionTest", preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
 
-        String response = mockitoResponse.getContentAsString();
-        assertThat(response.equals("Logout succeed")).isTrue();
     }
 }
