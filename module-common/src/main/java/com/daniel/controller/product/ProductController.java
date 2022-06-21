@@ -1,7 +1,7 @@
 package com.daniel.controller.product;
 
+import com.daniel.domain.DTO.product.ProductDTO;
 import com.daniel.domain.DTO.product.ProductListDTO;
-import com.daniel.domain.DTO.product.ProductModifyDTO;
 import com.daniel.enums.global.ResponseMessage;
 import com.daniel.enums.products.ChickenStatus;
 import com.daniel.interceptor.auth.Auth;
@@ -45,7 +45,7 @@ public class ProductController {
      * @return ResponseEntity 상품 정보
      */
     @GetMapping("/{productNo}")
-    public ResponseEntity<ProductListDTO> productDetail(@PathVariable int productNo) {
+    public ResponseEntity<ProductDTO> productDetail(@PathVariable int productNo) {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(productService.findByNumber(productNo));
     }
 
@@ -63,7 +63,8 @@ public class ProductController {
                                                             @RequestParam(required = false) String searchValue) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productService.getCategoryList(new Pager(searchKeyword, searchValue, Pager.getStartRow(pageNum, PRODUCT_SIZE), BLOCK_SIZE), productCategoryNo));
+                .body(productService.getCategoryList(searchKeyword, searchValue,
+                        new Pager(Pager.getStartRow(pageNum, PRODUCT_SIZE), BLOCK_SIZE), productCategoryNo));
     }
 
     /**
@@ -74,7 +75,7 @@ public class ProductController {
      */
     @Auth(role = Auth.Role.ADMIN)
     @PostMapping
-    public ResponseEntity<Message> addAction(@ModelAttribute ProductListDTO productDTO) {
+    public ResponseEntity<Message> addAction(@RequestBody ProductDTO productDTO) {
         productService.addProduct(productDTO);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()
@@ -87,16 +88,16 @@ public class ProductController {
     /**
      * 상품 수정
      *
-     * @param productModifyDTO 수정할 상품 정보
+     * @param productDTO 수정할 상품 정보
      * @return Message 응답 객체
      */
     @Auth(role = Auth.Role.ADMIN)
     @PutMapping
-    public ResponseEntity<Message> modifyAction(@ModelAttribute ProductModifyDTO productModifyDTO) {
-        productService.modifyProduct(productModifyDTO);
+    public ResponseEntity<Message> modifyAction(@RequestBody ProductDTO productDTO) {
+        productService.modifyProduct(productDTO);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()
-                        .data(productService.findByNumber(productModifyDTO.getProductNo()))
+                        .data(productService.findByNumber(productDTO.getProductNo()))
                         .message(ResponseMessage.MODIFY_MESSAGE.getValue())
                         .build()
         );

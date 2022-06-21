@@ -1,8 +1,8 @@
 package com.daniel.service;
 
 import com.daniel.domain.DTO.cart.CartItemDTO;
+import com.daniel.domain.DTO.product.ProductDTO;
 import com.daniel.domain.DTO.product.ProductListDTO;
-import com.daniel.domain.DTO.product.ProductModifyDTO;
 import com.daniel.domain.VO.ProductVO;
 import com.daniel.exceptions.error.InvalidPayAmountException;
 import com.daniel.exceptions.error.InvalidProductException;
@@ -43,33 +43,34 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductListDTO findByNumber(Integer productNo) {
-        return modelMapper.map(productMapper.selectNoProduct(productNo), ProductListDTO.class);
+    public ProductDTO findByNumber(Integer productNo) {
+        return modelMapper.map(productMapper.selectNoProduct(productNo), ProductDTO.class);
     }
 
     @Transactional(readOnly = true)
-    public ProductListDTO findByName(String productName) {
-        return modelMapper.map(productMapper.selectNameProduct(productName), ProductListDTO.class);
+    public ProductDTO findByName(String productName) {
+        return modelMapper.map(productMapper.selectNameProduct(productName), ProductDTO.class);
     }
 
     @Transactional(readOnly = true)
-    public List<ProductListDTO> getCategoryList(Pager pager, int productCategoryNo) {
-        return productMapper.selectCategoryList(pager, productCategoryNo).stream()
+    public List<ProductListDTO> getCategoryList(String searchKeyword, String searchValue, Pager pager, int productCategoryNo) {
+        return productMapper.selectCategoryList(searchKeyword, searchValue, pager, productCategoryNo).stream()
                 .map(productVO -> modelMapper.map(productVO, ProductListDTO.class))
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public int getStockOfProduct(String productName) {
         return productMapper.selectStockOfProduct(productName);
     }
 
     @Transactional
-    public void addProduct(ProductListDTO productDTO) {
+    public void addProduct(ProductDTO productDTO) {
         productMapper.insertProduct(modelMapper.map(productDTO, ProductVO.class));
     }
 
     @Transactional
-    public void modifyProduct(ProductModifyDTO productModifyDTO) {
+    public void modifyProduct(ProductDTO productModifyDTO) {
         productMapper.updateProduct(modelMapper.map(productModifyDTO, ProductVO.class));
     }
 

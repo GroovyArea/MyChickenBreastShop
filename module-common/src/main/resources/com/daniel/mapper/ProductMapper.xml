@@ -41,10 +41,10 @@
                 (SELECT PRODUCT_NO, PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_STOCK,
                 PRODUCT_IMAGE, PRODUCT_CATEGORY
                 FROM PRODUCT
-                WHERE ${pager.searchKeyword} LIKE '%${pager.searchValue}%') subQuery
+                WHERE ${searchKeyword} LIKE '%${searchValue}%') subQuery
                 WHERE subQuery.PRODUCT_CATEGORY = #{productCategory}
             </if>
-            <if test="searchValue == null or searchValue ==''">
+            <if test="searchKeyword == null or searchValue ==''">
                 PRODUCT
                 WHERE PRODUCT_CATEGORY = #{productCategory}
             </if>

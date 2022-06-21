@@ -17,7 +17,7 @@ public interface ProductMapper {
 
     ProductVO selectNameProduct(String productName);
 
-    List<ProductVO> selectCategoryList(@Param("pager") Pager pager, @Param("productCategory") int productCategoryNo);
+    List<ProductVO> selectCategoryList(String searchKeyword, String searchValue, @Param("pager") Pager pager, @Param("productCategory") int productCategoryNo);
 
     int selectStockOfProduct(String productName);
 
