@@ -4,6 +4,7 @@ import com.daniel.domain.DTO.user.UserDTO;
 import com.daniel.domain.DTO.user.UserModifyDTO;
 import com.daniel.enums.global.ResponseMessage;
 import com.daniel.enums.users.UserGrade;
+import com.daniel.exceptions.error.UserNotExistsException;
 import com.daniel.interceptor.auth.Auth;
 import com.daniel.response.Message;
 import com.daniel.service.UserService;
@@ -40,7 +41,7 @@ public class UserController {
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @GetMapping("/{userId}")
-    public ResponseEntity<Message> detailAction(@PathVariable String userId) {
+    public ResponseEntity<Message> detailAction(@PathVariable String userId) throws UserNotExistsException {
         UserDTO userDTO = userService.findById(userId);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()
@@ -58,7 +59,7 @@ public class UserController {
      */
     @Auth(role = Auth.Role.BASIC_USER)
     @PutMapping
-    public ResponseEntity<Message> modifyAction(@ModelAttribute UserModifyDTO userModifyDTO) {
+    public ResponseEntity<Message> modifyAction(@RequestBody UserModifyDTO userModifyDTO) throws UserNotExistsException {
         userService.modifyUser(userModifyDTO);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()

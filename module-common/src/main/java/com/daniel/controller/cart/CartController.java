@@ -8,8 +8,7 @@ import com.daniel.interceptor.auth.Auth;
 import com.daniel.service.ProductService;
 import com.daniel.utility.CookieUtil;
 import com.daniel.utility.JsonUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +41,9 @@ import static com.daniel.utility.CookieUtil.getCartItemDTOMap;
  * @version 1.2
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/carts")
 public class CartController {
-
-    private static final Logger log = LoggerFactory.getLogger(CartController.class);
 
     private static final String COOKIE_KEY = "Chicken";
     private static final String ENC_TYPE = "utf-8";
@@ -62,10 +60,6 @@ public class CartController {
     private Map<Integer, CartItemDTO> cartDTOMap;
     private Integer productNo;
 
-    public CartController(ProductService productService) {
-        this.productService = productService;
-    }
-
     /**
      * 장바구니 목록 조회 메서드
      *
@@ -79,9 +73,7 @@ public class CartController {
         List<CartItemDTO> cartList;
         /* 장바구니 쿠키가 존재하지 않을 경우*/
         if (responseCartCookie == null) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(NULL_CART_COOKIE);
+            return ResponseEntity.badRequest().body(NULL_CART_COOKIE);
         }
 
         getCartDTOMap(responseCartCookie);

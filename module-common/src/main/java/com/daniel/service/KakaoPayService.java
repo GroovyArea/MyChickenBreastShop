@@ -1,7 +1,10 @@
 package com.daniel.service;
 
 import com.daniel.domain.DTO.order.*;
-import com.daniel.domain.VO.*;
+import com.daniel.domain.VO.AmountVO;
+import com.daniel.domain.VO.CardVO;
+import com.daniel.domain.VO.OrderVO;
+import com.daniel.domain.VO.UserVO;
 import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.mapper.*;
 import com.daniel.outbox.event.OrderCreated;
@@ -44,8 +47,6 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class KakaoPayService {
-
-    private static final String RUN_OUT_OFF_STOCK = "해당 상품이 품절되었습니다.";
 
     @Value("${kakao.admin.key}")
     private String ADMIN_KEY;
@@ -92,7 +93,7 @@ public class KakaoPayService {
     private final OrderMapper orderMapper;
 
     @Transactional
-    public String getkakaoPayUrl(OrderProductDTO orderProductDTO, HttpServletRequest request) throws RunOutOfStockException {
+    public String getkakaoPayUrl(OrderProductDTO orderProductDTO, HttpServletRequest request) throws RunOutOfStockException{
 
         /* 재고 확인 이벤트 발생 */
         applicationEventPublisher.publishEvent(

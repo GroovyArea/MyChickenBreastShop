@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
@@ -23,7 +24,8 @@ public class JwtTokenProvider {
 
     private final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-    private static final String SECRET_KEY = "mysecretmysecretmysecretmysecretmysecretasdfasdfasdf";
+    @Value("${jwt.secret.key}")
+    private String SECRET_KEY;
     private static final long VALIDATE_IN_MILLISECONDS = 1000 * 60L * 30L;
 
     /**
