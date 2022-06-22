@@ -69,7 +69,7 @@ public class CartController {
 
         /* 장바구니 쿠키가 존재하지 않을 경우*/
         if (responseCartCookie == null) {
-            return ResponseEntity.badRequest().body(NULL_CART_COOKIE);
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON_UTF8).body(NULL_CART_COOKIE);
         }
 
         cartDTOMap = cartService.getCartDTOMap(responseCartCookie);
@@ -79,7 +79,7 @@ public class CartController {
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(cartList);
         }
 
-        return ResponseEntity.badRequest().body(CART_EMPTY);
+        return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON_UTF8).body(CART_EMPTY);
     }
 
     /**
