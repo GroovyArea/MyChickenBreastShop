@@ -1,0 +1,84 @@
+= My-Chicken-Shop REST Docs
+:doctype: book
+:icons: font
+:source-highlighter: hightlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+[[Cart_API]]
+== Cart API
+
+=== 장바구니 조회
+
+==== URL
+include::{snippets}/get-cart-list-test/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/get-cart-list-test/curl-request.adoc[]
+
+==== Response
+include::{snippets}/get-cart-list-test/http-response.adoc[]
+
+
+|===
+|Name |Type |Discription
+
+|productNo
+|Integer
+|장바구니에 담긴 상품 번호
+
+|productName
+|String
+|상품 명
+
+|productStock
+|Integer
+|상품 수량
+
+|productPrice
+|Integer
+|상품 총 가격
+|===
+
+=== 장바구니 상품 추가
+
+==== URL
+include::{snippets}/add-cart/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/add-cart/curl-request.adoc[]
+
+==== Response
+include::{snippets}/add-cart/http-response.adoc[]
+
+=== 장바구니 상품 수정
+
+==== URL
+include::{snippets}/modify-cart/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/modify-cart/curl-request.adoc[]
+
+==== Response
+include::{snippets}/modify-cart/http-response.adoc[]
+
+
+=== 장바구니 상품 삭제
+
+==== URL
+include::{snippets}/delete-cart/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/delete-cart/curl-request.adoc[]
+
+==== Response
+include::{snippets}/delete-cart/http-response.adoc[]

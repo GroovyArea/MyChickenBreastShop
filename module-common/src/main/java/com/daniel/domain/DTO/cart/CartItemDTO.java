@@ -1,5 +1,6 @@
 package com.daniel.domain.DTO.cart;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.beans.ConstructorProperties;
 
 @Getter
 @Setter
+@Builder
 public class CartItemDTO {
 
     private final Integer productNo;
