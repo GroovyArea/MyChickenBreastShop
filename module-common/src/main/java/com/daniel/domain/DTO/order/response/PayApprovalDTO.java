@@ -1,4 +1,4 @@
-package com.daniel.domain.DTO.order;
+package com.daniel.domain.DTO.order.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
