@@ -1,6 +1,6 @@
 package com.daniel.service;
 
-import com.daniel.domain.DTO.order.OrderInfoDTO;
+import com.daniel.domain.DTO.order.response.OrderInfoDTO;
 import com.daniel.mapper.OrderMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

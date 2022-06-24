@@ -1,6 +1,11 @@
 package com.daniel.service;
 
-import com.daniel.domain.DTO.order.*;
+import com.daniel.domain.DTO.order.request.OrderProductDTO;
+import com.daniel.domain.DTO.order.request.PayCancelDTO;
+import com.daniel.domain.DTO.order.response.OrderCancelDTO;
+import com.daniel.domain.DTO.order.response.OrderInfoDTO;
+import com.daniel.domain.DTO.order.response.PayApprovalDTO;
+import com.daniel.domain.DTO.order.response.PayReadyDTO;
 import com.daniel.domain.VO.AmountVO;
 import com.daniel.domain.VO.CardVO;
 import com.daniel.domain.VO.OrderVO;
@@ -27,6 +32,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -46,6 +52,8 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class KakaoPayService {
+
+    private static final String ORDER_APPROVED = "결제 승인";
 
     @Value("${kakao.admin.key}")
     private String ADMIN_KEY;
@@ -104,7 +112,6 @@ public class KakaoPayService {
                         .build())
         );
 
-        /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
@@ -114,7 +121,6 @@ public class KakaoPayService {
         itemName = orderProductDTO.getItemName();
         totalAmount = orderProductDTO.getTotalAmount();
 
-        /* 서버로 요청할 body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         setParams(params, requestUrl);
         params.add("partner_order_id", orderId);
@@ -150,7 +156,6 @@ public class KakaoPayService {
                 outBoxEventCartBuilder.createOutBoxEvent(orderCreatedCartList)
         );
 
-        /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
@@ -160,14 +165,15 @@ public class KakaoPayService {
         userId = user.getUserId();
         this.totalAmount = totalAmount;
 
-        /* 서버로 요청할 body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         setParams(params, requestUrl);
         params.add("partner_order_id", orderId);
         params.add("partner_user_id", userId);
         params.add("item_name", itemName);
-        params.add("item_code", String.join(", ", Arrays.stream(productNoArr).map(String::valueOf)
-                .toArray(String[]::new)));
+        params.add("item_code", String.join(", ",
+                Arrays.stream(productNoArr)
+                        .map(String::valueOf)
+                        .toArray(String[]::new)));
         params.add("quantity", String.valueOf(productNoArr.length));
         params.add("total_amount", String.valueOf(totalAmount));
         params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
@@ -189,13 +195,10 @@ public class KakaoPayService {
     }
 
     @Transactional
-    public PayApprovalDTO getKakaoPayInfo(String pg_token) {
-
-        /* 서버로 요청할 헤더*/
+    public PayApprovalDTO getApprovedKakaoPayInfo(String pg_token) {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        /* 서버로 요청할 Body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", TEST_CID);
         params.add("tid", payReadyDTO.getTid());
@@ -207,7 +210,7 @@ public class KakaoPayService {
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
         PayApprovalDTO approvalDTO = restTemplate.postForObject(HOST + KAKAO_PAY_APPROVE, body, PayApprovalDTO.class);
-        approvalDTO.setOrderStatus("결제 승인");
+        approvalDTO.setOrderStatus(ORDER_APPROVED);
 
         cardMapper.insertCard(modelMapper.map(approvalDTO.getCardInfo(), CardVO.class), approvalDTO.getTid());
         amountMapper.insertAmount(modelMapper.map(approvalDTO.getAmount(), AmountVO.class), approvalDTO.getTid());
@@ -224,12 +227,9 @@ public class KakaoPayService {
 
     @Transactional
     public OrderInfoDTO getOrderDetail(String tid, String cid) {
-
-        /* 서버로 요청할 헤더*/
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        /* 서버로 요청할 Body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", cid);
         params.add("tid", tid);
@@ -245,25 +245,26 @@ public class KakaoPayService {
     }
 
     @Transactional
-    public OrderCancelDTO cancelKakaoPay(Map<String, Object> map) {
-
-        /* 서버로 요청할 헤더*/
+    public OrderCancelDTO cancelKakaoPay(PayCancelDTO payCancelDTO) {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        /* 서버로 요청할 Body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("tid", String.valueOf(map.get("tid")));
-        params.add("cancel_amount", String.valueOf(map.get("cancelAmount")));
-        params.add("cancel_tax_free_amount", String.valueOf(map.get("cancelTaxFreeAmount")));
         params.add("cid", TEST_CID);
+        params.add("tid", String.valueOf(payCancelDTO.getTid()));
+        params.add("cancel_amount", String.valueOf(payCancelDTO.getCancelAmount()));
+        params.add("cancel_tax_free_amount", String.valueOf(payCancelDTO.getCancelTaxFreeAmount()));
 
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
         try {
             OrderCancelDTO responseDTO =
                     restTemplate.postForObject(HOST + KAKAO_PAY_CANCEL, body, OrderCancelDTO.class);
-            orderMapper.updateOrder(responseDTO.getTid());
+
+            if (responseDTO != null) {
+                orderMapper.updateOrder(responseDTO.getTid());
+            }
+
             return responseDTO;
 
         } catch (RestClientException e) {
@@ -314,16 +315,12 @@ public class KakaoPayService {
     }
 
     private List<OrderCreated> getOrderCreatedList(Integer[] productNoArr, String[] productNameArr, Integer[] productStockArr, int totalAmount) {
-        List<OrderCreated> orderCartList = new ArrayList<>();
-        for (int i = 0; i < productNameArr.length; i++) {
-            orderCartList.add(OrderCreated.builder()
-                    .itemNumber(productNoArr[i])
-                    .quantity(productStockArr[i])
-                    .itemName(productNameArr[i])
-                    .totalAmount(totalAmount)
-                    .build());
-        }
-        return orderCartList;
+        return IntStream.range(0, productNameArr.length).mapToObj(i -> OrderCreated.builder()
+                .itemNumber(productNoArr[i])
+                .quantity(productStockArr[i])
+                .itemName(productNameArr[i])
+                .totalAmount(totalAmount)
+                .build()).collect(Collectors.toList());
     }
 
     public void changeStockFlag(boolean flag) {
