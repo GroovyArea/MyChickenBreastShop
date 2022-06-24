@@ -26,7 +26,7 @@ include::{snippets}/get-db-order-info/curl-request.adoc[]
 ==== Response
 include::{snippets}/get-db-order-info/http-response.adoc[]
 
-*Data*
+*Data(JSON)*
 |===
 |Name |Type |Description
 
@@ -100,7 +100,7 @@ CARD 또는 MONEY 중 하나
 |결제/취소 상세
 |===
 
-*AmountDTO*
+*AmountDTO(JSON)*
 
 |===
 |Name |Type |Description
@@ -213,7 +213,7 @@ include::{snippets}/pay-success-action/curl-request.adoc[]
 ==== request
 include::{snippets}/pay-success-action/http-response.adoc[]
 
-Card_Info
+Card_Info(JSON)
 |===
 |Name |Type |Description
 
@@ -262,7 +262,7 @@ Card_Info
 |카드 상품 코드
 |===
 
-=== 결제 취소 요청 (Redirect)
+=== 결제 중단 요청 (Redirect)
 
 ==== URL
 include::{snippets}/pay-cancel-action/http-request.adoc[]
@@ -285,3 +285,206 @@ include::{snippets}/pay-fail-action/curl-request.adoc[]
 
 ==== Response
 include::{snippets}/pay-fail-action/http-response.adoc[]
+
+=== 결제 취소
+
+==== URL
+include::{snippets}/pay-cancel/http-request.adoc[]
+
+*Parameter*
+|===
+|Name |Type |Description
+
+|tid
+|String
+|결제 고유번호
+
+|cancelAmount
+|Integer
+|취소 금액
+
+|cancelTaxFreeAmount
+|Integer
+|취소 비과세 금액
+|===
+
+==== #sample#
+==== Request
+include::{snippets}/pay-cancel/curl-request.adoc[]
+
+==== Response
+include::{snippets}/pay-cancel/http-response.adoc[]
+
+|===
+|Name |Type |Description
+
+|cid
+|String
+|가맹점 코드, 20자
+
+|tid
+|String
+|결제 고유 번호, 10자
+
+|aid
+|String
+|요청 고유 번호
+
+|status
+|String
+|결제 상태
+
+|partnerOrderId
+|String
+|가맹점 주문번호, 최대 100자
+
+|partnerUserId
+|String
+|가맹점 회원 id, 최대 100자
+
+|paymentMethodType
+|String
+|결제 수단, CARD 또는 MONEY 중 하나
+
+|amount
+|AmountDTO
+|결제 금액 정보
+
+|approvedCancelAmount
+|ApprovedCancelAmount
+|이번 요청으로 취소된 금액
+
+|canceledAmount
+|CanceledAmount
+|누계 취소 금액
+
+|cancelAvailableAmount
+|CancelAvailableAmount
+|남은 취소 가능 금액
+
+|itemName
+|String
+|상품 이름, 최대 100자
+
+|itemCode
+|String
+|상품 코드, 최대 100자
+
+|quantity
+|Integer
+|상품 수량
+
+|createdAt
+|Datetime
+|결제 준비 요청 시각
+
+|approvedAt
+|Datetime
+|결제 승인 시각
+
+|canceledAt
+|Datetime
+|결제 취소 시각
+|===
+
+*amount(JSON)*
+
+|===
+|Name |Type |Description
+
+|total
+|Integer
+|전체 결제 금액
+
+|taxFree
+|Integer
+|비과세 금액
+
+|vat
+|Integer
+|부가세 금액
+
+|point
+|Integer
+|포인트 금액
+
+|discount
+|Integer
+|할인 금액
+|===
+
+*approvedCancelAmount(JSON)*
+|===
+|Name |Type |Description
+
+|total
+|Integer
+|이번 요청으로 취소된 전체 금액
+
+|taxFree
+|Integer
+|이번 요청으로 취소된 비과세 금액
+
+|vat
+|Integer
+|이번 요청으로 취소된 부가세 금액
+
+|point
+|Integer
+|이번 요청으로 취소된 포인트 금액
+
+|discount
+|Integer
+|이번 요청으로 취소된 할인 금액
+|===
+
+*canceledAmount(JSON)*
+|===
+|Name |Type |Description
+
+|total
+|Integer
+|취소된 전체 금액
+
+|taxFree
+|Integer
+|취소된 비과세 금액
+
+|vat
+|Integer
+|취소된 부가세 금액
+
+|point
+|Integer
+|취소된 포인트 금액
+
+|discount
+|Integer
+|취소된 할인 금액
+|===
+
+*cancelAvailableAmount(JSON)*
+|===
+|Name |Type |Description
+
+|total
+|Integer
+|전체 취소 가능 금액
+
+|taxFree
+|Integer
+|취소 가능한 비과세 금액
+
+|vat
+|Integer
+|취소 가능한 부가세 금액
+
+|point
+|Integer
+|취소 가능한 포인트 금액
+
+|discount
+|Integer
+|취소 가능한 할인 금액
+|===
+
