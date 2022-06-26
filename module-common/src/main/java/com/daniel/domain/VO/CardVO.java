@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CardVO {
 
-    private String tid, userId;
+    private String tid;
     private String issuerCorp, issuerCorpCode;
     private String bin, cardType, installMonth;
     private String interestFreeInstall;

@@ -1,9 +1,6 @@
 package com.daniel.domain.DTO.order.response;
 
-import com.daniel.domain.DTO.order.response.kakaoPay.CancelAvailableAmount;
-import com.daniel.domain.DTO.order.response.kakaoPay.CanceledAmount;
-import com.daniel.domain.DTO.order.response.kakaoPay.PaymentActionDetails;
-import com.daniel.domain.DTO.order.response.kakaoPay.SelectedCardInfo;
+import com.daniel.domain.DTO.order.response.kakaoPay.*;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -22,7 +19,7 @@ public class OrderInfoDTO {
 
     String cid, cidSecret, tid;
     String status, partnerOrderId, partnerUserId, paymentMethodType;
-    AmountDTO amount;
+    Amount amount;
     CanceledAmount canceledAmount;
     CancelAvailableAmount cancelAvailableAmount;
     String itemName, itemCode;

@@ -1,5 +1,7 @@
 package com.daniel.domain.DTO.order.response;
 
+import com.daniel.domain.DTO.order.response.kakaoPay.Amount;
+import com.daniel.domain.DTO.order.response.kakaoPay.CardInfo;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -18,8 +20,8 @@ public class PayApprovalDTO {
 
     private String aid, tid, cid, sid;
     private String partnerOrderId, partnerUserId, paymentMethodType;
-    private AmountDTO amount;
-    private CardDTO cardInfo;
+    private Amount amount;
+    private CardInfo cardInfo;
     private String itemName, itemCode, payload;
     private Integer quantity, taxFreeAmount, vatAmount;
     private Date createdAt, approvedAt;

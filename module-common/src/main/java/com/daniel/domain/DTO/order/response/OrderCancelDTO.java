@@ -1,5 +1,6 @@
 package com.daniel.domain.DTO.order.response;
 
+import com.daniel.domain.DTO.order.response.kakaoPay.Amount;
 import com.daniel.domain.DTO.order.response.kakaoPay.ApprovedCancelAmount;
 import com.daniel.domain.DTO.order.response.kakaoPay.CancelAvailableAmount;
 import com.daniel.domain.DTO.order.response.kakaoPay.CanceledAmount;
@@ -21,7 +22,7 @@ public class OrderCancelDTO {
 
     private String cid, tid, aid, status;
     private String partnerOrderId, partnerUserId, paymentMethodType;
-    private AmountDTO amount;
+    private Amount amount;
     private ApprovedCancelAmount approvedCancelAmount;
     private CanceledAmount canceledAmount;
     private CancelAvailableAmount cancelAvailableAmount;
