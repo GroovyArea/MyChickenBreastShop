@@ -19,4 +19,12 @@ public class OrderDTO {
     private CardDTO cardDTO;
     private AmountDTO amountDTO;
     private String orderStatus;
+
+    public void setCardDTO(CardDTO cardDTO) {
+        this.cardDTO = cardDTO;
+    }
+
+    public void setAmountDTO(AmountDTO amountDTO) {
+        this.amountDTO = amountDTO;
+    }
 }

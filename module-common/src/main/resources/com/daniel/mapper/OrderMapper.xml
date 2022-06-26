@@ -5,7 +5,7 @@
 <mapper namespace="com.daniel.mapper.OrderMapper">
 
     <resultMap id="order" type="OrderVO">
-        <result property="tid" column="tid"/>
+        <id property="tid" column="tid"/>
         <result property="userId" column="userId"/>
         <result property="aid" column="aid"/>
         <result property="cid" column="cid"/>
@@ -18,12 +18,32 @@
         <result property="createdAt" column="created_at"/>
         <result property="approvedAt" column="approved_at"/>
         <result property="orderStatus" column="order_status"/>
+        <association property="amountVO" javaType="com.daniel.domain.VO.AmountVO">
+            <id property="tid" column="tid"/>
+            <result property="total" column="total"/>
+            <result property="taxFree" column="tax_free"/>
+            <result property="vat" column="vat"/>
+            <result property="point" column="point"/>
+            <result property="discount" column="discount"/>
+        </association>
+        <association property="cardVO" javaType="com.daniel.domain.VO.CardVO">
+            <id property="tid" column="tid"/>
+            <result property="issuerCorp" column="issuer_corp"/>
+            <result property="issuerCorpCode" column="issuer_corp_code"/>
+            <result property="bin" column="bin"/>
+            <result property="cardType" column="card_type"/>
+            <result property="installMonth" column="install_month"/>
+            <result property="interestFreeInstall" column="interest_free_install"/>
+        </association>
     </resultMap>
 
     <select id="selectOrderList" resultType="com.daniel.domain.VO.OrderVO" resultMap="order">
         SELECT *
-        FROM `ORDER`
-        WHERE USER_ID = #{userId} AND ORDER_STATUS = '결제 승인'
+        FROM `ORDER` o
+                 JOIN CARDINFO c ON o.tid = c.tid
+                 JOIN AMOUNT a ON c.tid = a.tid
+        WHERE USER_ID = #{userId}
+          AND ORDER_STATUS = '결제 승인'
     </select>
 
     <insert id="insertOrder">

@@ -2,14 +2,8 @@ package com.daniel.controller.order;
 
 import com.daniel.domain.DTO.cart.CartItemDTO;
 import com.daniel.domain.DTO.order.request.OrderProductDTO;
-import com.daniel.domain.DTO.order.response.AmountDTO;
-import com.daniel.domain.DTO.order.response.CardDTO;
-import com.daniel.domain.DTO.order.response.OrderInfoDTO;
-import com.daniel.domain.DTO.order.response.PayApprovalDTO;
-import com.daniel.domain.DTO.order.response.kakaoPay.CancelAvailableAmount;
-import com.daniel.domain.DTO.order.response.kakaoPay.CanceledAmount;
-import com.daniel.domain.DTO.order.response.kakaoPay.PaymentActionDetails;
-import com.daniel.domain.DTO.order.response.kakaoPay.SelectedCardInfo;
+import com.daniel.domain.DTO.order.response.*;
+import com.daniel.domain.DTO.order.response.kakaoPay.*;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;
 import com.daniel.service.CartService;
@@ -81,7 +75,7 @@ class OrderControllerTest {
                         .build();
     }
 
-    AmountDTO amountDTO = AmountDTO.builder()
+    Amount amount = Amount.builder()
             .total(96000).taxFree(1000).vat(8636).point(0).discount(0).build();
 
     final CanceledAmount canceledAmount = CanceledAmount.builder()
@@ -100,7 +94,7 @@ class OrderControllerTest {
     OrderInfoDTO orderInfoDTO = OrderInfoDTO.builder()
             .cid("TC0ONETIME").cidSecret(null).tid("T2b3092b6520050854a7").status("결제 승인")
             .partnerOrderId("aa11, 스팀 오리지널 그 외 1개").partnerUserId("aa11").paymentMethodType("CARD")
-            .amount(amountDTO)
+            .amount(amount)
             .canceledAmount(canceledAmount)
             .cancelAvailableAmount(cancelAvailableAmount)
             .itemName("스팀 오리지널 그 외 1개").itemCode("9, 12").quantity(2)
@@ -108,9 +102,21 @@ class OrderControllerTest {
             .selectedCardInfo(selectedCardInfo)
             .paymentActionDetails(new PaymentActionDetails[]{paymentActionDetails}).build();
 
+    final AmountDTO amountDTO = AmountDTO.builder()
+            .total(96000).taxFree(1000).vat(8636).point(0).discount(0).build();
 
+    final CardDTO cardDTO = CardDTO.builder()
+            .issuerCorp("NH카드").issuerCorpCode("11")
+            .bin("123456").cardType("신용").installMonth("00").interestFreeInstall("N").build();
 
-    CardDTO cardDTO = CardDTO.builder()
+    OrderDTO orderDTO = OrderDTO.builder()
+            .tid("T2b3092b6520050854a7").userId("aa11").aid("A1629b12d90bc83c6fbc").cid("TC0ONETIME")
+            .partnerOrderId("aa11, 스팀 오리지널 그 외 1개").partnerUserId("aa11")
+            .itemName("스팀 오리지널 그 외 1개").itemCode("9, 12").paymentMethodType("CARD")
+            .amountDTO(amountDTO).cardDTO(cardDTO).quantity(2).createdAt("2022-06-04 17:08:06").approvedAt("2022-06-04 17:08:06")
+            .orderStatus("결제 승인").build();
+
+    CardInfo cardInfo = CardInfo.builder()
             .purchaseCorp("NH카드").purchaseCorpCode("11").issuerCorp("NH카드").issuerCorpCode("11")
             .bin("123456").cardType("신용").installMonth("00").approvedId("11111111").cardMid(null)
             .interestFreeInstall("N").cardItemCode(null).build();
@@ -119,7 +125,7 @@ class OrderControllerTest {
             .aid("A162b3c5b73b3844359a").tid("T2b3c5996520050855cc").cid("TC0ONETIME")
             .partnerOrderId("aa11, 스팀 오리지널 그 외 1개").partnerUserId("aa11").paymentMethodType("CARD")
             .itemName("스팀 오리지널 그 외 1개").itemCode("9, 12").quantity(2).createdAt(new Date()).approvedAt(new Date())
-            .amount(amountDTO).cardInfo(cardDTO).build();
+            .amount(amount).cardInfo(cardInfo).build();
 
     OrderProductDTO orderProductDTO = OrderProductDTO.builder()
             .quantity(5).itemNumber(9).itemName("스팀 오리지널").totalAmount(65000).build();
@@ -177,11 +183,11 @@ class OrderControllerTest {
     @Test
     @DisplayName("회원 주문 조회 리스트 테스트")
     void getDBOrderInfo() throws Exception {
-        List<OrderInfoDTO> orderInfoDTOList = new ArrayList<>();
-        orderInfoDTOList.add(orderInfoDTO);
-        Mockito.when(orderService.getOrderInfoList(orderInfoDTO.getPartnerUserId())).thenReturn(orderInfoDTOList);
+        List<OrderDTO> orderList = new ArrayList<>();
+        orderList.add(orderDTO);
+        Mockito.when(orderService.getOrderInfoList(orderDTO.getPartnerUserId())).thenReturn(orderList);
 
-        mockMvc.perform(get("/api/order/{userId}", orderInfoDTO.getPartnerUserId())
+        mockMvc.perform(get("/api/order/{userId}", orderDTO.getPartnerUserId())
                         .header("Authorization", "Bearer ${ADMIN_AUTH_TOKEN}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists())

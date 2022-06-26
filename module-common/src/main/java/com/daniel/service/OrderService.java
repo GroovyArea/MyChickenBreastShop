@@ -1,6 +1,8 @@
 package com.daniel.service;
 
-import com.daniel.domain.DTO.order.response.OrderInfoDTO;
+import com.daniel.domain.DTO.order.response.AmountDTO;
+import com.daniel.domain.DTO.order.response.CardDTO;
+import com.daniel.domain.DTO.order.response.OrderDTO;
 import com.daniel.mapper.OrderMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,11 @@ import java.util.stream.Collectors;
  * <pre>
  *     <b>History</b>
  *     김남영, 1.0, 2022.05.28 최초 작성
+ *     김남영, 1.1, 2022.06.27 스트림 수정
  * </pre>
  *
  * @author 김남영
- * @version 1.0
+ * @version 1.1
  */
 @Service
 public class OrderService {
@@ -33,11 +36,15 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderInfoDTO> getOrderInfoList(String userId) {
+    public List<OrderDTO> getOrderInfoList(String userId) {
         return orderMapper.selectOrderList(userId).stream()
-                .map(a -> modelMapper.map(a, OrderInfoDTO.class))
+                .map(a -> {
+                            OrderDTO orderDTO = modelMapper.map(a, OrderDTO.class);
+                            orderDTO.setCardDTO(modelMapper.map(a.getCardVO(), CardDTO.class));
+                            orderDTO.setAmountDTO(modelMapper.map(a.getAmountVO(), AmountDTO.class));
+                            return orderDTO;
+                        }
+                )
                 .collect(Collectors.toList());
     }
-
-
 }

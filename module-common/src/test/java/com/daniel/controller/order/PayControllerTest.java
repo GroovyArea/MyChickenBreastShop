@@ -2,6 +2,7 @@ package com.daniel.controller.order;
 
 import com.daniel.domain.DTO.order.request.PayCancelDTO;
 import com.daniel.domain.DTO.order.response.*;
+import com.daniel.domain.DTO.order.response.kakaoPay.Amount;
 import com.daniel.domain.DTO.order.response.kakaoPay.ApprovedCancelAmount;
 import com.daniel.domain.DTO.order.response.kakaoPay.CancelAvailableAmount;
 import com.daniel.domain.DTO.order.response.kakaoPay.CanceledAmount;
@@ -61,7 +62,7 @@ class PayControllerTest {
             .cancelTaxFreeAmount(1000)
             .build();
 
-    final AmountDTO amountDTO = AmountDTO.builder()
+    final Amount amountDTO = Amount.builder()
             .total(96000).taxFree(1000).vat(8636).point(10000).discount(0).build();
 
     final ApprovedCancelAmount approvedCancelAmount = ApprovedCancelAmount.builder()
