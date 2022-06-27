@@ -46,11 +46,9 @@ public class EmailCheck {
             completedList.add(outBox.getId());
 
             redisService.setDataExpire(userEmail, authKey, EXPIRE_DURATION);
-        } catch (MailException e) {
-            log.error("메일 발송 중 오류 발생 . . .");
-            outBoxMapper.insertOutBox(outBox);
-        } catch (FailedPayloadConvertException | JsonProcessingException e) {
+        } catch (MailException | FailedPayloadConvertException | JsonProcessingException e) {
             log.error(e.getMessage());
+            outBoxMapper.deleteOutBox(outBox);
             outBoxMapper.insertOutBox(outBox);
         }
     }

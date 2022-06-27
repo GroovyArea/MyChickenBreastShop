@@ -12,5 +12,7 @@ public interface OutBoxEmailMapper {
 
     void insertOutBox(OutBox outBox);
 
+    void deleteOutBox(OutBox outBox);
+
     void deleteAllById(List<Long> completedList);
 }

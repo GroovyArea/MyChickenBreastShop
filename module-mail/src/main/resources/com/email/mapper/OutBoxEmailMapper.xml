@@ -25,6 +25,12 @@
                 #{payload})
     </insert>
 
+    <delete id="deleteOutBox" parameterType="OutBox">
+        DELETE
+        FROM `OUTBOX-EMAIL`
+        WHERE ID = #{id}
+    </delete>
+
     <delete id="deleteAllById" parameterType="java.util.List">
         DELETE FROM `OUTBOX-EMAIL`
         WHERE

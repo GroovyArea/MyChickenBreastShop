@@ -16,5 +16,7 @@ public interface OutBoxMapper {
 
     void insertOrderOutBox(OutBox outBox);
 
+    void deleteById(OutBox outBox);
+
     void deleteAllById(List<Long> completedList);
 }

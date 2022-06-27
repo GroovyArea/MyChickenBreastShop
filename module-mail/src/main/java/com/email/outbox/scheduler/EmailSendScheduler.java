@@ -24,7 +24,7 @@ public class EmailSendScheduler {
     private final OutBoxEmailMapper outBoxEmailMapper;
     private final EmailCheck emailCheck;
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0 58 11 * * ?")
     @Transactional
     public void schedulingValidNumberEmail() {
         ObjectMapper objectMapper = new ObjectMapper();
