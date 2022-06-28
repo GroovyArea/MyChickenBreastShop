@@ -2,10 +2,10 @@ package com.daniel.controller.order;
 
 import com.daniel.domain.DTO.order.OrderProductDTO;
 import com.daniel.domain.DTO.order.PayApprovalDTO;
-import com.daniel.exceptions.error.UserNotExistsException;
 import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.interceptor.auth.Auth;
 import com.daniel.response.Message;
+import com.daniel.service.CartService;
 import com.daniel.service.KakaoPayService;
 import com.daniel.service.OrderService;
 import com.daniel.utility.CookieUtil;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.Optional;
 
 /**
  * 주문 컨트롤러 <br>
@@ -50,8 +49,10 @@ public class OrderController {
 
     private final KakaoPayService kakaoPayService;
     private final OrderService orderService;
+    private final CartService cartService;
 
     @GetMapping("/{userId}")
+    @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<Message> getDBOrderInfo(@PathVariable String userId) {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()
@@ -61,6 +62,7 @@ public class OrderController {
     }
 
     @GetMapping("/detail")
+    @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<Message> getOrderDetail(@RequestParam String tid, @RequestParam String cid) {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()
@@ -69,31 +71,34 @@ public class OrderController {
                         .build());
     }
 
-    @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping
+    @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<Message> orderAction(@RequestBody OrderProductDTO orderProductDTO,
-                                               HttpServletRequest request) throws RunOutOfStockException, UserNotExistsException {
+                                               HttpServletRequest request) throws RunOutOfStockException {
 
-        String url = kakaoPayService.getkakaoPayUrl(orderProductDTO, request);
+        String tokenUserId = request.getAttribute("tokenUserId").toString();
+        String requestUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+
+        String url = kakaoPayService.getkakaoPayUrl(orderProductDTO, tokenUserId, requestUrl);
 
         if (url == null) {
             getFailedPayMessage();
         }
 
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
+        return ResponseEntity.ok().body(
                 Message.builder()
                         .data(url)
                         .message(PAY_URI_MSG)
                         .build());
     }
 
-    @Auth(role = Auth.Role.BASIC_USER)
     @PostMapping("/cart")
-    public ResponseEntity<Message> cartOrderAction(HttpServletRequest request) throws UnsupportedEncodingException, RunOutOfStockException, UserNotExistsException {
+    @Auth(role = Auth.Role.BASIC_USER)
+    public ResponseEntity<Message> cartOrderAction(HttpServletRequest request) throws UnsupportedEncodingException, RunOutOfStockException {
         Cookie[] cookies = request.getCookies();
-        Optional<Cookie> cartCookie = CookieUtil.getCartCookie(cookies);
+        Cookie cartCookie = cartService.getCartCookie(cookies);
 
-        if (cartCookie.isEmpty()) {
+        if (cartCookie == null) {
             return ResponseEntity.badRequest().body(
                     Message.builder()
                             .message(EMPTY_CART_DATA)
@@ -101,13 +106,16 @@ public class OrderController {
             );
         }
 
-        Integer[] productNoArr = CookieUtil.getItemNoArr(cartCookie.get());
-        String[] productNameArr = CookieUtil.getItemNameArr(cartCookie.get());
-        Integer[] productStockArr = CookieUtil.getStockArr(cartCookie.get());
-        int totalAmount = CookieUtil.getTotalAmount(cartCookie.get());
+        Integer[] productNoArr = CookieUtil.getItemNoArr(cartCookie);
+        String[] productNameArr = CookieUtil.getItemNameArr(cartCookie);
+        Integer[] productStockArr = CookieUtil.getStockArr(cartCookie);
+        int totalAmount = CookieUtil.getTotalAmount(cartCookie);
+
+        String tokenUserId = request.getAttribute("tokenUserId").toString();
+        String requestUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "");
 
         String url = kakaoPayService.getCartKakaoPayUrl(productNoArr, productNameArr,
-                productStockArr, totalAmount, request);
+                productStockArr, totalAmount, tokenUserId, requestUrl);
 
         if (url == null) {
             return getFailedPayMessage();
@@ -123,6 +131,7 @@ public class OrderController {
 
 
     @GetMapping("/completed")
+    @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<Message> paySuccessAction(@RequestParam("pg_token") String pg_token) {
         PayApprovalDTO kakaoPayReadyDTO = kakaoPayService.getKakaoPayInfo(pg_token);
 
@@ -139,13 +148,15 @@ public class OrderController {
     }
 
     @GetMapping("/cancel")
+    @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<String> payCancelAction() {
-        return ResponseEntity.ok().body(CANCELED_PAY_MESSAGE);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(CANCELED_PAY_MESSAGE);
     }
 
     @GetMapping("/fail")
+    @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<String> payFailAction() {
-        return ResponseEntity.ok().body(FAILED_PAY_MESSAGE);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(FAILED_PAY_MESSAGE);
     }
 
     private ResponseEntity<Message> getFailedPayMessage() {

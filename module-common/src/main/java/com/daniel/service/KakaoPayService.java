@@ -26,7 +26,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -93,7 +92,7 @@ public class KakaoPayService {
     private final OrderMapper orderMapper;
 
     @Transactional
-    public String getkakaoPayUrl(OrderProductDTO orderProductDTO, HttpServletRequest request) throws RunOutOfStockException{
+    public String getkakaoPayUrl(OrderProductDTO orderProductDTO, String tokenUserId, String requestUrl) throws RunOutOfStockException {
 
         /* 재고 확인 이벤트 발생 */
         applicationEventPublisher.publishEvent(
@@ -109,7 +108,7 @@ public class KakaoPayService {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        user = userMapper.selectUser(request.getAttribute("tokenUserId").toString());
+        user = userMapper.selectUser(tokenUserId);
         orderId = user.getUserId() + " / " + orderProductDTO.getItemName();
         userId = user.getUserId();
         itemName = orderProductDTO.getItemName();
@@ -117,7 +116,7 @@ public class KakaoPayService {
 
         /* 서버로 요청할 body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        setParams(params, request);
+        setParams(params, requestUrl);
         params.add("partner_order_id", orderId);
         params.add("partner_user_id", userId);
         params.add("item_name", itemName);
@@ -140,7 +139,8 @@ public class KakaoPayService {
     }
 
     @Transactional
-    public String getCartKakaoPayUrl(Integer[] productNoArr, String[] productNameArr, Integer[] productStockArr, int totalAmount, HttpServletRequest request) throws RunOutOfStockException {
+    public String getCartKakaoPayUrl(Integer[] productNoArr, String[] productNameArr, Integer[] productStockArr, int totalAmount,
+                                     String tokenUserId, String requestUrl) throws RunOutOfStockException {
 
         List<OrderCreated> orderCreatedCartList =
                 getOrderCreatedList(productNoArr, productNameArr, productStockArr, totalAmount);
@@ -154,7 +154,7 @@ public class KakaoPayService {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
-        user = userMapper.selectUser((String) request.getAttribute("tokenUserId"));
+        user = userMapper.selectUser(tokenUserId);
         itemName = productMapper.selectNoProduct(productNoArr[0]).getProductName() + " 그 외 " + (productNoArr.length - 1) + "개";
         orderId = user.getUserId() + ", " + itemName;
         userId = user.getUserId();
@@ -162,7 +162,7 @@ public class KakaoPayService {
 
         /* 서버로 요청할 body */
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        setParams(params, request);
+        setParams(params, requestUrl);
         params.add("partner_order_id", orderId);
         params.add("partner_user_id", userId);
         params.add("item_name", itemName);
@@ -291,11 +291,11 @@ public class KakaoPayService {
         headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
     }
 
-    private void setParams(MultiValueMap<String, String> params, HttpServletRequest request) {
+    private void setParams(MultiValueMap<String, String> params, String requestUrl) {
         params.add("cid", TEST_CID);
-        params.add("approval_url", getUrl(request) + APPROVAL_URI);
-        params.add("cancel_url", getUrl(request) + CANCEL_URI);
-        params.add("fail_url", getUrl(request) + FAIL_URI);
+        params.add("approval_url", requestUrl + APPROVAL_URI);
+        params.add("cancel_url", requestUrl + CANCEL_URI);
+        params.add("fail_url", requestUrl + FAIL_URI);
     }
 
     private String getPayUrl(HttpHeaders headers, MultiValueMap<String, String> params) {
@@ -311,10 +311,6 @@ public class KakaoPayService {
             log.error(e.getMessage());
         }
         return null;
-    }
-
-    private String getUrl(HttpServletRequest request) {
-        return request.getRequestURL().toString().replace(request.getRequestURI(), "");
     }
 
     private List<OrderCreated> getOrderCreatedList(Integer[] productNoArr, String[] productNameArr, Integer[] productStockArr, int totalAmount) {

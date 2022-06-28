@@ -1,0 +1,287 @@
+=  My-Chicken-Shop REST Docs
+:doctype: book
+:icons: font
+:source-highlighter: hightlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+[[Order_API]]
+== Order API
+
+=== 회원 주문 조회
+
+==== URL
+include::{snippets}/get-db-order-info/http-request.adoc[]
+_Path : User 아이디_
+
+==== #sample#
+==== Request
+include::{snippets}/get-db-order-info/curl-request.adoc[]
+
+==== Response
+include::{snippets}/get-db-order-info/http-response.adoc[]
+
+*Data*
+|===
+|Name |Type |Description
+
+|cid
+|String
+|가맹점 코드, 10자
+
+|cidSecret
+|String
+|가맹점 코드 인증키, 24자, 숫자와 영문 소문자 조합
+
+|tid
+|String
+|결제 고유 번호, 20자
+
+|status
+|String
+|결제 상태
+
+|partnerOrderId
+|String
+|가맹점 주문번호, 최대 100자
+
+|partnerUserId
+|String
+|가맹점 회원 id, 최대 100자
+
+|paymentMethodType
+|String
+|사용 허가할 결제 수단, 지정하지 않으면 모든 결제 수단 허용
+CARD 또는 MONEY 중 하나
+
+|amountDTO
+|AmountDTO
+|지불 금액
+
+|canceledAmountDTO
+|CanceledAmountDTO
+|취소된 금액
+
+|cancelAvailableAmountDTO
+|CanceledAvailableAmountDTO
+|취소 가능 금액
+
+|itemName
+|String
+|상품 이름, 최대 100자
+
+|itemCode
+|String
+|상품 코드, 최대 100자
+
+|quantity
+|Integer
+|상품 수량
+
+|createdAt
+|Datetime
+|결제 준비 요청 시각
+
+|canceledAt
+|Datetime
+|결제 취소 시각
+
+|selectedCardInfoDTO
+|SelectedCardInfoDTO
+|결제 카드 정보
+
+|paymentActionDetails
+|PaymentActionDetails[]
+|결제/취소 상세
+|===
+
+*AmountDTO*
+
+|===
+|Name |Type |Description
+
+|total
+|Integer
+|전체 결제 금액
+
+|tax_free
+|Integer
+|비과세 금액
+
+|vat
+|Integer
+|부가세 금액
+
+|point
+|Integer
+|사용한 포인트 금액
+
+|discount
+|Integer
+|할인 금액
+|===
+
+
+
+=== 주문 상세 조회
+
+==== URL
+include::{snippets}/get-order-detail/http-request.adoc[]
+*Parameter*
+
+|===
+|Name |Type |Description
+
+|tid
+|String
+|결제 고유 번호, 20자
+
+|cid
+|String
+|가맹점 코드, 10자
+|===
+
+
+==== #sample#
+==== Request
+include::{snippets}/get-order-detail/curl-request.adoc[]
+
+==== Response
+include::{snippets}/get-order-detail/http-response.adoc[]
+
+=== 단건 상품 결제
+
+==== URL
+include::{snippets}/order-action/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/order-action/curl-request.adoc[]
+
+==== Response
+include::{snippets}/order-action/http-response.adoc[]
+
+|===
+|Name |Type |Description
+
+|data
+|String
+|카카오 페이 PC 결제 URL
+|===
+
+=== 장바구니 상품 결제
+
+==== URL
+include::{snippets}/cart-order-action/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/cart-order-action/curl-request.adoc[]
+
+==== Response
+include::{snippets}/cart-order-action/http-response.adoc[]
+|===
+|Name |Type |Description
+
+|data
+|String
+|카카오 페이 PC 결제 URL
+|===
+
+=== 결제 정보 조회
+
+==== URL
+include::{snippets}/pay-success-action/http-request.adoc[]
+*Parameter*
+|===
+|Name |Type |Description
+
+|pg_token
+|String
+|결제 승인 인증 토큰
+|===
+
+==== #sample#
+==== Request
+include::{snippets}/pay-success-action/curl-request.adoc[]
+
+==== request
+include::{snippets}/pay-success-action/http-response.adoc[]
+
+Card_Info
+|===
+|Name |Type |Description
+
+|purchase_corp
+|String
+|매입 카드사 한글명
+
+|purchase_corp_code
+|String
+|매입 카드사 코드
+
+|issuer_corp
+|String
+|카드 발급사 한글명
+
+|issuer_corp_code
+|String
+|카드 발급사 코드
+
+|bin
+|String
+|카드 BIN
+
+|card_type
+|String
+|카드 타입
+
+|install_month
+|String
+|할부 개월 수
+
+|approved_id
+|String
+|카드사 승인번호
+
+|card_mid
+|String
+|카드사 가맹점 번호
+
+|interest_free_install
+|String
+|무이자할부 여부(Y/N)
+
+|card_item_code
+|String
+|카드 상품 코드
+|===
+
+=== 결제 취소 요청 (Redirect)
+
+==== URL
+include::{snippets}/pay-cancel-action/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/pay-cancel-action/curl-request.adoc[]
+
+==== Response
+include::{snippets}/pay-cancel-action/http-response.adoc[]
+
+=== 결제 실패 요청 (Redirect)
+
+==== URL
+include::{snippets}/pay-fail-action/http-request.adoc[]
+
+==== #sample#
+==== Request
+include::{snippets}/pay-fail-action/curl-request.adoc[]
+
+==== Response
+include::{snippets}/pay-fail-action/http-response.adoc[]

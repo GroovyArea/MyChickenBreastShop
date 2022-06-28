@@ -107,6 +107,10 @@ class CartControllerTest {
 
     List<Cookie> cookieList = new ArrayList<>();
 
+    Cookie newCartCookie;
+
+    Cookie[] cookies;
+
     @BeforeEach
     void setUpCookie() {
         cartItemDTOMap.put(addCartDTO1.getProductNo(), addCartDTO1);
@@ -116,6 +120,8 @@ class CartControllerTest {
         cookieList.add(cookie2);
         cookieList.add(cookie3);
         cookieList.add(cookie4);
+
+        newCartCookie = new Cookie("Chicken", URLEncoder.encode(JsonUtil.objectToString(cartItemDTOMap), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -123,12 +129,22 @@ class CartControllerTest {
     void getCartListTest() throws Exception {
 
         Cookie newCartCookie = new Cookie("Chicken", URLEncoder.encode(JsonUtil.objectToString(cartItemDTOMap), StandardCharsets.UTF_8));
+
         newCartCookie.setMaxAge(60 * 60 * 24 * 7);
         newCartCookie.setPath("/api");
 
         cookieList.add(newCartCookie);
 
+        cookies = cookieList.toArray(Cookie[]::new);
+    }
+
+    @Test
+    @DisplayName("장바구니 조회 테스트")
+    void getCartListTest() throws Exception {
+
+
         Cookie[] cookies = cookieList.toArray(Cookie[]::new);
+
 
         Mockito.when(cartService.getCartCookie(cookies)).thenReturn(newCartCookie);
         Mockito.when(cartService.getCartDTOMap(newCartCookie)).thenReturn(cartItemDTOMap);
@@ -144,6 +160,10 @@ class CartControllerTest {
     @Test
     @DisplayName("장바구니 추가 테스트")
     void addCart() throws Exception {
+
+        cartItemDTOMap.put(addCartDTO3.getProductNo(), addCartDTO3);
+
+        cookieList.add(newCartCookie);
 
         cartItemDTOMap.put(addCartDTO3.getProductNo(), addCartDTO3);
 
@@ -175,6 +195,11 @@ class CartControllerTest {
         cartItemDTOMap.remove(addCartDTO3.getProductNo());
         cartItemDTOMap.put(modifyCartDTO.getProductNo(), modifyCartDTO);
 
+        cookieList.add(newCartCookie);
+
+        cartItemDTOMap.remove(addCartDTO3.getProductNo());
+        cartItemDTOMap.put(modifyCartDTO.getProductNo(), modifyCartDTO);
+
         Cookie newCartCookie = new Cookie("Chicken", URLEncoder.encode(JsonUtil.objectToString(cartItemDTOMap), StandardCharsets.UTF_8));
         newCartCookie.setMaxAge(60 * 60 * 24 * 7);
         newCartCookie.setPath("/api");
@@ -199,6 +224,9 @@ class CartControllerTest {
     @Test
     @DisplayName("장바구니 상품 삭제 테스트")
     void deleteCart() throws Exception {
+        cartItemDTOMap.remove(deleteCartDTO.getProductNo());
+
+        cookieList.add(newCartCookie);
 
         cartItemDTOMap.remove(deleteCartDTO.getProductNo());
 
