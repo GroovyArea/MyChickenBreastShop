@@ -8,6 +8,7 @@ import com.daniel.exceptions.error.InvalidPayAmountException;
 import com.daniel.exceptions.error.InvalidProductException;
 import com.daniel.mapper.ProductMapper;
 import com.daniel.utility.Pager;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  * @version 1.2
  */
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private static final String INVALID_PRODUCT = "존재하지 않는 상품 번호입니다. 다시 확인 바랍니다.";
@@ -36,11 +38,6 @@ public class ProductService {
 
     private final ProductMapper productMapper;
     private final ModelMapper modelMapper;
-
-    public ProductService(ProductMapper productMapper, ModelMapper modelMapper) {
-        this.productMapper = productMapper;
-        this.modelMapper = modelMapper;
-    }
 
     @Transactional(readOnly = true)
     public ProductDTO findByNumber(Integer productNo) {
