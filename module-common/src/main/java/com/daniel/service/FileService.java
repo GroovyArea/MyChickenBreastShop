@@ -20,6 +20,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileService {
 
+    private static final String FILE_NOT_FOUNT="파일을 찾을 수 없습니다.";
+    private static final String FAILED_DOWNLOAD = "파일을 다운로드 할 수 없습니다.";
     @Value("${file.upload.location}")
     private String uploadDirectory;
 
@@ -55,10 +57,10 @@ public class FileService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new FileNotFoundException("파일을 찾을 수 없습니다.");
+                throw new FileNotFoundException(FILE_NOT_FOUNT);
             }
         } catch (MalformedURLException e) {
-            throw new FileNotFoundException("파일을 다운로드 할 수 없습니다.");
+            throw new FileNotFoundException(FAILED_DOWNLOAD);
         }
     }
 
