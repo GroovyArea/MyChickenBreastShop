@@ -1,5 +1,7 @@
 package com.daniel.controller.order;
 
+import com.daniel.domain.DTO.order.response.OrderCancelDTO;
+import com.daniel.domain.DTO.order.request.PayCancelDTO;
 import com.daniel.response.Message;
 import com.daniel.service.KakaoPayService;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 /**
  * 결제 컨트롤러 <br>
@@ -30,14 +30,25 @@ import java.util.Map;
 public class PayController {
 
     private static final String CANCEL_PAY = "결제가 취소되었습니다.";
+    private static final String NULL_DATA = "결제 취소 가능한 주문 건이 없습니다.";
 
     private final KakaoPayService kakaoPayService;
 
     @PostMapping("/cancel")
-    public ResponseEntity<Message> payCancel(@RequestBody Map<String, Object> map) {
+    public ResponseEntity<Message> payCancel(@RequestBody PayCancelDTO payCancelDTO) {
+        OrderCancelDTO canceledData = kakaoPayService.cancelKakaoPay(payCancelDTO);
+
+        if (canceledData == null) {
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body(
+                    Message.builder()
+                            .message(NULL_DATA)
+                            .build()
+            );
+        }
+
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()
-                        .data(kakaoPayService.cancelKakaoPay(map))
+                        .data(canceledData)
                         .message(CANCEL_PAY)
                         .build()
         );

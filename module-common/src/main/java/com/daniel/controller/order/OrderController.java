@@ -1,7 +1,7 @@
 package com.daniel.controller.order;
 
-import com.daniel.domain.DTO.order.OrderProductDTO;
-import com.daniel.domain.DTO.order.PayApprovalDTO;
+import com.daniel.domain.DTO.order.request.OrderProductDTO;
+import com.daniel.domain.DTO.order.response.PayApprovalDTO;
 import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.interceptor.auth.Auth;
 import com.daniel.response.Message;
@@ -133,15 +133,15 @@ public class OrderController {
     @GetMapping("/completed")
     @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<Message> paySuccessAction(@RequestParam("pg_token") String pg_token) {
-        PayApprovalDTO kakaoPayReadyDTO = kakaoPayService.getKakaoPayInfo(pg_token);
+        PayApprovalDTO payInfo = kakaoPayService.getApprovedKakaoPayInfo(pg_token);
 
-        if (kakaoPayReadyDTO == null) {
+        if (payInfo == null) {
             getFailedPayMessage();
         }
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()
-                        .data(kakaoPayReadyDTO)
+                        .data(payInfo)
                         .message(INFO_URI_MSG)
                         .build()
         );

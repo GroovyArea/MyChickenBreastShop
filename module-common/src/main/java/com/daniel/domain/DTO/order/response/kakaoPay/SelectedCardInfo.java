@@ -1,14 +1,19 @@
-package com.daniel.domain.DTO.order;
+package com.daniel.domain.DTO.order.response.kakaoPay;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class CancelAvailableAmountDTO {
+@Builder
+public class SelectedCardInfo {
 
-    Integer total, taxFree, vat, point, discount;
+    private String cardBin, cardCorpName, interestFreeInstall;
+    private Integer installMonth;
 }

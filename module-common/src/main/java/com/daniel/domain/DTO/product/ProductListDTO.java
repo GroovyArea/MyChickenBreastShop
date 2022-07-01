@@ -16,4 +16,8 @@ public class ProductListDTO {
     private Integer productPrice;
     private Integer productStock;
     private String productImage;
+
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
+    }
 }

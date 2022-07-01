@@ -29,8 +29,6 @@ public class CheckStockScheduler {
     public void schedulingCheckStock() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        log.info("재고 확인 중 . . .");
-
         List<OutBox> outBoxList = outBoxMapper.selectAllOrderOutBox();
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();

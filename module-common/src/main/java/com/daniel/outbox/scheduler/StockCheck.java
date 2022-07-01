@@ -39,6 +39,7 @@ public class StockCheck {
 
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
+            outBoxMapper.deleteById(outBox);
             outBoxMapper.insertOrderOutBox(outBox);
         }
     }

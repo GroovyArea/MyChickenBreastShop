@@ -33,6 +33,12 @@
                 #{payload})
     </insert>
 
+    <delete id="deleteById" parameterType="OutBox">
+        DELETE
+        FROM `OUTBOX-ORDER`
+        WHERE ID = #{id}
+    </delete>
+
     <delete id="deleteAllById" parameterType="java.util.List">
         DELETE FROM `OUTBOX-ORDER`
         WHERE

@@ -56,7 +56,13 @@
         <selectKey resultType="int" keyProperty="productNo" order="BEFORE">
             select nextval('product_seq') from dual
         </selectKey>
-        INSERT INTO product VALUES (
+        INSERT INTO product (PRODUCT_NO,
+        PRODUCT_NAME,
+        PRODUCT_CATEGORY,
+        PRODUCT_PRICE,
+        PRODUCT_STOCK,
+        PRODUCT_DETAIL,
+        PRODUCT_IMAGE) VALUES (
         #{productNo},
         #{productName},
         #{productCategory},

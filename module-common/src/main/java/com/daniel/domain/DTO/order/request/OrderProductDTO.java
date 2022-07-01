@@ -1,4 +1,4 @@
-package com.daniel.domain.DTO.order;
+package com.daniel.domain.DTO.order.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
