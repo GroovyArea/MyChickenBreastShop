@@ -2,11 +2,18 @@ package com.daniel.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
@@ -35,5 +42,30 @@ public class FileService {
         if (existingFile.exists()) {
             existingFile.delete();
         }
+    }
+
+    public Resource loadFile(String fileName) throws FileNotFoundException {
+        try {
+            Path directoryLocation = Paths.get(uploadDirectory)
+                    .toAbsolutePath().normalize();
+
+            Path file = directoryLocation.resolve(fileName).normalize();
+            Resource resource = new UrlResource(file.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new FileNotFoundException("파일을 찾을 수 없습니다.");
+            }
+        } catch (MalformedURLException e) {
+            throw new FileNotFoundException("파일을 다운로드 할 수 없습니다.");
+        }
+    }
+
+    public String getDownloadURI (String uploadFileName) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/products/download/")
+                .path(uploadFileName)
+                .toUriString();
     }
 }

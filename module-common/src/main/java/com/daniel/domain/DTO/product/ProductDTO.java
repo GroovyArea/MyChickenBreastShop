@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 public class ProductDTO {
-
+    
     private Integer productNo;
     private String productName;
     private Integer productCategory;
