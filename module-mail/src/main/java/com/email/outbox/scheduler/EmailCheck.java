@@ -32,7 +32,7 @@ public class EmailCheck {
     private final MailContentService mailContentService;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    void validateEmailNumber(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
+    public void validateEmailNumber(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
         String payload = outBox.getPayload();
         try {
             JsonNode jsonNode = objectMapper.readTree(payload);

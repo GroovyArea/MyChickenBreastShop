@@ -34,9 +34,9 @@ public class EmailSendScheduler {
         List<OutBox> outBoxList = outBoxEmailMapper.selectAllEmailOutBox();
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
-            outBoxList.forEach(outBox -> {
-                emailCheck.validateEmailNumber(objectMapper, completedList, outBox);
-            });
+            outBoxList.forEach(outBox ->
+                    emailCheck.validateEmailNumber(objectMapper, completedList, outBox)
+            );
             if (!completedList.isEmpty()) {
                 outBoxEmailMapper.deleteAllById(completedList);
             }

@@ -136,14 +136,6 @@ class CartControllerTest {
         cookieList.add(newCartCookie);
 
         cookies = cookieList.toArray(Cookie[]::new);
-    }
-
-    @Test
-    @DisplayName("장바구니 조회 테스트")
-    void getCartListTest() throws Exception {
-
-
-        Cookie[] cookies = cookieList.toArray(Cookie[]::new);
 
 
         Mockito.when(cartService.getCartCookie(cookies)).thenReturn(newCartCookie);

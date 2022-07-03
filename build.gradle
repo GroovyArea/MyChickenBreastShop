@@ -16,6 +16,22 @@ plugins {
     id 'org.springframework.boot' version '2.3.12.RELEASE'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id "org.sonarqube" version "3.4.0.2513"
+}
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "http://localhost:9000/"
+        property "sonar.login", "sqp_13bb5ec9d0ba32ec26890d53f4fe337f19032279"        // 로그인 id 또는 인증토큰
+        property "sonar.password", ""    // 인증토큰 사용시는 공백으로
+        property "sonar.language", "java" // 분석을 Java로 제한
+        property "sonar.projectVersion", "1.0"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.exclusions", "**/*Test*.*, **/Q*.JAVA"
+        //property "sonar.sources", "src/"
+        property "sonar.profile", "Sonar way"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/coverageReport/coverageReport.xml"    // Test Coverage Report 생성한 경우 사용
+    }
 }
 
 subprojects {
@@ -23,6 +39,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.sonarqube'
 
     group 'com.daniel'
     version '0.0.1-SNAPSHOT'
@@ -78,6 +95,7 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-mail'
 
         implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
+
     }
 
     test {
