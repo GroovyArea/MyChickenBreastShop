@@ -1,6 +1,6 @@
 package com.email.outbox.message;
 
-import com.daniel.outbox.dto.MailDTO;
+import com.email.domain.dto.MailDTO;
 import com.email.exception.error.FailedPayloadConvertException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,15 +17,15 @@ import org.springframework.stereotype.Service;
 public class MailContentService {
 
     @Value("${email.from}")
-    private String FROM;
+    private String from;
     @Value("${email.subject}")
-    private String SUBJECT;
+    private String subject;
     @Value("${email.text}")
-    private String TEXT;
+    private String text;
 
     public MailDTO createMailContent(String payload) throws FailedPayloadConvertException {
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
+        JsonNode jsonNode;
 
         try {
             jsonNode = objectMapper.readTree(payload);
@@ -36,9 +36,9 @@ public class MailContentService {
         String userEmail = jsonNode.get("email").asText();
         String authKey = jsonNode.get("email_key").asText();
 
-        String content = TEXT + authKey;
+        String content = text + authKey;
 
-        return toMailContentDTO(userEmail, FROM, SUBJECT, content);
+        return toMailContentDTO(userEmail, from, subject, content);
     }
 
     private MailDTO toMailContentDTO(String to, String from, String title, String content) {

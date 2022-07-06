@@ -1,7 +1,7 @@
 package com.email.outbox.scheduler;
 
-import com.daniel.outbox.dto.MailDTO;
-import com.email.domain.VO.OutBox;
+import com.email.domain.dto.MailDTO;
+import com.email.domain.vo.OutBox;
 import com.email.exception.error.FailedPayloadConvertException;
 import com.email.mapper.OutBoxEmailMapper;
 import com.email.outbox.message.MailContentService;

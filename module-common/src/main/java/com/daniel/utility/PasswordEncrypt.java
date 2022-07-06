@@ -1,24 +1,22 @@
 package com.daniel.utility;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.security.MessageDigest;
-
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 public class PasswordEncrypt {
 
-    Logger logger = LoggerFactory.getLogger(PasswordEncrypt.class);
+    private PasswordEncrypt() {
+    }
 
     public static String getSalt() {
-        Random random = new Random();
+        Random random = new SecureRandom();
         byte[] salt = new byte[10];
 
         random.nextBytes(salt);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < salt.length; i++) {
             sb.append(String.format("%02x", salt[i]));
@@ -43,7 +41,7 @@ public class PasswordEncrypt {
 
         byte[] b = md.digest();
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < b.length; i++) {
             sb.append(Integer.toString((b[i] & 0xFF) + 256, 16).substring(1));

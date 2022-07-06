@@ -1,6 +1,6 @@
 package com.email.outbox.scheduler;
 
-import com.email.domain.VO.OutBox;
+import com.email.domain.vo.OutBox;
 import com.email.mapper.OutBoxEmailMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

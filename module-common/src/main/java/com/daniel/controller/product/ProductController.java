@@ -40,6 +40,7 @@ public class ProductController {
     private static final String FAILED_FILE_CONTENT = "파일 형식을 결정할 수 없습니다.";
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
     private static final String FILE_REQUEST_MESSAGE = "파일을 넣어주세요.";
+
     private static final int PRODUCT_SIZE = 5;
     private static final int BLOCK_SIZE = 8;
 
@@ -88,10 +89,11 @@ public class ProductController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productService.getCategoryList(searchKeyword, searchValue,
                                 new Pager(Pager.getStartRow(pageNum, PRODUCT_SIZE), BLOCK_SIZE), productCategoryNo).stream()
-                        .peek(selectedProduct -> {
+                        .map(selectedProduct -> {
                             String uploadFileName = selectedProduct.getProductImage();
                             String downloadURI = fileService.getDownloadURI(uploadFileName);
                             selectedProduct.setProductImage(downloadURI);
+                            return selectedProduct;
                         })
                         .collect(Collectors.toList()));
     }
@@ -127,13 +129,14 @@ public class ProductController {
      */
     @Auth(role = Auth.Role.ADMIN)
     @PostMapping
-    public ResponseEntity<?> addAction(@ModelAttribute ProductDTO productDTO,
-                                       @RequestParam("image") MultipartFile file) throws IOException {
+    public ResponseEntity<Object> addAction(@RequestPart ProductDTO productDTO,
+                                            @RequestPart("image") MultipartFile file) throws IOException {
         if (file == null) {
             return ResponseEntity.badRequest().body(FILE_REQUEST_MESSAGE);
         }
 
         String uploadFileName = fileService.uploadFile(file);
+
         productDTO.setProductImage(uploadFileName);
 
         productService.addProduct(productDTO);
@@ -158,8 +161,8 @@ public class ProductController {
      */
     @Auth(role = Auth.Role.ADMIN)
     @PutMapping
-    public ResponseEntity<?> modifyAction(@ModelAttribute ProductDTO productDTO,
-                                          @RequestParam("image") MultipartFile file) throws IOException {
+    public ResponseEntity<Message> modifyAction(@RequestPart ProductDTO productDTO,
+                                                @RequestPart("image") MultipartFile file) throws IOException {
         if (file == null) {
             productService.modifyProduct(productDTO);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
@@ -198,7 +201,7 @@ public class ProductController {
      */
     @Auth(role = Auth.Role.ADMIN)
     @DeleteMapping("/{productNo}")
-    public ResponseEntity<String> deleteAction(@PathVariable int productNo) {
+    public ResponseEntity<Object> deleteAction(@PathVariable int productNo) throws IOException {
         String productImageName = productService.findByNumber(productNo).getProductImage();
 
         fileService.deleteFile(productImageName);
@@ -206,11 +209,17 @@ public class ProductController {
         deleteProductMap.put("productNo", productNo);
         deleteProductMap.put("productStatus", ChickenStatus.EXTINCTION.getValue());
         productService.removeProduct(deleteProductMap);
+
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(ResponseMessage.DELETE_MESSAGE.getValue());
     }
 
     private void setURI(ProductDTO product, String uploadFileName) {
         String downloadURI = fileService.getDownloadURI(uploadFileName);
         product.setProductImage(downloadURI);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> ioExceptionHandle(IOException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }

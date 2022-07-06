@@ -36,7 +36,7 @@ subprojects {
     sonarqube {
         properties {
             property "sonar.host.url", "http://localhost:9000"
-            property "sonar.login", "squ_bec33ac6f92973d7171cba3195f808ad35c098fd" // 로그인 id 또는 인증토큰
+            property "sonar.login", "squ_7cbe315202f785aab6cd6ae94c0e17e85e5a9656" // 로그인 id 또는 인증토큰
             property "sonar.source", "src"
             property "sonar.language", "java" // 분석을 Java로 제한
             property "sonar.projectVersion", "1.0"

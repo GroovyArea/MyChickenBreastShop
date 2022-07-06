@@ -1,6 +1,6 @@
 package com.email.mapper;
 
-import com.email.domain.VO.OutBox;
+import com.email.domain.vo.OutBox;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

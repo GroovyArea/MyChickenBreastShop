@@ -1,4 +1,4 @@
-package com.email.domain.VO;
+package com.email.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
