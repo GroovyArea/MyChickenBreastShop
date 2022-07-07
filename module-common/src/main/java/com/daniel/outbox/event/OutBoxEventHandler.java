@@ -59,7 +59,7 @@ public class OutBoxEventHandler {
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<String> IllegalStateExceptionHandle(IllegalStateException e) {
+    public ResponseEntity<String> illegalStateExceptionHandle(IllegalStateException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
