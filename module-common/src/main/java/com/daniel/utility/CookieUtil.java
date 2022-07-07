@@ -28,6 +28,9 @@ public class CookieUtil {
     private static final String COOKIE_KEY = "Chicken";
     private static final String ENC_TYPE = "utf-8";
 
+    private CookieUtil() {
+    }
+
     /* 카트 쿠키 반환 메서드 */
     public static Optional<Cookie> getCartCookie(Cookie[] requestCookies) {
         return Arrays.stream(requestCookies)

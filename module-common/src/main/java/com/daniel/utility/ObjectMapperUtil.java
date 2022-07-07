@@ -13,6 +13,9 @@ import java.time.format.DateTimeFormatter;
  */
 public class ObjectMapperUtil {
 
+    private ObjectMapperUtil() {
+    }
+
     public static ObjectMapper getMapper() {
         ObjectMapper mapper = new ObjectMapper();
         JavaTimeModule javaTimeModule = new JavaTimeModule();

@@ -44,7 +44,7 @@ public class CartService {
 
     public Cookie createCartCookie(Map<Integer, CartItemDTO> cartItemDTOMap) throws UnsupportedEncodingException {
         Cookie newCookie = new Cookie(COOKIE_KEY, URLEncoder.encode(JsonUtil.objectToString(cartItemDTOMap), ENC_TYPE));
-        newCookie.setSecure(true);
+        newCookie.setHttpOnly(true);
         newCookie.setPath("/api");
         newCookie.setMaxAge(COOKIE_AGE);
         return newCookie;
