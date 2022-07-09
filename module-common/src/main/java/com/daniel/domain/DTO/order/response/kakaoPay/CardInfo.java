@@ -14,8 +14,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CardInfo {
 
-    private String purchaseCorp, purchaseCorpCode;
-    private String issuerCorp, issuerCorpCode;
-    private String bin, cardType, installMonth, approvedId, cardMid;
-    private String interestFreeInstall, cardItemCode;
+    private String purchaseCorp;
+    private String purchaseCorpCode;
+    private String issuerCorp;
+    private String issuerCorpCode;
+    private String bin;
+    private String cardType;
+    private String installMonth;
+    private String approvedId;
+    private String cardMid;
+    private String interestFreeInstall;
+    private String cardItemCode;
 }

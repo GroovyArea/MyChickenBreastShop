@@ -14,6 +14,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaymentActionDetails {
 
-    private String aid, approvedAt, paymentActionType, payload;
-    private Integer amount, pointAmount, discountAmount;
+    private String aid;
+    private String approvedAt;
+    private String paymentActionType;
+    private String payload;
+    private Integer amount;
+    private Integer pointAmount;
+    private Integer discountAmount;
 }

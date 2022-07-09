@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SelectedCardInfo {
 
-    private String cardBin, cardCorpName, interestFreeInstall;
+    private String cardBin;
+    private String cardCorpName;
+    private String interestFreeInstall;
     private Integer installMonth;
 }

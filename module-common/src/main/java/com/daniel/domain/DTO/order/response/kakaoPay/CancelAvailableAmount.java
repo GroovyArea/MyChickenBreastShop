@@ -14,5 +14,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CancelAvailableAmount {
 
-    Integer total, taxFree, vat, point, discount;
+    Integer total;
+    Integer taxFree;
+    Integer vat;
+    Integer point;
+    Integer discount;
 }
