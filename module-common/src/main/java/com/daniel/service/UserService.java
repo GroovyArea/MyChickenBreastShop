@@ -26,7 +26,7 @@ public class UserService {
     private static final String USER_EXISTS_MESSAGE = "이미 사용중인 아이디를 입력 하셨습니다.";
     private static final String LOGIN_FAIL_MESSAGE = "해당 아이디의 회원 정보가 존재하지 않습니다.";
     private static final String WITHDRAW_USER_MESSAGE = "탈퇴 회원입니다.";
-    private static final String WRONG_PASSWORD_MESSAGE = "비밀번호가 일치하지 않습니다.";
+    private static final String WRONG_PW_MESSAGE = "비밀번호가 일치하지 않습니다.";
 
     private final UserMapper userMapper;
     private final ModelMapper modelMapper;
@@ -97,7 +97,7 @@ public class UserService {
         String dbPassword = authUser.getUserPw();
 
         if (!loginPassword.equals(dbPassword)) {
-            throw new WrongPasswordException(WRONG_PASSWORD_MESSAGE);
+            throw new WrongPasswordException(WRONG_PW_MESSAGE);
         }
     }
 
