@@ -1,6 +1,6 @@
 package com.email.outbox.message;
 
-import com.daniel.outbox.dto.MailDTO;
+import com.email.domain.dto.MailDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;

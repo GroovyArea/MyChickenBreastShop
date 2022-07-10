@@ -49,12 +49,9 @@ public class AuthorizeInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        /* 에너테이션 값 => 관리자일 경우 */
-        if (auth.role() == ADMIN) {
-            /* 로그인 유저 권한이 관리자가 아닐 경우 */
-            if (!request.getAttribute("tokenUserRole").toString().equals(ADMIN.toString())) {
-                throw new AuthenticationException(NOT_ADMIN_AUTH);
-            }
+        /* 에너테이션 값 => 관리자일 경우 & 로그인 유저 권한이 관리자가 아닐 경우 */
+        if (auth.role() == ADMIN && !request.getAttribute("tokenUserRole").toString().equals(ADMIN.toString())) {
+            throw new AuthenticationException(NOT_ADMIN_AUTH);
         }
 
         return true;

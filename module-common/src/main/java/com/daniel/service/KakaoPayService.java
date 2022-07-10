@@ -54,29 +54,32 @@ import java.util.stream.IntStream;
 public class KakaoPayService {
 
     private static final String ORDER_APPROVED = "결제 승인";
+    private static final String PARTNER_ORDER_ID = "partner_order_id";
+    private static final String PARTNER_USER_ID = "partner_user_id";
+    private static final String TOTAL_AMOUNT = "total_amount";
 
     @Value("${kakao.admin.key}")
-    private String ADMIN_KEY;
+    private String adminKey;
     @Value("${kakao.host}")
-    private String HOST;
+    private String host;
     @Value("${kakao.uri.approval}")
-    private String APPROVAL_URI;
+    private String approvalUri;
     @Value("${kakao.uri.cancel}")
-    private String CANCEL_URI;
+    private String cancelUri;
     @Value("${kakao.uri.fail}")
-    private String FAIL_URI;
+    private String failUri;
     @Value("${kakao.pay.ready}")
-    private String KAKAO_PAY_READY;
+    private String kakaoPayReady;
     @Value("${kakao.pay.approve}")
-    private String KAKAO_PAY_APPROVE;
+    private String kakaoPayApprove;
     @Value("${kakao.pay.cid}")
-    private String TEST_CID;
+    private String testCid;
     @Value("${kakao.pay.taxfree}")
-    private Integer TAX_FREE_AMOUNT;
+    private Integer taxFreeAmount;
     @Value("${kakao.pay.cancel}")
-    private String KAKAO_PAY_CANCEL;
+    private String kakaoPayCancel;
     @Value("${kakao.pay.order}")
-    private String KAKAP_PAY_ORDER;
+    private String kakaoPayOrder;
 
     private static final Logger log = LoggerFactory.getLogger(KakaoPayService.class);
 
@@ -123,12 +126,12 @@ public class KakaoPayService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         setParams(params, requestUrl);
-        params.add("partner_order_id", orderId);
-        params.add("partner_user_id", userId);
+        params.add(PARTNER_ORDER_ID, orderId);
+        params.add(PARTNER_USER_ID, userId);
         params.add("item_name", itemName);
         params.add("quantity", String.valueOf(orderProductDTO.getQuantity()));
-        params.add("total_amount", String.valueOf(totalAmount));
-        params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
+        params.add(TOTAL_AMOUNT, String.valueOf(totalAmount));
+        params.add("tax_free_amount", String.valueOf(taxFreeAmount));
 
         /* 재고 품절 예외 발생 */
         if (!this.exceptionFlag) {
@@ -167,16 +170,16 @@ public class KakaoPayService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         setParams(params, requestUrl);
-        params.add("partner_order_id", orderId);
-        params.add("partner_user_id", userId);
+        params.add(PARTNER_ORDER_ID, orderId);
+        params.add(PARTNER_USER_ID, userId);
         params.add("item_name", itemName);
         params.add("item_code", String.join(", ",
                 Arrays.stream(productNoArr)
                         .map(String::valueOf)
                         .toArray(String[]::new)));
         params.add("quantity", String.valueOf(productNoArr.length));
-        params.add("total_amount", String.valueOf(totalAmount));
-        params.add("tax_free_amount", String.valueOf(TAX_FREE_AMOUNT));
+        params.add(TOTAL_AMOUNT, String.valueOf(totalAmount));
+        params.add("tax_free_amount", String.valueOf(taxFreeAmount));
 
         /* 재고 품절 예외 발생 */
         if (!this.exceptionFlag) {
@@ -195,21 +198,26 @@ public class KakaoPayService {
     }
 
     @Transactional
-    public PayApprovalDTO getApprovedKakaoPayInfo(String pg_token) {
+    public PayApprovalDTO getApprovedKakaoPayInfo(String pgToken) {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("cid", TEST_CID);
+        params.add("cid", testCid);
         params.add("tid", payReadyDTO.getTid());
-        params.add("partner_order_id", orderId);
-        params.add("partner_user_id", userId);
-        params.add("pg_token", pg_token);
-        params.add("total_amount", String.valueOf(totalAmount));
+        params.add(PARTNER_ORDER_ID, orderId);
+        params.add(PARTNER_USER_ID, userId);
+        params.add("pg_token", pgToken);
+        params.add(TOTAL_AMOUNT, String.valueOf(totalAmount));
 
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
-        PayApprovalDTO approvalDTO = restTemplate.postForObject(HOST + KAKAO_PAY_APPROVE, body, PayApprovalDTO.class);
+        PayApprovalDTO approvalDTO = restTemplate.postForObject(host + kakaoPayApprove, body, PayApprovalDTO.class);
+
+        if (approvalDTO == null) {
+            return null;
+        }
+
         approvalDTO.setOrderStatus(ORDER_APPROVED);
 
         cardMapper.insertCard(modelMapper.map(approvalDTO.getCardInfo(), CardVO.class), approvalDTO.getTid());
@@ -237,7 +245,7 @@ public class KakaoPayService {
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
         try {
-            return restTemplate.postForObject(HOST + KAKAP_PAY_ORDER, body, OrderInfoDTO.class);
+            return restTemplate.postForObject(host + kakaoPayOrder, body, OrderInfoDTO.class);
         } catch (RestClientException e) {
             log.error(e.getMessage());
         }
@@ -250,7 +258,7 @@ public class KakaoPayService {
         setHeaders(headers);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("cid", TEST_CID);
+        params.add("cid", testCid);
         params.add("tid", String.valueOf(payCancelDTO.getTid()));
         params.add("cancel_amount", String.valueOf(payCancelDTO.getCancelAmount()));
         params.add("cancel_tax_free_amount", String.valueOf(payCancelDTO.getCancelTaxFreeAmount()));
@@ -259,7 +267,7 @@ public class KakaoPayService {
 
         try {
             OrderCancelDTO responseDTO =
-                    restTemplate.postForObject(HOST + KAKAO_PAY_CANCEL, body, OrderCancelDTO.class);
+                    restTemplate.postForObject(host + kakaoPayCancel, body, OrderCancelDTO.class);
 
             if (responseDTO != null) {
                 orderMapper.updateOrder(responseDTO.getTid());
@@ -287,16 +295,16 @@ public class KakaoPayService {
         restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-        headers.add("Authorization", "KakaoAK " + ADMIN_KEY);
+        headers.add("Authorization", "KakaoAK " + adminKey);
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
         headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
     }
 
     private void setParams(MultiValueMap<String, String> params, String requestUrl) {
-        params.add("cid", TEST_CID);
-        params.add("approval_url", requestUrl + APPROVAL_URI);
-        params.add("cancel_url", requestUrl + CANCEL_URI);
-        params.add("fail_url", requestUrl + FAIL_URI);
+        params.add("cid", testCid);
+        params.add("approval_url", requestUrl + approvalUri);
+        params.add("cancel_url", requestUrl + cancelUri);
+        params.add("fail_url", requestUrl + failUri);
     }
 
     private String getPayUrl(HttpHeaders headers, MultiValueMap<String, String> params) {
@@ -304,7 +312,7 @@ public class KakaoPayService {
 
         try {
             /* 서버 요청 후 응답 객체 받기 */
-            payReadyDTO = restTemplate.postForObject(HOST + KAKAO_PAY_READY,
+            payReadyDTO = restTemplate.postForObject(host + kakaoPayReady,
                     body, PayReadyDTO.class);
 
             return payReadyDTO != null ? payReadyDTO.getNextRedirectPcUrl() : null;

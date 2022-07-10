@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.SimpleType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +13,10 @@ import java.util.Map;
 /**
  * objectMapper를 이용한 객체, Json를 파싱하는 util class
  */
+@Slf4j
 public class JsonUtil {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
-
-    private static Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
     private JsonUtil() {
     }

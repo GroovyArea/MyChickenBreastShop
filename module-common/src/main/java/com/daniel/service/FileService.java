@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileService {
 
-    private static final String FILE_NOT_FOUNT="파일을 찾을 수 없습니다.";
+    private static final String FILE_NOT_FOUNT = "파일을 찾을 수 없습니다.";
     private static final String FAILED_DOWNLOAD = "파일을 다운로드 할 수 없습니다.";
     @Value("${file.upload.location}")
     private String uploadDirectory;
@@ -39,11 +40,11 @@ public class FileService {
         return uploadFileName;
     }
 
-    public void deleteFile(String productImageName) {
-        File existingFile = new File(uploadDirectory, productImageName);
-        if (existingFile.exists()) {
-            existingFile.delete();
-        }
+    public void deleteFile(String productImageName) throws IOException {
+        String deleteDirectory = uploadDirectory + "/" + productImageName;
+        Path fileLocation = Paths.get(deleteDirectory)
+                .toAbsolutePath().normalize();
+        Files.delete(fileLocation);
     }
 
     public Resource loadFile(String fileName) throws FileNotFoundException {
@@ -64,7 +65,7 @@ public class FileService {
         }
     }
 
-    public String getDownloadURI (String uploadFileName) {
+    public String getDownloadURI(String uploadFileName) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/products/download/")
                 .path(uploadFileName)

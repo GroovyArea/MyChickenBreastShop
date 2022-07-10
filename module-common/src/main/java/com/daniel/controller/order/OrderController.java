@@ -132,8 +132,8 @@ public class OrderController {
 
     @GetMapping("/completed")
     @Auth(role = Auth.Role.BASIC_USER)
-    public ResponseEntity<Message> paySuccessAction(@RequestParam("pg_token") String pg_token) {
-        PayApprovalDTO payInfo = kakaoPayService.getApprovedKakaoPayInfo(pg_token);
+    public ResponseEntity<Message> paySuccessAction(@RequestParam("pg_token") String pgToken) {
+        PayApprovalDTO payInfo = kakaoPayService.getApprovedKakaoPayInfo(pgToken);
 
         if (payInfo == null) {
             getFailedPayMessage();
@@ -150,13 +150,13 @@ public class OrderController {
     @GetMapping("/cancel")
     @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<String> payCancelAction() {
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(CANCELED_PAY_MESSAGE);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(CANCELED_PAY_MESSAGE);
     }
 
     @GetMapping("/fail")
     @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<String> payFailAction() {
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(FAILED_PAY_MESSAGE);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(FAILED_PAY_MESSAGE);
     }
 
     private ResponseEntity<Message> getFailedPayMessage() {

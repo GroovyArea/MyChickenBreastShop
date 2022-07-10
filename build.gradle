@@ -1,19 +1,19 @@
 buildscript {
     ext {
-        springBootVersion = '2.3.12.RELEASE'
         snippetDir = file('build/generated-snippets')
     }
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.5.2"
         classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.0"
     }
 }
 
 plugins {
-    id 'org.springframework.boot' version '2.3.12.RELEASE'
+    id 'org.springframework.boot' version '2.5.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
@@ -23,6 +23,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: "org.sonarqube"
 
     group 'com.daniel'
     version '0.0.1-SNAPSHOT'
@@ -32,13 +33,23 @@ subprojects {
         mavenCentral()
     }
 
+    sonarqube {
+        properties {
+            property "sonar.host.url", "http://localhost:9000"
+            property "sonar.login", "squ_7cbe315202f785aab6cd6ae94c0e17e85e5a9656" // 로그인 id 또는 인증토큰
+            property "sonar.source", "src"
+            property "sonar.language", "java" // 분석을 Java로 제한
+            property "sonar.projectVersion", "1.0"
+            property "sonar.sourceEncoding", "UTF-8"
+            property "sonar.test.exclusions", "**/*Test.java"
+            property "sonar.profile", "Sonar way"
+        }
+    }
+
     dependencies {
         //Spring Boot
         implementation 'org.springframework.boot:spring-boot-starter-web'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-//        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-//        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
         //Lombok
         implementation 'org.projectlombok:lombok'
@@ -58,7 +69,7 @@ subprojects {
         implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 
         //Flyway
-        implementation("org.flywaydb:flyway-core:6.5.7")
+        implementation 'org.flywaydb:flyway-core:7.12.0'
 
         //modelMapper
         implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
@@ -91,3 +102,9 @@ project(':module-mail') {
     }
 }
 
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}

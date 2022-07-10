@@ -7,12 +7,13 @@ import com.daniel.exceptions.error.EmailAuthException;
 import com.daniel.mapper.EmailKeyMapper;
 import com.daniel.outbox.event.EmailKeyCreated;
 import com.daniel.outbox.event.OutBoxEventBuilder;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -30,17 +31,25 @@ import java.util.Random;
  * @version 1.1
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
-    private static final int RANDOM_KEY = new Random().nextInt(888888) + 111111;
+    private final Random random;
+
     private static final String INVALID_AUTH_KEY = "인증 번호가 일치하지 않습니다.";
 
     private final RedisService redisService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final OutBoxEventBuilder<EmailKeyCreated> outBoxEventBuilder;
     private final EmailKeyMapper emailKeyMapper;
+
+    public EmailService(RedisService redisService, ApplicationEventPublisher applicationEventPublisher, OutBoxEventBuilder<EmailKeyCreated> outBoxEventBuilder, EmailKeyMapper emailKeyMapper) throws NoSuchAlgorithmException {
+        this.redisService = redisService;
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.outBoxEventBuilder = outBoxEventBuilder;
+        this.emailKeyMapper = emailKeyMapper;
+        this.random = SecureRandom.getInstanceStrong();
+    }
 
     /**
      * 인증 번호 검증
@@ -58,6 +67,7 @@ public class EmailService {
 
     /**
      * 이메일을 받고 관련 정보를 DB에 저장 후 아웃박스 패턴을 위해 이벤트 발생
+     *
      * @param emailRequestDTO 이메일 DTO
      */
     @Transactional
@@ -79,8 +89,9 @@ public class EmailService {
     }
 
     private EmailKey toEmailKeyVO(LocalDateTime expiredAt, String email) {
+        int randomKey = random.nextInt(888888) + 111111;
         return EmailKey.builder()
-                .emailKey((long) EmailService.RANDOM_KEY)
+                .emailKey((long) randomKey)
                 .email(email)
                 .expiredAt(expiredAt)
                 .build();

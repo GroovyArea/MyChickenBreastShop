@@ -25,7 +25,7 @@ public class StockCheck {
     private final OutBoxMapper outBoxMapper;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    void outBoxStockCheck(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
+    public void outBoxStockCheck(ObjectMapper objectMapper, List<Long> completedList, OutBox outBox) {
         String payload = outBox.getPayload();
         try {
             JsonNode jsonNode = objectMapper.readTree(payload);

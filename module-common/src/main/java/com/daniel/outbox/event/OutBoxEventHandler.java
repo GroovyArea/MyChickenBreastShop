@@ -6,7 +6,9 @@ import com.daniel.utility.ObjectMapperUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
  * 아웃박스 객체 DB에 저장
@@ -51,6 +53,13 @@ public class OutBoxEventHandler {
                             .build());
                 }
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + outBoxEvent.getEventAction());
         }
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> illegalStateExceptionHandle(IllegalStateException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }

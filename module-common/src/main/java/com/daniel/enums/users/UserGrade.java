@@ -9,19 +9,19 @@ public enum UserGrade {
     BASIC_USER(1),
     ADMIN(9);
 
-    private final int userGrade;
+    private final int grade;
 
-    private UserGrade(int userGrade) {
-        this.userGrade = userGrade;
+    UserGrade(int grade) {
+        this.grade = grade;
     }
 
     public int getValue() {
-        return userGrade;
+        return grade;
     }
 
     public static Optional<UserGrade> of(int gradeNumber) {
         return Optional.of(Arrays.stream(UserGrade.values())
-                .filter(userGrade1 -> userGrade1.getValue() == gradeNumber)
+                .filter(userGrade -> userGrade.getValue() == gradeNumber)
                 .findFirst()
                 .orElse(BASIC_USER));
     }

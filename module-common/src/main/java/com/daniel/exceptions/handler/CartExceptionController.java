@@ -29,7 +29,7 @@ public class CartExceptionController {
     @ExceptionHandler(EmptyCookiesException.class)
     public ResponseEntity<String> emptyCookiesException(EmptyCookiesException e) {
         return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
+                .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
     }
 

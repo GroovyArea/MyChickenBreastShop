@@ -1,6 +1,6 @@
 package com.email.outbox.scheduler;
 
-import com.email.domain.VO.OutBox;
+import com.email.domain.vo.OutBox;
 import com.email.mapper.OutBoxEmailMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +34,9 @@ public class EmailSendScheduler {
         List<OutBox> outBoxList = outBoxEmailMapper.selectAllEmailOutBox();
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
-            outBoxList.forEach(outBox -> {
-                emailCheck.validateEmailNumber(objectMapper, completedList, outBox);
-            });
+            outBoxList.forEach(outBox ->
+                    emailCheck.validateEmailNumber(objectMapper, completedList, outBox)
+            );
             if (!completedList.isEmpty()) {
                 outBoxEmailMapper.deleteAllById(completedList);
             }

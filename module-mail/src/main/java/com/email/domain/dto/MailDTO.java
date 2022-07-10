@@ -1,4 +1,4 @@
-package com.daniel.outbox.dto;
+package com.email.domain.dto;
 
 import lombok.Getter;
 import lombok.Setter;
