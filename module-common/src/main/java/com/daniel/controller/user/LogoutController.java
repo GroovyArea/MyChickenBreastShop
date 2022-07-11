@@ -25,9 +25,9 @@ public class LogoutController {
      * @param userId 로그아웃 DTO
      * @return Message 응답 정보 객체
      */
-    @GetMapping("/user/logout/{userId}")
+    @GetMapping("/logout/{userId}")
     public ResponseEntity<String> logoutAction(@PathVariable String userId) {
-        if (redisService.deleteData(userId)) {
+        if (Boolean.TRUE.equals(redisService.deleteData(userId))) {
             return ResponseEntity
                     .ok()
                     .contentType(MediaType.APPLICATION_JSON)

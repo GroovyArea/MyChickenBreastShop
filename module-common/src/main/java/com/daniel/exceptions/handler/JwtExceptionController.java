@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class JwtExceptionController {
 
-    private static final String EMPTY_TOKEN = "헤더 저장된 토큰이 필요합니다.";
+    private static final String EMPTY_TOKEN = "헤더에 저장된 토큰이 필요합니다.";
     private static final String INVALID_SIGNATURE = "토큰 형식이 잘못 되었습니다.";
     private static final String CLASS_CAST_FAIL = "토큰 유효성 검사가 실패하였습니다. 확인 후 재요청 바랍니다.";
     private static final String MALFORMED_TOKEN = "유효하지 않은 토큰입니다.";
