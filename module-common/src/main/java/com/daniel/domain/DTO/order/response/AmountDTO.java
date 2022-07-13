@@ -12,5 +12,9 @@ import lombok.NoArgsConstructor;
 public class AmountDTO {
 
     private String tid;
-    private Integer total, taxFree, vat, point, discount;
+    private Integer total;
+    private Integer taxFree;
+    private Integer vat;
+    private Integer point;
+    private Integer discount;
 }

@@ -11,11 +11,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderDTO {
 
-    private String tid, userId, aid;
-    private String cid, partnerOrderId, partnerUserId;
-    private String paymentMethodType, itemName, itemCode;
+    private String tid;
+    private String userId;
+    private String aid;
+    private String cid;
+    private String partnerOrderId;
+    private String partnerUserId;
+    private String paymentMethodType;
+    private String itemName;
+    private String itemCode;
     private Integer quantity;
-    private String createdAt, approvedAt;
+    private String createdAt;
+    private String approvedAt;
     private CardDTO cardDTO;
     private AmountDTO amountDTO;
     private String orderStatus;

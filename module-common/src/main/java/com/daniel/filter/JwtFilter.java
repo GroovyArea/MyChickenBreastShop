@@ -29,7 +29,6 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final String NULL_TOKEN = "DB에 토큰이 존재하지 않습니다. 로그인이 필요합니다.";
     private static final String INVALID_TOKEN = "토큰이 일치하지 않습니다. 잘못된 접근입니다.";
     private static final String INVALID_SIGNATURE = "토큰 형식이 잘못 되었습니다.";
-    //private static final String EMPTY_TOKEN = "헤더에 저장된 토큰이 필요합니다.";
     private static final String CLASS_CAST_FAIL = "토큰 유효성 검사가 실패하였습니다. 확인 후 재요청 바랍니다.";
     private static final String MALFORMED_TOKEN = "유효하지 않은 토큰입니다.";
     private static final String EXPIRED_TOKEN = "토큰 유효기간이 만료되었습니다. 재로그인 바랍니다.";
@@ -76,9 +75,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
-        } /*catch (TokenEmptyException e) {
-            setErrorResponse(response, EMPTY_TOKEN, e);
-        }*/ catch (SignatureException e) {
+        } catch (SignatureException e) {
             setErrorResponse(response, INVALID_SIGNATURE, e);
         } catch (RedisNullTokenException e) {
             setErrorResponse(response, NULL_TOKEN, e);

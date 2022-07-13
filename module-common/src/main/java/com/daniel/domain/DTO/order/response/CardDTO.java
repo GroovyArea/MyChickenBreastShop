@@ -12,8 +12,11 @@ import lombok.NoArgsConstructor;
 public class CardDTO {
 
     private String tid;
-    private String issuerCorp, issuerCorpCode;
-    private String bin, cardType, installMonth;
+    private String issuerCorp;
+    private String issuerCorpCode;
+    private String bin;
+    private String cardType;
+    private String installMonth;
     private String interestFreeInstall;
 
 }

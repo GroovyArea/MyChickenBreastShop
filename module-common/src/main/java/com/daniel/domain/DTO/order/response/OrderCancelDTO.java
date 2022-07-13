@@ -20,13 +20,21 @@ import java.util.Date;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class OrderCancelDTO {
 
-    private String cid, tid, aid, status;
-    private String partnerOrderId, partnerUserId, paymentMethodType;
+    private String cid;
+    private String tid;
+    private String aid;
+    private String status;
+    private String partnerOrderId;
+    private String partnerUserId;
+    private String paymentMethodType;
     private Amount amount;
     private ApprovedCancelAmount approvedCancelAmount;
     private CanceledAmount canceledAmount;
     private CancelAvailableAmount cancelAvailableAmount;
-    private String itemName, itemCode;
+    private String itemName;
+    private String itemCode;
     private Integer quantity;
-    private Date createdAt, approvedAt, canceledAt;
+    private Date createdAt;
+    private Date approvedAt;
+    private Date canceledAt;
 }

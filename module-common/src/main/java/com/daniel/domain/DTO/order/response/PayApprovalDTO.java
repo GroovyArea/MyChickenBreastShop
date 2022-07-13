@@ -18,13 +18,23 @@ import java.util.Date;
 @Builder
 public class PayApprovalDTO {
 
-    private String aid, tid, cid, sid;
-    private String partnerOrderId, partnerUserId, paymentMethodType;
+    private String aid;
+    private String tid;
+    private String cid;
+    private String sid;
+    private String partnerOrderId;
+    private String partnerUserId;
+    private String paymentMethodType;
     private Amount amount;
     private CardInfo cardInfo;
-    private String itemName, itemCode, payload;
-    private Integer quantity, taxFreeAmount, vatAmount;
-    private Date createdAt, approvedAt;
+    private String itemName;
+    private String itemCode;
+    private String payload;
+    private Integer quantity;
+    private Integer taxFreeAmount;
+    private Integer vatAmount;
+    private Date createdAt;
+    private Date approvedAt;
     private String orderStatus;
 
     public void setOrderStatus(String orderStatus) {

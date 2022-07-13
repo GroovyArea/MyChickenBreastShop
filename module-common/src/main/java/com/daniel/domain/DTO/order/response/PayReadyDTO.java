@@ -14,8 +14,13 @@ import java.util.Date;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class PayReadyDTO {
 
-    private String partnerOrderId, partnerUserId, itemName;
-    private Integer quantity, totalAmount, taxFreeAmount;
-    private String tid, nextRedirectPcUrl;
+    private String partnerOrderId;
+    private String partnerUserId;
+    private String itemName;
+    private Integer quantity;
+    private Integer totalAmount;
+    private Integer taxFreeAmount;
+    private String tid;
+    private String nextRedirectPcUrl;
     private Date createdAt;
 }

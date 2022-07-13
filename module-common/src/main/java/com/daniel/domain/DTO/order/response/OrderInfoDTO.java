@@ -17,14 +17,22 @@ import java.util.Date;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class OrderInfoDTO {
 
-    String cid, cidSecret, tid;
-    String status, partnerOrderId, partnerUserId, paymentMethodType;
+    String cid;
+    String cidSecret;
+    String tid;
+    String status;
+    String partnerOrderId;
+    String partnerUserId;
+    String paymentMethodType;
     Amount amount;
     CanceledAmount canceledAmount;
     CancelAvailableAmount cancelAvailableAmount;
-    String itemName, itemCode;
+    String itemName;
+    String itemCode;
     Integer quantity;
-    Date createdAt, approvedAt, canceledAt;
+    Date createdAt;
+    Date approvedAt;
+    Date canceledAt;
     SelectedCardInfo selectedCardInfo;
     PaymentActionDetails[] paymentActionDetails;
 }
