@@ -1,6 +1,6 @@
 package com.daniel.controller.admin;
 
-import com.daniel.domain.DTO.user.UserListDTO;
+import com.daniel.domain.dto.user.UserListDTO;
 import com.daniel.interceptor.auth.Auth;
 import com.daniel.service.UserService;
 import com.daniel.utility.Pager;

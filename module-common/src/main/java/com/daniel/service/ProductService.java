@@ -1,8 +1,8 @@
 package com.daniel.service;
 
-import com.daniel.domain.DTO.cart.CartItemDTO;
-import com.daniel.domain.DTO.product.ProductDTO;
-import com.daniel.domain.DTO.product.ProductListDTO;
+import com.daniel.domain.dto.cart.CartItemDTO;
+import com.daniel.domain.dto.product.ProductDTO;
+import com.daniel.domain.dto.product.ProductListDTO;
 import com.daniel.domain.VO.ProductVO;
 import com.daniel.exceptions.error.InvalidPayAmountException;
 import com.daniel.exceptions.error.InvalidProductException;

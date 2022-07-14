@@ -1,7 +1,7 @@
 package com.daniel.controller.order;
 
-import com.daniel.domain.DTO.order.request.OrderProductDTO;
-import com.daniel.domain.DTO.order.response.PayApprovalDTO;
+import com.daniel.domain.dto.order.request.OrderProductDTO;
+import com.daniel.domain.dto.order.response.PayApprovalDTO;
 import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.interceptor.auth.Auth;
 import com.daniel.response.Message;

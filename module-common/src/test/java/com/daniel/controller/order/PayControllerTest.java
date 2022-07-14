@@ -1,11 +1,11 @@
 package com.daniel.controller.order;
 
-import com.daniel.domain.DTO.order.request.PayCancelDTO;
-import com.daniel.domain.DTO.order.response.*;
-import com.daniel.domain.DTO.order.response.kakaoPay.Amount;
-import com.daniel.domain.DTO.order.response.kakaoPay.ApprovedCancelAmount;
-import com.daniel.domain.DTO.order.response.kakaoPay.CancelAvailableAmount;
-import com.daniel.domain.DTO.order.response.kakaoPay.CanceledAmount;
+import com.daniel.domain.dto.order.request.PayCancelDTO;
+import com.daniel.domain.dto.order.response.*;
+import com.daniel.domain.dto.order.response.kakaopay.Amount;
+import com.daniel.domain.dto.order.response.kakaopay.ApprovedCancelAmount;
+import com.daniel.domain.dto.order.response.kakaopay.CancelAvailableAmount;
+import com.daniel.domain.dto.order.response.kakaopay.CanceledAmount;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;
 import com.daniel.service.KakaoPayService;

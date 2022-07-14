@@ -1,6 +1,6 @@
 package com.daniel.utility;
 
-import com.daniel.domain.DTO.cart.CartItemDTO;
+import com.daniel.domain.dto.cart.CartItemDTO;
 
 import javax.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;

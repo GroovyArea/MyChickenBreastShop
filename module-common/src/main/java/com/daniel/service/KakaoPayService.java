@@ -1,11 +1,11 @@
 package com.daniel.service;
 
-import com.daniel.domain.DTO.order.request.OrderProductDTO;
-import com.daniel.domain.DTO.order.request.PayCancelDTO;
-import com.daniel.domain.DTO.order.response.OrderCancelDTO;
-import com.daniel.domain.DTO.order.response.OrderInfoDTO;
-import com.daniel.domain.DTO.order.response.PayApprovalDTO;
-import com.daniel.domain.DTO.order.response.PayReadyDTO;
+import com.daniel.domain.dto.order.request.OrderProductDTO;
+import com.daniel.domain.dto.order.request.PayCancelDTO;
+import com.daniel.domain.dto.order.response.OrderCancelDTO;
+import com.daniel.domain.dto.order.response.OrderInfoDTO;
+import com.daniel.domain.dto.order.response.PayApprovalDTO;
+import com.daniel.domain.dto.order.response.PayReadyDTO;
 import com.daniel.domain.VO.AmountVO;
 import com.daniel.domain.VO.CardVO;
 import com.daniel.domain.VO.OrderVO;

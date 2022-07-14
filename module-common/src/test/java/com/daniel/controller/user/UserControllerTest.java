@@ -1,7 +1,7 @@
 package com.daniel.controller.user;
 
-import com.daniel.domain.DTO.user.UserDTO;
-import com.daniel.domain.DTO.user.UserModifyDTO;
+import com.daniel.domain.dto.user.UserDTO;
+import com.daniel.domain.dto.user.UserModifyDTO;
 import com.daniel.enums.users.UserGrade;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;

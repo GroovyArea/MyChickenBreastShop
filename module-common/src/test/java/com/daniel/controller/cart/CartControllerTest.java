@@ -1,6 +1,6 @@
 package com.daniel.controller.cart;
 
-import com.daniel.domain.DTO.cart.CartItemDTO;
+import com.daniel.domain.dto.cart.CartItemDTO;
 import com.daniel.enums.global.ResponseMessage;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;
