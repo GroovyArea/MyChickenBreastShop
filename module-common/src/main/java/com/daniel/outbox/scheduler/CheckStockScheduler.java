@@ -33,7 +33,7 @@ public class CheckStockScheduler {
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
             outBoxList.forEach(outBox ->
-                    stockCheck.outBoxStockCheck(objectMapper, completedList, outBox);
+                    stockCheck.outBoxStockCheck(objectMapper, completedList, outBox)
             );
             if (!completedList.isEmpty()) {
                 outBoxMapper.deleteAllById(completedList);
