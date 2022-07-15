@@ -1,6 +1,6 @@
 package com.daniel.mapper;
 
-import com.daniel.domain.VO.EmailKey;
+import com.daniel.domain.vo.EmailKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,6 @@
 package com.daniel.outbox.scheduler;
 
-import com.daniel.domain.VO.OutBox;
+import com.daniel.domain.vo.OutBox;
 import com.daniel.mapper.OutBoxMapper;
 import com.daniel.mapper.ProductMapper;
 import com.daniel.service.KakaoPayService;

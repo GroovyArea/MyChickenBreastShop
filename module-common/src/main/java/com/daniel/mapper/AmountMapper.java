@@ -1,6 +1,6 @@
 package com.daniel.mapper;
 
-import com.daniel.domain.VO.AmountVO;
+import com.daniel.domain.vo.AmountVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

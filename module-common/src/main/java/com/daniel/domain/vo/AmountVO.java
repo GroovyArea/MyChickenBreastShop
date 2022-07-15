@@ -1,5 +1,5 @@
 
-package com.daniel.domain.VO;
+package com.daniel.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,5 +11,9 @@ import lombok.NoArgsConstructor;
 public class AmountVO {
 
     private String tid;
-    private Integer total, taxFree, vat, point, discount;
+    private Integer total;
+    private Integer taxFree;
+    private Integer vat;
+    private Integer point;
+    private Integer discount;
 }

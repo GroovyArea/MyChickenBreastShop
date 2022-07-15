@@ -1,6 +1,6 @@
 package com.daniel.mapper;
 
-import com.daniel.domain.VO.ProductVO;
+import com.daniel.domain.vo.ProductVO;
 import com.daniel.utility.Pager;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

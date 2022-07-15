@@ -1,6 +1,6 @@
 package com.daniel.mapper;
 
-import com.daniel.domain.VO.OrderVO;
+import com.daniel.domain.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

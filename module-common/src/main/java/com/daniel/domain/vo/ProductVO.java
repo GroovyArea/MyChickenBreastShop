@@ -1,4 +1,4 @@
-package com.daniel.domain.VO;
+package com.daniel.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

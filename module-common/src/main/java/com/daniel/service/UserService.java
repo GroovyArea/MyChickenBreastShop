@@ -1,7 +1,7 @@
 package com.daniel.service;
 
 import com.daniel.domain.dto.user.*;
-import com.daniel.domain.VO.UserVO;
+import com.daniel.domain.vo.UserVO;
 import com.daniel.enums.users.UserGrade;
 import com.daniel.exceptions.error.UserExistsException;
 import com.daniel.exceptions.error.UserNotExistsException;

@@ -1,4 +1,4 @@
-package com.daniel.domain.VO;
+package com.daniel.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 public class CardVO {
 
     private String tid;
-    private String issuerCorp, issuerCorpCode;
-    private String bin, cardType, installMonth;
+    private String issuerCorp;
+    private String issuerCorpCode;
+    private String bin;
+    private String cardType;
+    private String installMonth;
     private String interestFreeInstall;
 }

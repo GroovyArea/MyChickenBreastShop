@@ -1,6 +1,6 @@
 package com.daniel.mapper;
 
-import com.daniel.domain.VO.CardVO;
+import com.daniel.domain.vo.CardVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
