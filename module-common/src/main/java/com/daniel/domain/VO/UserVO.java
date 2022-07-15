@@ -13,6 +13,7 @@ public class UserVO {
 
     private String userId;
     private String userPw;
+    private String userSalt;
     private String userName;
     private String userPhone;
     private String userEmail;
@@ -20,6 +21,4 @@ public class UserVO {
     private String userDetailAddress;
     private String userZipcode;
     private Integer userGrade;
-    private Integer userReserves;
-    private String userSalt;
 }

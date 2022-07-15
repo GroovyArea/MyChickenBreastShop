@@ -79,7 +79,7 @@ public class OrderController {
         String tokenUserId = request.getAttribute("tokenUserId").toString();
         String requestUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "");
 
-        String url = kakaoPayService.getkakaoPayUrl(orderProductDTO, tokenUserId, requestUrl);
+        String url = kakaoPayService.getKakaoPayUrl(orderProductDTO, tokenUserId, requestUrl);
 
         if (url == null) {
             getFailedPayMessage();

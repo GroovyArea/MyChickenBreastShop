@@ -21,5 +21,4 @@ public class UserDTO {
     private String userDetailAddress;
     private String userZipcode;
     private Integer userGrade;
-    private Integer userReserves;
 }
