@@ -218,7 +218,7 @@ class OrderControllerTest {
         String userId = orderInfoDTO.getPartnerUserId();
         String url = "https://online-pay.kakao.com/mockup/v1/cd749f82c8c58decb5c832ab45a0990e02c87b07e32bf3f28aa9b9297a0cf710/info";
 
-        Mockito.when(kakaoPayService.getkakaoPayUrl(any(OrderProductDTO.class), anyString(), anyString())).thenReturn(url);
+        Mockito.when(kakaoPayService.getKakaoPayUrl(any(OrderProductDTO.class), anyString(), anyString())).thenReturn(url);
 
         mockMvc.perform(post("/api/order")
                         .header("Authorization", "Bearer ${ADMIN_AUTH_TOKEN}")

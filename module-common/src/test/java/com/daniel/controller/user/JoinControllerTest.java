@@ -81,7 +81,6 @@ class JoinControllerTest {
             .userDetailAddress("사당동")
             .userZipcode("12345")
             .userGrade(UserGrade.BASIC_USER.getValue())
-            .userReserves(2000)
             .build();
 
     @BeforeEach
