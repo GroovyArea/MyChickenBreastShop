@@ -1,5 +1,7 @@
 package com.daniel.enums.products;
 
+import java.util.Arrays;
+
 public enum ChickenBreast {
 
     STEAMED(1), // 스팀
@@ -11,25 +13,15 @@ public enum ChickenBreast {
 
     private final int chickenNumber;
 
-    private ChickenBreast(int chickenNumber) {
+    ChickenBreast(int chickenNumber) {
         this.chickenNumber = chickenNumber;
     }
 
     public static ChickenBreast of(int chickenNumber) {
-        switch (chickenNumber) {
-            case 2:
-                return SMOKED;
-            case 3:
-                return SAUSAGE;
-            case 4:
-                return STEAK;
-            case 5:
-                return BALL;
-            case 6:
-                return RAW;
-            default:
-                return STEAMED;
-        }
+        return Arrays.stream(ChickenBreast.values())
+                .filter(number -> number.getValue() == chickenNumber)
+                .findAny()
+                .orElse(STEAMED);
     }
 
     public int getValue() {
