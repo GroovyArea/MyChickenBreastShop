@@ -14,7 +14,6 @@
         <result property="userDetailAddress" column="user_detail_address"/>
         <result property="userZipcode" column="user_zipcode"/>
         <result property="userGrade" column="user_grade"/>
-        <result property="userReserves" column="user_reserves"/>
         <result property="userSalt" column="user_salt"/>
     </resultMap>
 

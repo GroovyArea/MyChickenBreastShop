@@ -1,8 +1,8 @@
 package com.daniel.service;
 
-import com.daniel.domain.DTO.user.UserEmailRequestDTO;
-import com.daniel.domain.DTO.user.UserJoinDTO;
-import com.daniel.domain.VO.EmailKey;
+import com.daniel.domain.dto.user.UserEmailRequestDTO;
+import com.daniel.domain.dto.user.UserJoinDTO;
+import com.daniel.domain.vo.EmailKey;
 import com.daniel.exceptions.error.EmailAuthException;
 import com.daniel.mapper.EmailKeyMapper;
 import com.daniel.outbox.event.EmailKeyCreated;

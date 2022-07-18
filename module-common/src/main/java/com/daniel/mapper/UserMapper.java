@@ -1,6 +1,6 @@
 package com.daniel.mapper;
 
-import com.daniel.domain.VO.UserVO;
+import com.daniel.domain.vo.UserVO;
 import com.daniel.utility.Pager;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;

@@ -1,7 +1,7 @@
 package com.daniel.controller.user;
 
-import com.daniel.domain.DTO.user.UserDTO;
-import com.daniel.domain.DTO.user.UserModifyDTO;
+import com.daniel.domain.dto.user.UserDTO;
+import com.daniel.domain.dto.user.UserModifyDTO;
 import com.daniel.enums.users.UserGrade;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;
@@ -66,7 +66,6 @@ class UserControllerTest {
             .userDetailAddress("사당동")
             .userZipcode("12345")
             .userGrade(UserGrade.BASIC_USER.getValue())
-            .userReserves(2000)
             .build();
 
     final UserModifyDTO modifyUserDTO = UserModifyDTO.builder()
@@ -87,7 +86,6 @@ class UserControllerTest {
             .userDetailAddress("서초동")
             .userZipcode("12345")
             .userGrade(UserGrade.BASIC_USER.getValue())
-            .userReserves(2000)
             .build();
 
     @BeforeEach

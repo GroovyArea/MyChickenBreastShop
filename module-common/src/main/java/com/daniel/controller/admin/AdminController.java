@@ -1,6 +1,6 @@
 package com.daniel.controller.admin;
 
-import com.daniel.domain.DTO.user.UserListDTO;
+import com.daniel.domain.dto.user.UserListDTO;
 import com.daniel.interceptor.auth.Auth;
 import com.daniel.service.UserService;
 import com.daniel.utility.Pager;
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
 
     private static final String SUCCEED_CHANGE_GRADE = "회원 등급 변경이 완료되었습니다.";
@@ -64,7 +64,7 @@ public class AdminController {
     @Auth(role = Auth.Role.ADMIN)
     @GetMapping("/users")
     public ResponseEntity<List<UserListDTO>> userSearchList(@RequestParam(defaultValue = "1") int pageNum,
-                                                            @RequestParam String searchKeyword,
+                                                            @RequestParam(defaultValue = "user_name") String searchKeyword,
                                                             @RequestParam String searchValue) {
         return ResponseEntity
                 .ok()

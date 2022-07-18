@@ -1,7 +1,5 @@
 package com.daniel.interceptor.auth;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -30,12 +28,8 @@ public class AuthorizeInterceptor implements HandlerInterceptor {
 
     private static final String NOT_ADMIN_AUTH = "관리자 권한을 필요로 하는 접근입니다.";
 
-    private static final Logger log = LoggerFactory.getLogger(AuthorizeInterceptor.class);
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("권한 처리 인터셉터 실행");
-
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }

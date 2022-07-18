@@ -1,7 +1,7 @@
 package com.daniel.controller.user;
 
-import com.daniel.domain.DTO.user.UserDTO;
-import com.daniel.domain.DTO.user.UserJoinDTO;
+import com.daniel.domain.dto.user.UserDTO;
+import com.daniel.domain.dto.user.UserJoinDTO;
 import com.daniel.enums.users.UserGrade;
 import com.daniel.jwt.AuthorizationExtractor;
 import com.daniel.jwt.JwtTokenProvider;
@@ -81,7 +81,6 @@ class JoinControllerTest {
             .userDetailAddress("사당동")
             .userZipcode("12345")
             .userGrade(UserGrade.BASIC_USER.getValue())
-            .userReserves(2000)
             .build();
 
     @BeforeEach

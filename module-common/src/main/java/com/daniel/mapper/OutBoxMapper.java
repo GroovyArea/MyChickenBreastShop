@@ -1,6 +1,6 @@
 package com.daniel.mapper;
 
-import com.daniel.domain.VO.OutBox;
+import com.daniel.domain.vo.OutBox;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.daniel.controller.user;
 
-import com.daniel.domain.DTO.user.UserLoginDTO;
+import com.daniel.domain.dto.user.UserLoginDTO;
 import com.daniel.jwt.JwtTokenProvider;
 import com.daniel.service.RedisService;
 import com.daniel.service.UserService;

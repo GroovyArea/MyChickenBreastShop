@@ -13,7 +13,7 @@
         <result property="interestFreeInstall" column="interest_free_install"/>
     </resultMap>
 
-    <select id="selectCard" resultType="com.daniel.domain.VO.CardVO" resultMap="card">
+    <select id="selectCard" resultType="com.daniel.domain.vo.CardVO" resultMap="card">
         SELECT *
         FROM CARDINFO
         WHERE tid = #{tid}

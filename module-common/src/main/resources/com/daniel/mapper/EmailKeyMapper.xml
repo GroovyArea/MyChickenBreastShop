@@ -11,13 +11,13 @@
         <result property="expiredAt" column="expired_at"/>
     </resultMap>
 
-    <select id="selectEmailKey" parameterType="long" resultType="com.daniel.domain.VO.EmailKey" resultMap="email">
+    <select id="selectEmailKey" parameterType="long" resultType="com.daniel.domain.vo.EmailKey" resultMap="email">
         SELECT *
         FROM EMAIL
         WHERE ID = #{id}
     </select>
 
-    <insert id="insertEmailKey" useGeneratedKeys="true" keyProperty="id" parameterType="com.daniel.domain.VO.EmailKey">
+    <insert id="insertEmailKey" useGeneratedKeys="true" keyProperty="id" parameterType="com.daniel.domain.vo.EmailKey">
         INSERT INTO EMAIL (EMAIL_KEY, EMAIL, EXPIRED_AT)
         VALUES (#{emailKey},
                 #{email},

@@ -12,7 +12,7 @@
         <result property="payload" column="payload"/>
     </resultMap>
 
-    <select id="selectAllOrderOutBox" resultType="com.daniel.domain.VO.OutBox" resultMap="outBoxOrder">
+    <select id="selectAllOrderOutBox" resultType="com.daniel.domain.vo.OutBox" resultMap="outBoxOrder">
         SELECT *
         FROM `OUTBOX-ORDER`
     </select>

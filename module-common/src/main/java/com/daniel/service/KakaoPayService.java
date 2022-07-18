@@ -1,15 +1,15 @@
 package com.daniel.service;
 
-import com.daniel.domain.DTO.order.request.OrderProductDTO;
-import com.daniel.domain.DTO.order.request.PayCancelDTO;
-import com.daniel.domain.DTO.order.response.OrderCancelDTO;
-import com.daniel.domain.DTO.order.response.OrderInfoDTO;
-import com.daniel.domain.DTO.order.response.PayApprovalDTO;
-import com.daniel.domain.DTO.order.response.PayReadyDTO;
-import com.daniel.domain.VO.AmountVO;
-import com.daniel.domain.VO.CardVO;
-import com.daniel.domain.VO.OrderVO;
-import com.daniel.domain.VO.UserVO;
+import com.daniel.domain.dto.order.request.OrderProductDTO;
+import com.daniel.domain.dto.order.request.PayCancelDTO;
+import com.daniel.domain.dto.order.response.OrderCancelDTO;
+import com.daniel.domain.dto.order.response.OrderInfoDTO;
+import com.daniel.domain.dto.order.response.PayApprovalDTO;
+import com.daniel.domain.dto.order.response.PayReadyDTO;
+import com.daniel.domain.vo.AmountVO;
+import com.daniel.domain.vo.CardVO;
+import com.daniel.domain.vo.OrderVO;
+import com.daniel.domain.vo.UserVO;
 import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.mapper.*;
 import com.daniel.outbox.event.OrderCreated;
@@ -103,7 +103,7 @@ public class KakaoPayService {
     private final OrderMapper orderMapper;
 
     @Transactional
-    public String getkakaoPayUrl(OrderProductDTO orderProductDTO, String tokenUserId, String requestUrl) throws RunOutOfStockException {
+    public String getKakaoPayUrl(OrderProductDTO orderProductDTO, String tokenUserId, String requestUrl) throws RunOutOfStockException {
 
         /* 재고 확인 이벤트 발생 */
         applicationEventPublisher.publishEvent(
@@ -311,7 +311,6 @@ public class KakaoPayService {
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
         try {
-            /* 서버 요청 후 응답 객체 받기 */
             payReadyDTO = restTemplate.postForObject(host + kakaoPayReady,
                     body, PayReadyDTO.class);
 

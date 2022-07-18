@@ -18,7 +18,7 @@
         <result property="createdAt" column="created_at"/>
         <result property="approvedAt" column="approved_at"/>
         <result property="orderStatus" column="order_status"/>
-        <association property="amountVO" javaType="com.daniel.domain.VO.AmountVO">
+        <association property="amountVO" javaType="com.daniel.domain.vo.AmountVO">
             <id property="tid" column="tid"/>
             <result property="total" column="total"/>
             <result property="taxFree" column="tax_free"/>
@@ -26,7 +26,7 @@
             <result property="point" column="point"/>
             <result property="discount" column="discount"/>
         </association>
-        <association property="cardVO" javaType="com.daniel.domain.VO.CardVO">
+        <association property="cardVO" javaType="com.daniel.domain.vo.CardVO">
             <id property="tid" column="tid"/>
             <result property="issuerCorp" column="issuer_corp"/>
             <result property="issuerCorpCode" column="issuer_corp_code"/>
@@ -37,7 +37,7 @@
         </association>
     </resultMap>
 
-    <select id="selectOrderList" resultType="com.daniel.domain.VO.OrderVO" resultMap="order">
+    <select id="selectOrderList" resultType="com.daniel.domain.vo.OrderVO" resultMap="order">
         SELECT *
         FROM `ORDER` o
                  JOIN CARDINFO c ON o.tid = c.tid

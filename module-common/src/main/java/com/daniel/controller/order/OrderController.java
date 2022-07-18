@@ -1,7 +1,7 @@
 package com.daniel.controller.order;
 
-import com.daniel.domain.DTO.order.request.OrderProductDTO;
-import com.daniel.domain.DTO.order.response.PayApprovalDTO;
+import com.daniel.domain.dto.order.request.OrderProductDTO;
+import com.daniel.domain.dto.order.response.PayApprovalDTO;
 import com.daniel.exceptions.error.RunOutOfStockException;
 import com.daniel.interceptor.auth.Auth;
 import com.daniel.response.Message;
@@ -79,7 +79,7 @@ public class OrderController {
         String tokenUserId = request.getAttribute("tokenUserId").toString();
         String requestUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "");
 
-        String url = kakaoPayService.getkakaoPayUrl(orderProductDTO, tokenUserId, requestUrl);
+        String url = kakaoPayService.getKakaoPayUrl(orderProductDTO, tokenUserId, requestUrl);
 
         if (url == null) {
             getFailedPayMessage();

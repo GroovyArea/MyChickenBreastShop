@@ -1,6 +1,6 @@
 package com.daniel.outbox.event;
 
-import com.daniel.domain.VO.OutBox;
+import com.daniel.domain.vo.OutBox;
 import com.daniel.mapper.OutBoxMapper;
 import com.daniel.utility.ObjectMapperUtil;
 import com.fasterxml.jackson.databind.JsonNode;

@@ -1,6 +1,6 @@
 package com.daniel.outbox.scheduler;
 
-import com.daniel.domain.VO.OutBox;
+import com.daniel.domain.vo.OutBox;
 import com.daniel.mapper.OutBoxMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +32,9 @@ public class CheckStockScheduler {
         List<OutBox> outBoxList = outBoxMapper.selectAllOrderOutBox();
         if (!outBoxList.isEmpty()) {
             List<Long> completedList = new LinkedList<>();
-            outBoxList.forEach(outBox -> {
-                stockCheck.outBoxStockCheck(objectMapper, completedList, outBox);
-            });
+            outBoxList.forEach(outBox ->
+                    stockCheck.outBoxStockCheck(objectMapper, completedList, outBox)
+            );
             if (!completedList.isEmpty()) {
                 outBoxMapper.deleteAllById(completedList);
             }

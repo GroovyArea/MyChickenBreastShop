@@ -1,7 +1,7 @@
 package com.daniel.controller.order;
 
-import com.daniel.domain.DTO.order.response.OrderCancelDTO;
-import com.daniel.domain.DTO.order.request.PayCancelDTO;
+import com.daniel.domain.dto.order.response.OrderCancelDTO;
+import com.daniel.domain.dto.order.request.PayCancelDTO;
 import com.daniel.response.Message;
 import com.daniel.service.KakaoPayService;
 import lombok.RequiredArgsConstructor;

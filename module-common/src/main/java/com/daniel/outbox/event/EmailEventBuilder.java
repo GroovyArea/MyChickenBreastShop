@@ -1,6 +1,6 @@
 package com.daniel.outbox.event;
 
-import com.daniel.domain.VO.EmailKey;
+import com.daniel.domain.vo.EmailKey;
 import com.daniel.utility.ObjectMapperUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;

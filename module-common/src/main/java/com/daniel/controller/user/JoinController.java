@@ -1,7 +1,7 @@
 package com.daniel.controller.user;
 
-import com.daniel.domain.DTO.user.UserEmailRequestDTO;
-import com.daniel.domain.DTO.user.UserJoinDTO;
+import com.daniel.domain.dto.user.UserEmailRequestDTO;
+import com.daniel.domain.dto.user.UserJoinDTO;
 import com.daniel.exceptions.error.EmailAuthException;
 import com.daniel.exceptions.error.UserExistsException;
 import com.daniel.exceptions.error.UserNotExistsException;
