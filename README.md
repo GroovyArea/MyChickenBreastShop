@@ -24,6 +24,6 @@ Mysql 8.0.17
 <details>
 <summary>Version 1.1</summary>
 <div markdown = "1">
-- [https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version-1.1](URL)
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version-1.1
 </div>
 </details>
