@@ -38,14 +38,14 @@ https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version-1.2
 <details>
 <summary>Version 1.3</summary>
 <div markdown = "1">
-https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.3 (2022.05.17~) 
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version-1.3-(2022.05.17~)
 </div>
 </details>
 
 <details>
 <summary>Version 1.4</summary>
 <div markdown = "1">
-https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.4 (2022.05.24~) 
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.4-(2022.05.24~) 
 </div>
 </details>
 
@@ -53,34 +53,34 @@ https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.4 (2022.05.24~)
 <details>
 <summary>Version 1.5</summary>
 <div markdown = "1">
-https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.5 (2022.05.31~) 
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.5-(2022.05.31~) 
 </div>
 </details>
 
 <details>
 <summary>Version 1.6</summary>
 <div markdown = "1">
-https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.6 (2022.06.06~) 
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.6-(2022.06.06~) 
 </div>
 </details>
 
 <details>
 <summary>Version 1.7</summary>
 <div markdown = "1">
-https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.7 (2022.06.22~) 
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.7-(2022.06.22~) 
 </div>
 </details>
 
 <details>
 <summary>Version 1.8</summary>
 <div markdown = "1">
-https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.8 (2022.07.05~) 
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.8-(2022.07.05~) 
 </div>
 </details>
 
 <details>
 <summary>Version 1.9</summary>
 <div markdown = "1">
-https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.9 (2022.07.11~) 
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.9-(2022.07.11~) 
 </div>
 </details>
