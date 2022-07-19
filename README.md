@@ -18,7 +18,7 @@ Mysql 8.0.17
 ```
 
 ## 프로젝트 구상
-- [https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version-1](URL)
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version-1
 
 ## 프로젝트 버전
 <details>
