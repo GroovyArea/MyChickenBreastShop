@@ -81,6 +81,6 @@ https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version-1.8-(2022.07.05~)
 <details>
 <summary>Version 1.9</summary>
 <div markdown = "1">
-https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version 1.9-(2022.07.11~) 
+https://github.com/GroovyArea/MyChickenBreastShop/wiki/Version-1.9-(2022.07.11~) 
 </div>
 </details>
