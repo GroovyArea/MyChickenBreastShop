@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author 김남영
  * @version 1.0
  */
-@SpringBootTest(properties = {"spring.config.location = classpath:/application.yml, classpath:/service.yml"})
+@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 class LogoutControllerTest {
