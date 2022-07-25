@@ -1,0 +1,43 @@
+# mybatis
+mybatis:
+  type-aliases-package: com.daniel.mapper
+  mapper-locations: classpath:com/daniel/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+
+
+spring:
+  # database
+  datasource:
+    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/스키마
+    username:
+    password:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+
+  # Redis
+  redis:
+    lettuce:
+      pool:
+        max-active: 5
+        max-idle: 5
+        min-idle: 5
+    host:
+    port: 6379
+    password:
+
+  # flyway
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+    sql-migration-suffixes: ddl
+    baseline-version: 0
+    baseline-on-migrate: true
+
+  #Multipart file
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB

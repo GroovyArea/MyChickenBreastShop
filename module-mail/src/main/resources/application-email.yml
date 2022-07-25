@@ -1,0 +1,4 @@
+email:
+  from: 메일 주소
+  subject: 메일 제목
+  text: 메일 내용

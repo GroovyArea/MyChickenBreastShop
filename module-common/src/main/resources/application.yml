@@ -1,0 +1,13 @@
+#spring:
+#  profiles:
+#    group:
+#      local-dev : dev, service
+#    active: local-dev
+
+spring :
+  profiles:
+    include: real-dev, real-service
+
+# logging
+logging:
+  config: classpath:logback/logback-local.xml

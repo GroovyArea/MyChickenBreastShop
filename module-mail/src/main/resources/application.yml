@@ -1,0 +1,17 @@
+# logging
+logging:
+  config: classpath:logback/logback-local.xml
+
+# server
+server:
+  port: 8081
+
+#spring:
+#  profiles:
+#    group:
+#      local-dev: dev, email
+#    active: local-dev
+
+spring:
+  profiles:
+    include: real-dev, real-email
