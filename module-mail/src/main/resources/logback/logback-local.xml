@@ -2,7 +2,10 @@
 <configuration>
 
     <!-- 로그파일 저장 경로 -->
-    <property name="LOG_DIR" value="/Users/09520/logback" />
+    <!--로컬-->
+    <!--<property name="LOG_DIR" value="/Users/09520/logback" />-->
+    <!--배포-->
+    <property name="LOG_DIR" value="/app/logfiles"/>
 
     <!-- CONSOLE -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
