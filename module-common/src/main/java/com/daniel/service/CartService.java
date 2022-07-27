@@ -31,10 +31,12 @@ public class CartService {
     private static final int KILL_COOKIE = 0;
 
     public Cookie getCartCookie(Cookie[] cookies) {
+        //TODO Optional은 null safe한 코드를 지향하기 위해 사용하는데, 리턴값으로 null을 사용한다는거는 한번 더 고민해주세요.
         return CookieUtil.getCartCookie(cookies).orElse(null);
     }
 
-    public Map<Integer, CartItemDTO> getCartDTOMap(Cookie responseCartCookie) throws UnsupportedEncodingException {
+    //TODO 유틸함수도 아닌 서비스 클래스가 반환형으로 Map을 사용하는건 좋지 않아보여요. 타입추론이 어려워집니다
+    public Map<Integer, CartItemDTO> getCartDTOMap(Cookie responseCartCookie) throws UnsupportedEncodingException { //TODO 체크드 에러는 try - catch해서 서비스 레이어에서 다루는 커스텀 익셉션으로 다시 전파시키는게 적절해보입니다.
         return CookieUtil.getCartItemDTOMap(responseCartCookie);
     }
 
@@ -42,6 +44,7 @@ public class CartService {
         cartItemDTOMap.remove(productNo);
     }
 
+    //TODO 서비스 클래스의 리턴타입이 javax.servlet.http 관련 클래스이네요. 최소한 서비스 레이어에서 사용하는 모델을 만들어서 래핑해주세요.
     public Cookie createCartCookie(Map<Integer, CartItemDTO> cartItemDTOMap) throws UnsupportedEncodingException {
         Cookie newCookie = new Cookie(COOKIE_KEY, URLEncoder.encode(JsonUtil.objectToString(cartItemDTOMap), ENC_TYPE));
         newCookie.setHttpOnly(true);

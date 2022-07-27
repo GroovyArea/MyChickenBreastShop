@@ -83,6 +83,8 @@ public class KakaoPayService {
 
     private static final Logger log = LoggerFactory.getLogger(KakaoPayService.class);
 
+    //TODO 빈은 상태를 가져서는 안됩니다. 스레드 세이프하지 않아요.
+    // 이걸 전제로 작성된 로직은 수정이 필요합니다.
     private PayReadyDTO payReadyDTO;
     private RestTemplate restTemplate;
     private String orderId;
@@ -102,6 +104,10 @@ public class KakaoPayService {
     private final AmountMapper amountMapper;
     private final OrderMapper orderMapper;
 
+    /**
+     * TODO 전체적으로 비슷한 구조라 각 메소드들에 달린 코멘트 확인해주세요.
+     * 모든 메소드들에 해당하는 내용으로 보입니다.
+     */
     @Transactional
     public String getKakaoPayUrl(OrderProductDTO orderProductDTO, String tokenUserId, String requestUrl) throws RunOutOfStockException {
 
@@ -114,10 +120,15 @@ public class KakaoPayService {
                         .totalAmount(orderProductDTO.getTotalAmount())
                         .build())
         );
+        //TODO
+        // 이벤트 퍼블리셔는 보통 비동기적으로 처리가 필요할때 활용을 자주 합니다.
+        // 이 코드에서는 OutBoxEventhandler 로직이 완료되고 나서야 아래 코드가 실행될거에요
+        // 의도한 내용일까요?
 
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
+        //TODO 빈의 가변적인 상태를 전제로 작성된 로직입니다 수정필요해요.
         user = userMapper.selectUser(tokenUserId);
         orderId = user.getUserId() + " / " + orderProductDTO.getItemName();
         userId = user.getUserId();
@@ -235,9 +246,12 @@ public class KakaoPayService {
 
     @Transactional
     public OrderInfoDTO getOrderDetail(String tid, String cid) {
+        //TODO RestTemplate 관련된 작업은 KakaoPayClient 등을 만들어서 별도 책임을 부여해 처리하는게 바람직해보입니다.
+        // 그리고 restTemplate은 deprecated 됐습니다. webclient 사용 고민해주세요.
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers);
 
+        //TODO Map이 편리하겠지만 모델을 만들어 사용하는게 더 좋아보입니다.
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", cid);
         params.add("tid", tid);
@@ -247,9 +261,9 @@ public class KakaoPayService {
         try {
             return restTemplate.postForObject(host + kakaoPayOrder, body, OrderInfoDTO.class);
         } catch (RestClientException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage()); //fixme 만약 카카오페이에 장애가 발생했다면, 개발자는 시스템에 이상이 생긴걸 어떻게 감지할수있을까요?
         }
-        return null;
+        return null; //TODO 다른곳도 마찬가지지만 null return은 다시 고민해주세요
     }
 
     @Transactional
