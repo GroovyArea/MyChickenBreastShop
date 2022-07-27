@@ -121,8 +121,8 @@ public class KakaoPayService {
                         .build())
         );
         //TODO
-        // 이벤트 퍼블리셔는 보통 비동기적으로 처리가 필요할때 활용을 자주 합니다.
-        // 이 코드에서는 OutBoxEventhandler 로직이 완료되고 나서야 아래 코드가 실행될거에요
+        // 이벤트 퍼블리셔는 보통 비동기적으로 처리가 필요할때 활용을 자주 합니다. (@EventHandler + @Async)
+        // 하지만 이 코드에서는 OutBoxEventhandler 로직이 완료되고 나서야 아래 코드가 실행될거에요
         // 의도한 내용일까요?
 
         HttpHeaders headers = new HttpHeaders();
