@@ -47,13 +47,15 @@ public class OrderController {
     private static final String ORDER_INFO = "주문 상세 조회입니다.";
     private static final String CANCELED_PAY_MESSAGE = "결제를 취소하셨습니다.";
 
-    private final KakaoPayService kakaoPayService;
+    private final KakaoPayService kakaoPayService; //TODO OrderController인데 KakaoPayService 의존성이 필요없도록 설계 고민해보면 좋을거같아요
     private final OrderService orderService;
     private final CartService cartService;
 
     @GetMapping("/{userId}")
     @Auth(role = Auth.Role.BASIC_USER)
     public ResponseEntity<Message> getDBOrderInfo(@PathVariable String userId) {
+        //TODO contentType을 명시해주는 이유가 있나요?
+        // 그리고 ResponseEntity를 여기서 사용하는 이유가 있나요??
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(
                 Message.builder()
                         .data(orderService.getOrderInfoList(userId))

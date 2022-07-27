@@ -44,8 +44,10 @@ public class JsonUtil {
             return MAPPER.readValue(string, MapType.construct(HashMap.class, null, null,
                     null, SimpleType.constructUnsafe(keyType), SimpleType.constructUnsafe(valueType)));
         } catch (JsonProcessingException e) {
+            //TODO 만약 코드 오류로 항상 에러가 발생한다면, 개발자는 어떻게 시스템에 문제가 있다는걸 알수 있을까요??
+            // 어떻게 하면 시스템에 이슈가 있다는걸 감지할수 있을지 고민해보세요
             log.error(e.getMessage());
         }
-        return null;
+        return null; //TODO 리턴에 null을 하는건 한번더 고민해주세요. 밖의 코드에서 null체크를 해야하는 공수가 생깁니다.
     }
 }
