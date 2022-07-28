@@ -18,6 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Value("${file.upload.location}")
     private String filePath;
+
     private final AuthorizeInterceptor authorizeInterceptor;
     private final CookieInterceptor cookieInterceptor;
 

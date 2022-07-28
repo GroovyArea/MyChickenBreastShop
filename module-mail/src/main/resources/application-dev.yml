@@ -1,0 +1,46 @@
+# mybatis
+mybatis:
+  type-aliases-package: com.email.mapper
+  mapper-locations: classpath:com/email/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+
+spring:
+  # database
+  datasource:
+    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/namyoung_schema?serverTimezone=UTC&characterEncoding=UTF-8
+    username:
+    password:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+
+  # Redis
+  redis:
+    lettuce:
+      pool:
+        max-active: 5
+        max-idle: 5
+        min-idle: 5
+    host: 127.0.0.1
+    port: 6379
+    password:
+
+  # Mail
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username:
+    password:
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.ssl.enable: true
+      mail.smtps.ssl.trust: smtp.naver.com
+
+  # flyway
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+    sql-migration-suffixes: ddl
+    baseline-version: 0
+    baseline-on-migrate: true

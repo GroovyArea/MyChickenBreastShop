@@ -24,9 +24,9 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-**/application.yml
-**/kakaoPay.yml
-**/*.yml
+**/application-real-dev.yml
+**/application-real-service.yml
+**/application-real-email.yml
 
 ### NetBeans ###
 /nbproject/private/

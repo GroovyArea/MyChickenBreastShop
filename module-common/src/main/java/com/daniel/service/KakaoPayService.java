@@ -15,9 +15,8 @@ import com.daniel.mapper.*;
 import com.daniel.outbox.event.OrderCreated;
 import com.daniel.outbox.event.OutBoxEventBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
@@ -31,7 +30,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -50,6 +52,7 @@ import java.util.stream.IntStream;
  * @version 1.2
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class KakaoPayService {
 
@@ -80,8 +83,6 @@ public class KakaoPayService {
     private String kakaoPayCancel;
     @Value("${kakao.pay.order}")
     private String kakaoPayOrder;
-
-    private static final Logger log = LoggerFactory.getLogger(KakaoPayService.class);
 
     private PayReadyDTO payReadyDTO;
     private RestTemplate restTemplate;
